@@ -1,4 +1,4 @@
-package com.core.tasks;
+package org.firstinspires.ftc.teamcode.lioncore.tasks;
 
 public abstract class TaskBase {
     void init() {}
