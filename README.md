@@ -1,4 +1,4 @@
-## Welcome to the Offical Pedro Pathing Quickstart!  
+### Iron Lions FTC - DECODE [2025-2026] Repository
+Authored by hchap1.</br>
 
-Follow the steps on our [website](https://pedropathing.com/) to tune and setup!  
-Feel Free to reach out on the [Offical Pedro Pathing Discord Server](https://discord.gg/2GfC4qBP5s)!
+Status: Pre-Regionals
