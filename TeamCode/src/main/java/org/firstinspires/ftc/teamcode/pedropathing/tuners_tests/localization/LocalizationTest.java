@@ -20,8 +20,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.pedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.pedropathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedropathing.constants.LConstants;
 
 import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.util.DashboardPoseTracker;
@@ -30,7 +30,7 @@ import com.pedropathing.util.Drawing;
 import java.util.Arrays;
 import java.util.List;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.*;
+import org.firstinspires.ftc.teamcode.pedropathing.constants.*;
 
 /**
  * This is the LocalizationTest OpMode. This is basically just a simple mecanum drive attached to a

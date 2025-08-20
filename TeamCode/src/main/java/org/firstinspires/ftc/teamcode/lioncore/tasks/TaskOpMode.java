@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.lioncore.tasks;
-import com.core.systems.SystemBase;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 
 import java.util.ArrayList;
 import java.util.List;

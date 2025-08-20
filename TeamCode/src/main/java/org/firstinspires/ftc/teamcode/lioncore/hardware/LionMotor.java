@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.lioncore.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class LionMotor {
@@ -46,5 +47,14 @@ public class LionMotor {
             this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+    }
+
+    public void setReversed(boolean reversed) {
+        if (reversed) this.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        else this.motor.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+    public void setZPB(DcMotor.ZeroPowerBehavior zpb) {
+        this.motor.setZeroPowerBehavior(zpb);
     }
 }

@@ -12,8 +12,8 @@ import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.pedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.pedropathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedropathing.constants.LConstants;
 
 /**
  * This is the Circle autonomous OpMode. It runs the robot in a PathChain that's actually not quite
