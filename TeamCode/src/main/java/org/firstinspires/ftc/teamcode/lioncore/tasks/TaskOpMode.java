@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.lioncore.tasks;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.lioncore.control.Controller;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TaskOpMode extends LinearOpMode {
+public abstract class TaskOpMode extends OpMode {
     private TaskBase task;
+    public Controller controller1;
+    public Controller controller2;
 
     private List<LynxModule> hubs;
     private ArrayList<SystemBase> systems;
@@ -33,7 +36,7 @@ public abstract class TaskOpMode extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() {
+    public void init() {
 
         Jobs jobs = this.spawn();
         this.task = jobs.task;
@@ -52,34 +55,31 @@ public abstract class TaskOpMode extends LinearOpMode {
             hub.clearBulkCache();
         }
 
-        if (this.isStopRequested()) return;
-        this.waitForStart();
+        this.controller1 = new Controller(gamepad1);
+        this.controller2 = new Controller(gamepad2);
+    }
 
-        boolean running = true;
+    @Override
+    public void loop() {
+
         task.init();
+        this.controller1.update();
+        this.controller2.update();
 
-        while (running) {
-
-            // Fully update all sensor values, motor positions, ect, once per loop cycle.
-            for (LynxModule hub : this.hubs) {
-                hub.clearBulkCache();
-            }
-
-            this.task.run();
-            if (this.task.finished()) {
-                running = false;
-                task.end(false);
-            }
-            if (!this.opModeIsActive()) {
-                running = false;
-                task.end(true);
-            }
-
-            for (SystemBase system : this.systems) {
-                system.update();
-            }
-
-            this.mainloop();
+        // Fully update all sensor values, motor positions, ect, once per loop cycle.
+        for (LynxModule hub : this.hubs) {
+            hub.clearBulkCache();
         }
+
+        this.task.run();
+        if (this.task.finished()) {
+            task.end(false);
+        }
+
+        for (SystemBase system : this.systems) {
+            system.update();
+        }
+
+        this.mainloop();
     }
 }
