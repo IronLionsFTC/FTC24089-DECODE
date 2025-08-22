@@ -12,10 +12,10 @@ public class Hardware {
         }
 
         public static class Reversed {
-            public static boolean frontRight = false;
-            public static boolean frontLeft = true;
-            public static boolean backRight = false;
-            public static boolean backLeft = true;
+            public static boolean frontRight = true;
+            public static boolean frontLeft = false;
+            public static boolean backRight = true;
+            public static boolean backLeft = false;
         }
 
         public static class ZPB {

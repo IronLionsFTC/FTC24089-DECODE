@@ -6,15 +6,19 @@ import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 
+import java.util.function.DoubleSupplier;
+
 public class Drivebase extends SystemBase {
+
     private LionMotor frontRight;
     private LionMotor frontLeft;
     private LionMotor backRight;
     private LionMotor backLeft;
+    private DoubleSupplier driveX;
+    private DoubleSupplier driveY;
+    private DoubleSupplier yawX;
 
-    public Drivebase() {
-
-    }
+    public Drivebase() {}
 
     public void loadHardware(HardwareMap hardwareMap) {
         this.frontRight = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.frontRight);
@@ -31,11 +35,15 @@ public class Drivebase extends SystemBase {
         this.backLeft.setZPB(Hardware.Motors.ZPB.driveMotors);
     }
 
-    public void init() {
-
-    }
+    public void init() {}
 
     public void update() {
-
+        double cx = driveX.getAsDouble();
+        double cy = driveY.getAsDouble();
+        double cr = yawX.getAsDouble();
+        frontRight.setPower(cy + cx + cr);
+        frontLeft.setPower(cy - cx - cr);
+        backRight.setPower(cy - cx + cr);
+        backLeft.setPower(cy + cx - cr);
     }
 }

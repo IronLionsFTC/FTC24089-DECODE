@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.parameters.Hardware;
 @TeleOp
 public class linearTeleopDrive extends LinearOpMode {
     public void runOpMode() {
-
         LionMotor frontRight = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.frontRight);
         LionMotor frontLeft = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.frontLeft);
         LionMotor backRight = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.backRight);
@@ -22,15 +21,13 @@ public class linearTeleopDrive extends LinearOpMode {
         waitForStart();
 
         while (this.opModeIsActive()) {
-
             double cx = gamepad1.left_stick_x;
             double cy = gamepad1.left_stick_y;
             double cr = gamepad1.right_stick_x;
-
-            frontRight.setPower(-cy - cx - cr);
-            frontLeft.setPower(-cy + cx + cr);
-            backRight.setPower(-cy + cx - cr);
-            backLeft.setPower(-cy - cx + cr);
+            frontRight.setPower(cy + cx + cr);
+            frontLeft.setPower(cy - cx - cr);
+            backRight.setPower(cy - cx + cr);
+            backLeft.setPower(cy + cx - cr);
         }
     }
 }
