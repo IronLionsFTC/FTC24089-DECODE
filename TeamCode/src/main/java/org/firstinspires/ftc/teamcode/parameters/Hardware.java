@@ -9,6 +9,9 @@ public class Hardware {
             public static String frontLeft = "leftFront";
             public static String backRight = "rightRear";
             public static String backLeft = "leftRear";
+
+            public static String outtake1 = "outtake1";
+            public static String outtake2 = "outtake2";
         }
 
         public static class Reversed {
@@ -16,10 +19,14 @@ public class Hardware {
             public static boolean frontLeft = false;
             public static boolean backRight = true;
             public static boolean backLeft = false;
+
+            public static boolean outtake1 = false;
+            public static boolean outtake2 = false;
         }
 
         public static class ZPB {
             public static DcMotor.ZeroPowerBehavior driveMotors = DcMotor.ZeroPowerBehavior.BRAKE;
+            public static DcMotor.ZeroPowerBehavior outtakeMotors = DcMotor.ZeroPowerBehavior.FLOAT;
         }
     }
 }
