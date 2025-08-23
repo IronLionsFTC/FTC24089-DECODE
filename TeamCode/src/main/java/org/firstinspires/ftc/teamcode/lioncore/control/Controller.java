@@ -51,24 +51,32 @@ public class Controller {
 
     public class LeftJoystick {
         private Gamepad gamepad;
+        public Button button;
 
         private LeftJoystick(Gamepad gamepad) {
             this.gamepad = gamepad;
+            this.button = new Button(this::pressed);
         }
 
         public double x() { return this.gamepad.left_stick_x; }
         public double y() { return this.gamepad.left_stick_y; }
+        private boolean pressed() { return this.gamepad.left_stick_button; }
+        private void update() { this.button.update(); }
     }
 
     public class RightJoystick {
         private Gamepad gamepad;
+        public Button button;
 
         private RightJoystick(Gamepad gamepad) {
             this.gamepad = gamepad;
+            this.button = new Button(this::pressed);
         }
 
         public double x() { return this.gamepad.right_stick_x; }
         public double y() { return this.gamepad.right_stick_y; }
+        private boolean pressed() { return this.gamepad.right_stick_button; }
+        private void update() { this.button.update(); }
     }
 
     public class Trackpad {
@@ -158,7 +166,7 @@ public class Controller {
          * @param task
          */
         public void whilePressed(TaskBase task) {
-            this.onPress = trask;
+            this.onPress = task;
             this.hasOnPress = true;
             this.cancelOnRelease = true;
         }
@@ -184,7 +192,9 @@ public class Controller {
     }
 
     public void update() {
-
+        this.dpad.update();
+        this.leftJoystick.update();
+        this.rightJoystick.update();
     }
 
     private boolean a() { return this.gamepad.a; }
