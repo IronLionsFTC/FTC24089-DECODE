@@ -19,6 +19,28 @@ public class Controller {
     public Button Y;
 
     public Dpad dpad;
+    public Bumpers bumpers;
+
+    public class Bumpers {
+        private Gamepad gamepad;
+
+        public Button left;
+        public Button right;
+
+        private Bumpers(Gamepad gamepad) {
+            this.gamepad = gamepad;
+            this.left = new Button(this::leftPressed);
+            this.right = new Button(this::rightPressed);
+        }
+
+        private void update() {
+            this.left.update();
+            this.right.update();
+        }
+
+        private boolean leftPressed() { return this.gamepad.left_bumper; }
+        private boolean rightPressed() { return this.gamepad.right_bumper; }
+    }
 
     public class Dpad {
         private Gamepad gamepad;
@@ -81,16 +103,22 @@ public class Controller {
 
     public class Trackpad {
         private Gamepad gamepad;
+        private Button button;
 
         private Trackpad(Gamepad gamepad) {
             this.gamepad = gamepad;
+            this.button = new Button(this::pressed);
+        }
+
+        private void update() {
+            this.button.update();
         }
 
         public Vector position() {
             return Vector.cartesian(this.gamepad.touchpad_finger_1_x, this.gamepad.touchpad_finger_1_y);
         }
 
-        public boolean pressed() {
+        private boolean pressed() {
             return this.gamepad.touchpad;
         }
     }
@@ -185,26 +213,23 @@ public class Controller {
 
     public Controller(Gamepad gamepad) {
         this.gamepad = gamepad;
-        this.leftJoystick = new LeftJoystick(gamepad);
-        this.rightJoystick = new RightJoystick(gamepad);
-        this.trackpad = new Trackpad(gamepad);
-        this.dpad = new Dpad(gamepad);
+        this.leftJoystick = new LeftJoystick(this.gamepad);
+        this.rightJoystick = new RightJoystick(this.gamepad);
+        this.trackpad = new Trackpad(this.gamepad);
+        this.dpad = new Dpad(this.gamepad);
+        this.bumpers = new Bumpers(this.gamepad);
     }
 
     public void update() {
         this.dpad.update();
         this.leftJoystick.update();
         this.rightJoystick.update();
+        this.bumpers.update();
+        this.trackpad.update();
     }
 
     private boolean a() { return this.gamepad.a; }
     private boolean b() { return this.gamepad.b; }
     private boolean x() { return this.gamepad.x; }
     private boolean y() { return this.gamepad.y; }
-    private boolean up() { return this.gamepad.dpad_up; }
-    private boolean down() { return this.gamepad.dpad_up; }
-    private boolean right() { return this.gamepad.dpad_up; }
-    private boolean left() { return this.gamepad.dpad_up; }
-    private boolean leftBumper() { return this.gamepad.left_bumper; }
-    private boolean rightBumper() { return this.gamepad.right_bumper; }
 }
