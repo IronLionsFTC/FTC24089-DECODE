@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.lioncore.control.Controller;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class TaskOpMode extends OpMode {
@@ -14,11 +15,17 @@ public abstract class TaskOpMode extends OpMode {
     public Controller controller2;
 
     private List<LynxModule> hubs;
-    private ArrayList<SystemBase> systems;
+    private List<SystemBase> systems;
 
     public class Jobs {
         public TaskBase task;
-        public ArrayList<SystemBase> systems;
+        public List<SystemBase> systems;
+
+        public Jobs(TaskBase task, SystemBase... systems) {
+            this.task = task;
+            this.systems = new ArrayList<>();
+            this.systems.addAll(Arrays.asList(systems));
+        }
     }
 
     /**

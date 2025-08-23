@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.systems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
+import org.firstinspires.ftc.teamcode.lioncore.math.types.Vector;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 
@@ -14,11 +15,13 @@ public class Drivebase extends SystemBase {
     private LionMotor frontLeft;
     private LionMotor backRight;
     private LionMotor backLeft;
-    private DoubleSupplier driveX;
-    private DoubleSupplier driveY;
-    private DoubleSupplier yawX;
+    private Vector.Supplier drive;
+    private DoubleSupplier yaw;
 
-    public Drivebase() {}
+    public Drivebase(Vector.Supplier drive, DoubleSupplier yaw) {
+        this.drive = drive;
+        this.yaw = yaw;
+    }
 
     public void loadHardware(HardwareMap hardwareMap) {
         this.frontRight = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.frontRight);
@@ -38,12 +41,11 @@ public class Drivebase extends SystemBase {
     public void init() {}
 
     public void update() {
-        double cx = driveX.getAsDouble();
-        double cy = driveY.getAsDouble();
-        double cr = yawX.getAsDouble();
-        frontRight.setPower(cy + cx + cr);
-        frontLeft.setPower(cy - cx - cr);
-        backRight.setPower(cy - cx + cr);
-        backLeft.setPower(cy + cx - cr);
+        Vector drive = this.drive.getAsVector();
+        double yaw = this.yaw.getAsDouble();
+        frontRight.setPower(drive.y() + drive.x() + yaw);
+        frontLeft.setPower(drive.y() - drive.x() - yaw);
+        backRight.setPower(drive.y() - drive.x() + yaw);
+        backLeft.setPower(drive.y() + drive.x() - yaw);
     }
 }

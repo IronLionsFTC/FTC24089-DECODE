@@ -13,9 +13,14 @@ public class linearTeleopDrive extends LinearOpMode {
         LionMotor frontLeft = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.frontLeft);
         LionMotor backRight = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.backRight);
         LionMotor backLeft = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.backLeft);
-
+        frontRight.setReversed(Hardware.Motors.Reversed.frontRight);
         frontLeft.setReversed(Hardware.Motors.Reversed.frontLeft);
+        backRight.setReversed(Hardware.Motors.Reversed.backRight);
         backLeft.setReversed(Hardware.Motors.Reversed.backLeft);
+        frontRight.setZPB(Hardware.Motors.ZPB.driveMotors);
+        frontLeft.setZPB(Hardware.Motors.ZPB.driveMotors);
+        backRight.setZPB(Hardware.Motors.ZPB.driveMotors);
+        backLeft.setZPB(Hardware.Motors.ZPB.driveMotors);
 
         if (isStopRequested()) return;
         waitForStart();
