@@ -218,14 +218,25 @@ public class Controller {
         this.trackpad = new Trackpad(this.gamepad);
         this.dpad = new Dpad(this.gamepad);
         this.bumpers = new Bumpers(this.gamepad);
+        this.A = new Button(this::a);
+        this.B = new Button(this::b);
+        this.X = new Button(this::x);
+        this.Y = new Button(this::y);
     }
 
+    /**
+     * Poll the controller for all buttons. This must be called once per loop cycle.
+     */
     public void update() {
         this.dpad.update();
         this.leftJoystick.update();
         this.rightJoystick.update();
         this.bumpers.update();
         this.trackpad.update();
+        this.A.update();
+        this.B.update();
+        this.X.update();
+        this.Y.update();
     }
 
     private boolean a() { return this.gamepad.a; }
