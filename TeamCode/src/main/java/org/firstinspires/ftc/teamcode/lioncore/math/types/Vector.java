@@ -6,20 +6,6 @@ public class Vector {
     private double x;
     private double y;
 
-    public class Supplier {
-        private DoubleSupplier x;
-        private DoubleSupplier y;
-
-        public Supplier(DoubleSupplier x, DoubleSupplier y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public Vector getAsVector() {
-            return Vector.cartesian(this.x.getAsDouble(), this.y.getAsDouble());
-        }
-    }
-
     private Vector(double x, double y) {
         this.x = x;
         this.y = y;

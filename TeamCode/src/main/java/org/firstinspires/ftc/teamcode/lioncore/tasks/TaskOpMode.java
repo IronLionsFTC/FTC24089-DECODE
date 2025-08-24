@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.lioncore.tasks;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.teamcode.lioncore.control.Controller;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 
@@ -32,13 +31,13 @@ public abstract class TaskOpMode extends OpMode {
      * Create all systems and tasks and return them. Do not initialise the systems.
      * @return Return a "Jobs" item containing task and systems
      */
-    abstract Jobs spawn();
+    public abstract Jobs spawn();
 
     /**
      * Empty by default, allows users to override with something they want to happen once all commands in this iteration have been executed.
      * This could be used for something like bulk reading, updating a counter, ect.
      */
-    void mainloop() {
+    public void mainloop() {
 
     }
 

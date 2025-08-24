@@ -7,6 +7,10 @@ public class Forever extends TaskBase {
         this.task = task;
     }
 
+    public Forever(Runnable runnable) {
+        this.task = new Run(runnable);
+    }
+
     @Override
     public void init() {
         this.task.init();

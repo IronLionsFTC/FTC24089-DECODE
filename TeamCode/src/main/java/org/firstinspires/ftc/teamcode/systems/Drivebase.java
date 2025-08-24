@@ -15,11 +15,13 @@ public class Drivebase extends SystemBase {
     private LionMotor frontLeft;
     private LionMotor backRight;
     private LionMotor backLeft;
-    private Vector.Supplier drive;
+    private DoubleSupplier driveX;
+    private DoubleSupplier driveY;
     private DoubleSupplier yaw;
 
-    public Drivebase(Vector.Supplier drive, DoubleSupplier yaw) {
-        this.drive = drive;
+    public Drivebase(DoubleSupplier driveX, DoubleSupplier driveY, DoubleSupplier yaw) {
+        this.driveX = driveX;
+        this.driveY = driveY;
         this.yaw = yaw;
     }
 
@@ -41,7 +43,7 @@ public class Drivebase extends SystemBase {
     public void init() {}
 
     public void update() {
-        Vector drive = this.drive.getAsVector();
+        Vector drive = Vector.cartesian(this.driveX.getAsDouble(), this.driveY.getAsDouble());
         double yaw = this.yaw.getAsDouble();
         frontRight.setPower(drive.y() + drive.x() + yaw);
         frontLeft.setPower(drive.y() - drive.x() - yaw);

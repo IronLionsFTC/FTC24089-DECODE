@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 
 @TeleOp
 public class linearTeleopDrive extends LinearOpMode {
+
     public void runOpMode() {
         LionMotor frontRight = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.frontRight);
         LionMotor frontLeft = LionMotor.withoutEncoder(hardwareMap, Hardware.Motors.Names.frontLeft);
@@ -22,6 +24,12 @@ public class linearTeleopDrive extends LinearOpMode {
         backRight.setZPB(Hardware.Motors.ZPB.driveMotors);
         backLeft.setZPB(Hardware.Motors.ZPB.driveMotors);
 
+        DcMotor slideA = hardwareMap.get(DcMotor.class, "outtake1");
+        DcMotor slideB = hardwareMap.get(DcMotor.class, "outtake2");
+        slideA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideA.setZeroPowerBehavior(Hardware.Motors.ZPB.outtakeMotors);
+        slideB.setZeroPowerBehavior(Hardware.Motors.ZPB.outtakeMotors);
+
         if (isStopRequested()) return;
         waitForStart();
 
@@ -33,6 +41,14 @@ public class linearTeleopDrive extends LinearOpMode {
             frontLeft.setPower(cy - cx - cr);
             backRight.setPower(cy - cx + cr);
             backLeft.setPower(cy + cx - cr);
+            double sp = gamepad1.right_trigger - gamepad1.left_trigger;
+            telemetry.addData("slidePower", sp);
+            slideA.setPower(sp);
+            slideB.setPower(sp);
+
+            telemetry.addData("outtakePos", slideA.getCurrentPosition());
+
+            telemetry.update();
         }
     }
 }
