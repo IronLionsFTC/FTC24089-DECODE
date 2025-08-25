@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.lioncore.math.types;
 
-import java.util.function.DoubleSupplier;
-
 public class Vector {
     private double x;
     private double y;
