@@ -63,7 +63,7 @@ public class LionMotor {
     public void resetPosition() {
         if (this.motors.isEmpty()) return;
         this.motors.get(0).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.motors.get(0).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.motors.get(0).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setReversed(boolean... reversed) {

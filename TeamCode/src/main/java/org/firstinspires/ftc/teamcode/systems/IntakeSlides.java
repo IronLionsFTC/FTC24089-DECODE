@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
+import org.firstinspires.ftc.teamcode.parameters.Software;
 
 public class IntakeSlides extends SystemBase {
     private IntakeSlides.State state;
@@ -19,6 +20,11 @@ public class IntakeSlides extends SystemBase {
 
     public IntakeSlides() {
         this.state = State.Retracted;
+        this.motorController = new PID(
+                Software.PID.Intake.P,
+                Software.PID.Intake.I,
+                Software.PID.Intake.D
+        );
     }
 
     @Override
@@ -30,11 +36,34 @@ public class IntakeSlides extends SystemBase {
 
     @Override
     public void init() {
-
+        this.motor.resetPosition();
     }
 
     @Override
     public void update() {
 
+        this.motorController.setConstants(
+                Software.PID.Intake.P,
+                Software.PID.Intake.I,
+                Software.PID.Intake.D
+        );
+
+        double target;
+        double current = this.motor.getPosition();
+
+        switch (this.state) {
+            case Retracted:
+                target = 0.0;
+                break;
+            case Extended:
+                target = Hardware.Ranges.Slides.intakeExtension;
+                break;
+            default:
+                target = 0.0;
+                break;
+        }
+
+        double power = this.motorController.calculate(current, target);
+        this.motor.setPower(power);
     }
 }

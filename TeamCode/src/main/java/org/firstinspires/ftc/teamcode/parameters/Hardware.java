@@ -13,7 +13,7 @@ public class Hardware {
             public static String outtake1 = "outtake1";
             public static String outtake2 = "outtake2";
 
-            public static String intake = "intake";
+            public static String intake = "intakeMotor";
         }
 
         public static class Reversed {
@@ -32,6 +32,12 @@ public class Hardware {
             public static DcMotor.ZeroPowerBehavior driveMotors = DcMotor.ZeroPowerBehavior.BRAKE;
             public static DcMotor.ZeroPowerBehavior outtakeMotors = DcMotor.ZeroPowerBehavior.FLOAT;
             public static DcMotor.ZeroPowerBehavior intakeMotor = DcMotor.ZeroPowerBehavior.FLOAT;
+        }
+    }
+
+    public static class Ranges {
+        public static class Slides {
+            public static double intakeExtension = 500.0;
         }
     }
 }
