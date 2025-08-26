@@ -26,7 +26,7 @@ public class Teleop extends TaskOpMode {
         );
 
         controller1.bumpers.right.onPress(
-                new ExtendIntake(intakeSlides)
+                new Optional(new ExtendIntake(intakeSlides), () -> !this.intakeSlides.isAtTarget())
         );
 
         this.intakeSlides = new IntakeSlides();

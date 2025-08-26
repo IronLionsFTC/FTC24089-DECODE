@@ -74,4 +74,8 @@ public class IntakeSlides extends SystemBase {
     public double getPosition() {
         return this.motor.cachedPosition();
     }
+
+    public boolean isAtTarget() {
+        return this.motor.cachedPosition() > 0.95 * Hardware.Ranges.Slides.intakeExtension;
+    }
 }
