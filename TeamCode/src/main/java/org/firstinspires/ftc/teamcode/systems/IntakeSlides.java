@@ -66,4 +66,12 @@ public class IntakeSlides extends SystemBase {
         double power = this.motorController.calculate(current, target);
         this.motor.setPower(power);
     }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public double getPosition() {
+        return this.motor.cachedPosition();
+    }
 }
