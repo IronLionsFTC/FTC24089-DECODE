@@ -5,4 +5,16 @@ public abstract class TaskBase {
     public void run() {}
     public boolean finished() { return false; }
     public void end(boolean interrupted) { }
+
+    public TaskBase then(TaskBase... tasks) {
+        return new Series(tasks);
+    }
+
+    public TaskBase with(TaskBase... tasks) {
+        return new Parallel(tasks);
+    }
+
+    public TaskBase race(TaskBase... tasks) {
+        return new Race(tasks);
+    }
 }
