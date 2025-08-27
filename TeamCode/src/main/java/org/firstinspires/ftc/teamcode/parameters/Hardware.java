@@ -37,7 +37,8 @@ public class Hardware {
 
     public static class Ranges {
         public static class Slides {
-            public static double intakeExtension = 500.0;
+            public static double intakeMaximumExtension = 750.0;
+            public static double intakeExtension = intakeMaximumExtension;
         }
     }
 }

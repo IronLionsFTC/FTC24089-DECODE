@@ -67,10 +67,16 @@ public class IntakeSlides extends SystemBase {
         this.motor.setPower(power);
     }
 
+    // Getters & Setters (exterior mutability is confusing at scale)
+
+    public State getState() { return this.state; }
     public void setState(State state) {
         this.state = state;
     }
+
     public double getPosition() {
         return this.motor.cachedPosition();
     }
+    public void setPosition(double position) { Hardware.Ranges.Slides.intakeExtension = position; }
+    public void resetPosition() { Hardware.Ranges.Slides.intakeExtension = Hardware.Ranges.Slides.intakeMaximumExtension; }
 }
