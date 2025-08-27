@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.lioncore.systems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public abstract class SystemBase {
     /**
      * Idiomatic place to load hardware from the hardware map, run post initialisation
@@ -17,5 +19,5 @@ public abstract class SystemBase {
     /**
      * Runs once per cycle, after task execution. Should be used to set motor powers and servo positions based on state
      */
-    public abstract void update();
+    public abstract void update(Telemetry telemetry);
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.math.types.Vector;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
@@ -42,7 +43,7 @@ public class Drivebase extends SystemBase {
 
     public void init() {}
 
-    public void update() {
+    public void update(Telemetry telemetry) {
         Vector drive = Vector.cartesian(this.driveX.getAsDouble(), this.driveY.getAsDouble());
         double yaw = this.yaw.getAsDouble();
         frontRight.setPower(drive.y() + drive.x() + yaw);

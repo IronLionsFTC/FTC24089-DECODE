@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
@@ -40,7 +41,7 @@ public class IntakeSlides extends SystemBase {
     }
 
     @Override
-    public void update() {
+    public void update(Telemetry telemetry) {
 
         this.motorController.setConstants(
                 Software.PID.Intake.P,
@@ -65,6 +66,10 @@ public class IntakeSlides extends SystemBase {
 
         double power = this.motorController.calculate(current, target);
         this.motor.setPower(power);
+
+        telemetry.addData("Current Pos", current);
+        telemetry.addData("Current Pow", power);
+        telemetry.addData("Current State", state);
     }
 
     // Getters & Setters (exterior mutability is confusing at scale)

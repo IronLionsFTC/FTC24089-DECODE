@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
@@ -27,7 +28,7 @@ public class OuttakeSlides extends SystemBase {
         this.motorA.resetPosition();
     }
 
-    public void update() {
+    public void update(Telemetry telemetry) {
 
     }
 }

@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.lioncore.tasks;
 
 public class Sleep extends TaskBase {
 
-    private double seconds;
+    private final double seconds;
     private long startTime;
 
-    public Sleep(float seconds) {
+    public Sleep(double seconds) {
         this.seconds = seconds;
     }
 

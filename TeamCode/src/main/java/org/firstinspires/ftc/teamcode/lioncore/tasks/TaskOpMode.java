@@ -35,7 +35,7 @@ public abstract class TaskOpMode extends OpMode {
 
     /**
      * Empty by default, allows users to override with something they want to happen once all commands in this iteration have been executed.
-     * This could be used for something like bulk reading, updating a counter, ect.
+     * This could be used for something like bulk reading, updating a counter, etc.
      */
     public void mainloop() {
 
@@ -43,6 +43,8 @@ public abstract class TaskOpMode extends OpMode {
 
     @Override
     public void init() {
+        this.controller1 = new Controller(gamepad1);
+        this.controller2 = new Controller(gamepad2);
 
         Jobs jobs = this.spawn();
         this.task = jobs.task;
@@ -61,14 +63,12 @@ public abstract class TaskOpMode extends OpMode {
             hub.clearBulkCache();
         }
 
-        this.controller1 = new Controller(gamepad1);
-        this.controller2 = new Controller(gamepad2);
+        task.init();
     }
 
     @Override
     public void loop() {
 
-        task.init();
         this.controller1.update();
         this.controller2.update();
 
@@ -80,10 +80,11 @@ public abstract class TaskOpMode extends OpMode {
         this.task.run();
         if (this.task.finished()) {
             task.end(false);
+            this.requestOpModeStop();
         }
 
         for (SystemBase system : this.systems) {
-            system.update();
+            system.update(telemetry);
         }
 
         this.mainloop();

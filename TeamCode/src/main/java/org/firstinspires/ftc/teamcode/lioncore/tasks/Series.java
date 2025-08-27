@@ -17,19 +17,19 @@ public class Series extends TaskBase {
     @Override
     public void init() {
         TaskBase task = this.tasks.get(this.index);
-        if (task != null) {
-            task.init();
-        }
+        task.init();
     }
 
     @Override
     public void run() {
+        if (this.index >= tasks.size()) { return; }
         TaskBase task = this.tasks.get(this.index);
-        if (task != null) {
-            task.run();
-            if (task.finished()) {
-                task.end(false);
-                this.index += 1;
+        task.run();
+        if (task.finished()) {
+            task.end(false);
+            this.index += 1;
+            if (index < tasks.size()) {
+                tasks.get(index).init();
             }
         }
     }

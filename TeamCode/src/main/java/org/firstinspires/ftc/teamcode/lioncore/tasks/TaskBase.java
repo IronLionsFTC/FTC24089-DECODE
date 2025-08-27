@@ -7,14 +7,23 @@ public abstract class TaskBase {
     public void end(boolean interrupted) { }
 
     public TaskBase then(TaskBase... tasks) {
-        return new Series(tasks);
+        TaskBase[] allTasks = new TaskBase[tasks.length + 1];
+        allTasks[0] = this;
+        System.arraycopy(tasks, 0, allTasks, 1, tasks.length);
+        return new Series(allTasks);
     }
 
     public TaskBase with(TaskBase... tasks) {
-        return new Parallel(tasks);
+        TaskBase[] allTasks = new TaskBase[tasks.length + 1];
+        allTasks[0] = this;
+        System.arraycopy(tasks, 0, allTasks, 1, tasks.length);
+        return new Parallel(allTasks);
     }
 
     public TaskBase race(TaskBase... tasks) {
-        return new Race(tasks);
+        TaskBase[] allTasks = new TaskBase[tasks.length + 1];
+        allTasks[0] = this;
+        System.arraycopy(tasks, 0, allTasks, 1, tasks.length);
+        return new Race(allTasks);
     }
 }

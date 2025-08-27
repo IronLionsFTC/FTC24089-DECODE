@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.systems.IntakeSlides;
 
 public class CycleIntake extends TaskBase {
     private IntakeSlides intake;
+
     public CycleIntake(IntakeSlides intake) {
         this.intake = intake;
     }
