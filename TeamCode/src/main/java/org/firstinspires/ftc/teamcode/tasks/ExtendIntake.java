@@ -5,9 +5,7 @@ import org.firstinspires.ftc.teamcode.parameters.Hardware;
 import org.firstinspires.ftc.teamcode.systems.IntakeSlides;
 
 public class ExtendIntake extends TaskBase {
-
     private IntakeSlides slides;
-
     public ExtendIntake(IntakeSlides slides) {
         this.slides = slides;
     }
