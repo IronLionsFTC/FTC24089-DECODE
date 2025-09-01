@@ -16,17 +16,6 @@ public abstract class TaskOpMode extends OpMode {
     private List<LynxModule> hubs;
     private List<SystemBase> systems;
 
-    public class Jobs {
-        public Task task;
-        public List<SystemBase> systems;
-
-        public Jobs(Task task, SystemBase... systems) {
-            this.task = task;
-            this.systems = new ArrayList<>();
-            this.systems.addAll(Arrays.asList(systems));
-        }
-    }
-
     /**
      * Create all systems and tasks and return them. Do not initialise the systems.
      * @return Return a "Jobs" item containing task and systems
@@ -47,8 +36,8 @@ public abstract class TaskOpMode extends OpMode {
         this.controller2 = new Controller(gamepad2);
 
         Jobs jobs = this.spawn();
-        this.task = jobs.task;
-        this.systems = jobs.systems;
+        this.task = jobs.compileTask();
+        this.systems = jobs.getSystems();
 
         for (SystemBase system : this.systems) {
             system.loadHardware(this.hardwareMap);

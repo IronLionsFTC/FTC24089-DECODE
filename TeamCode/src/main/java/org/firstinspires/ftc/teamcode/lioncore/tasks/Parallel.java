@@ -19,6 +19,14 @@ public class Parallel extends Task {
         }
     }
 
+    public Parallel(List<Task> tasks) {
+        this.tasks = tasks;
+        this.finished = new ArrayList<>();
+        for (int i = 0; i < this.tasks.size(); i++) {
+            this.finished.add(false);
+        }
+    }
+
     @Override
     public void init() { for (Task task : this.tasks) task.init(); }
 
