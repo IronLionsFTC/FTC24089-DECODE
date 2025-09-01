@@ -16,6 +16,7 @@ public class Series extends Task {
 
     @Override
     public void init() {
+        this.index = 0;
         Task task = this.tasks.get(this.index);
         task.init();
     }
