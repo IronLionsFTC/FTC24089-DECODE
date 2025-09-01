@@ -20,7 +20,7 @@ public abstract class TaskOpMode extends OpMode {
 
     private List<LynxModule> hubs;
     private List<SystemBase> systems;
-    private final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+    public final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
     /**
      * Create all systems and tasks and return them. Do not initialise the systems.

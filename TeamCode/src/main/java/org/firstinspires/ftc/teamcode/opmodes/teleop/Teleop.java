@@ -35,7 +35,7 @@ public class Teleop extends TaskOpMode {
         return Jobs.create()
                 .addTask(
                         new Forever(
-                            new Run(() -> telemetry.addData("Update!", intakeSlides.getPosition())).then(
+                            new Run(() -> panelsTelemetry.addData("UPDATE", intakeSlides.getPosition())).then(
                                 new Sleep(1)
                             )
                         )

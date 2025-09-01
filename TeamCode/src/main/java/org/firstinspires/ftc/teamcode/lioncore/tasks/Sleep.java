@@ -15,7 +15,7 @@ public class Sleep extends Task {
 
     public boolean finished() {
         long deltaNs = System.nanoTime() - startTime;
-        double deltaS = deltaNs / 10e9;
+        double deltaS = deltaNs / 1e9;
         return deltaS > seconds;
     }
 }
