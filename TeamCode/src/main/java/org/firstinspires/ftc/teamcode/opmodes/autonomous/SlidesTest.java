@@ -25,19 +25,17 @@ public class SlidesTest extends TaskOpMode {
         intake = new IntakeSlides();
         follower = Core.loadFollower(hardwareMap);
 
-        return new Jobs(
-                new Parallel(
-                        new Forever(follower::update),
-                        new Series(
-                            new ExtendIntake(intake).with(
-                                    new FollowPath(follower, TestPath.part1(follower))
-                            ),
-                            new RetractIntake(intake).with(
-                                    new FollowPath(follower, TestPath.part2(follower))
-                            )
-                        )
-                ),
-                intake
-        );
+        return Jobs.create()
+                .registerSystem(intake)
+
+                .addTask(new Forever(follower::update))
+                .addSeries(
+                    new ExtendIntake(intake).with(
+                            new FollowPath(follower, TestPath.part1(follower))
+                    ),
+                    new RetractIntake(intake).with(
+                            new FollowPath(follower, TestPath.part2(follower))
+                    )
+                );
     }
 }
