@@ -67,8 +67,8 @@ public class FollowPath extends TaskBase {
     /**
      * Execute a task once the follower has reached a certain percentage.
      * Will finish once the follower is done, even if the tasks are not complete.
-     * @param progress
-     * @param tasks
+     * @param progress The progress (T) value at which to start the task [0, 1]
+     * @param tasks Tasks to execute (in parallel)
      * @return
      */
     public TaskBase uponProgressUntilPathComplete(double progress, TaskBase... tasks) {
