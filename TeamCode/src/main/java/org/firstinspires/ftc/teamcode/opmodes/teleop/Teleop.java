@@ -33,6 +33,7 @@ public class Teleop extends TaskOpMode {
         );
 
         return Jobs.create()
+                .addTask(new Forever())
                 .registerSystem(drivebase)
                 .registerSystem(intakeSlides);
     }
