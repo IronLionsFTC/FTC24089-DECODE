@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.paths.PathChain;
 
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Parallel;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskBase;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.WaitUntil;
 
 public class FollowPath extends TaskBase {
     private Follower follower;
@@ -36,7 +38,7 @@ public class FollowPath extends TaskBase {
 
     @Override
     public boolean finished() {
-        return this.follower.getCurrentTValue() > 0.98;
+        return !this.follower.isBusy();
     }
 
     @Override
@@ -45,5 +47,33 @@ public class FollowPath extends TaskBase {
         if (interrupted) {
             this.follower.breakFollowing();
         }
+    }
+
+    /**
+     * Execute a task once the follower has reached a certain percentage.
+     * This task will not finish until both the path and the task are finished.
+     * @param progress The progress (T) value at which to start the task [0, 1]
+     * @param tasks Tasks to execute (in parallel)
+     * @return
+     */
+    public TaskBase uponProgress(double progress, TaskBase... tasks) {
+        return this.with(
+                new WaitUntil(() -> this.follower.getCurrentTValue() > progress).then(
+                        new Parallel(tasks)
+                )
+        );
+    }
+
+    /**
+     * Execute a task once the follower has reached a certain percentage.
+     * Will finish once the follower is done, even if the tasks are not complete.
+     * @param progress
+     * @param tasks
+     * @return
+     */
+    public TaskBase uponProgressUntilPathComplete(double progress, TaskBase... tasks) {
+        return this.master(
+            tasks
+        );
     }
 }

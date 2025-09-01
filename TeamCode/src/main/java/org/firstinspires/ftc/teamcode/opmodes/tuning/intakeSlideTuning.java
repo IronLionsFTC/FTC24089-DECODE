@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tuning;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -13,7 +14,7 @@ public class intakeSlideTuning extends OpMode {
     private LionMotor intakeSlideMotor;
     private PID motorController;
 
-    @Config
+    @Configurable
     public static class IntakePIDTuning {
         public static double P = 0.0;
         public static double I = 0.0;

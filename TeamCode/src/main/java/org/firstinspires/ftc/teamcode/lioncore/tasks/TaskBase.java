@@ -26,4 +26,8 @@ public abstract class TaskBase {
         System.arraycopy(tasks, 0, allTasks, 1, tasks.length);
         return new Race(allTasks);
     }
+
+    public TaskBase master(TaskBase... slaves) {
+        return new Master(this, slaves);
+    }
 }
