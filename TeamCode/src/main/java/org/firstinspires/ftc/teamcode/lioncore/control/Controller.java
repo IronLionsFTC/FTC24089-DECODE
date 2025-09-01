@@ -29,17 +29,14 @@ public class Controller {
 
         private Bumpers(Gamepad gamepad) {
             this.gamepad = gamepad;
-            this.left = new Button(this::leftPressed);
-            this.right = new Button(this::rightPressed);
+            this.left = new Button();
+            this.right = new Button();
         }
 
-        private void update() {
-            this.left.update();
-            this.right.update();
+        private void update(Gamepad gamepad) {
+            this.left.update(gamepad.left_bumper);
+            this.right.update(gamepad.right_bumper);
         }
-
-        private boolean leftPressed() { return this.gamepad.left_bumper; }
-        private boolean rightPressed() { return this.gamepad.right_bumper; }
     }
 
     public class Dpad {
@@ -52,23 +49,18 @@ public class Controller {
 
         private Dpad(Gamepad gamepad) {
             this.gamepad = gamepad;
-            this.up = new Button(this::getUp);
-            this.down = new Button(this::getDown);
-            this.right = new Button(this::getRight);
-            this.left = new Button(this::getLeft);
+            this.up = new Button();
+            this.down = new Button();
+            this.right = new Button();
+            this.left = new Button();
         }
 
-        private void update() {
-            this.up.update();
-            this.down.update();
-            this.right.update();
-            this.left.update();
+        private void update(Gamepad gamepad) {
+            this.up.update(gamepad.dpad_up);
+            this.down.update(gamepad.dpad_down);
+            this.right.update(gamepad.dpad_right);
+            this.left.update(gamepad.dpad_left);
         }
-
-        private boolean getUp() { return this.gamepad.dpad_up; }
-        private boolean getDown() { return this.gamepad.dpad_down; }
-        private boolean getRight() { return this.gamepad.dpad_right; }
-        private boolean getLeft() { return this.gamepad.dpad_left; }
     }
 
     public class LeftJoystick {
@@ -77,13 +69,16 @@ public class Controller {
 
         private LeftJoystick(Gamepad gamepad) {
             this.gamepad = gamepad;
-            this.button = new Button(this::pressed);
+            this.button = new Button();
         }
 
         public double x() { return this.gamepad.left_stick_x; }
         public double y() { return this.gamepad.left_stick_y; }
-        private boolean pressed() { return this.gamepad.left_stick_button; }
-        private void update() { this.button.update(); }
+
+        private void update(Gamepad gamepad) {
+            this.gamepad = gamepad;
+            this.button.update(gamepad.left_stick_button);
+        }
     }
 
     public class RightJoystick {
@@ -92,13 +87,16 @@ public class Controller {
 
         private RightJoystick(Gamepad gamepad) {
             this.gamepad = gamepad;
-            this.button = new Button(this::pressed);
+            this.button = new Button();
         }
 
         public double x() { return this.gamepad.right_stick_x; }
         public double y() { return this.gamepad.right_stick_y; }
-        private boolean pressed() { return this.gamepad.right_stick_button; }
-        private void update() { this.button.update(); }
+
+        private void update(Gamepad gamepad) {
+            this.gamepad = gamepad;
+            this.button.update(gamepad.right_stick_button);
+        }
     }
 
     public class Trackpad {
@@ -107,11 +105,11 @@ public class Controller {
 
         private Trackpad(Gamepad gamepad) {
             this.gamepad = gamepad;
-            this.button = new Button(this::pressed);
+            this.button = new Button();
         }
 
-        private void update() {
-            this.button.update();
+        private void update(Gamepad gamepad) {
+            this.button.update(gamepad.touchpad);
         }
 
         public Vector position() {
@@ -124,7 +122,6 @@ public class Controller {
     }
 
     public class Button {
-        private BooleanSupplier button;
         private boolean last;
         private boolean current;
 
@@ -137,13 +134,11 @@ public class Controller {
         private Task onRelease;
         private boolean onReleaseRunning = false;
 
-        private Button(BooleanSupplier button) {
-            this.button = button;
-        }
+        private Button() { }
 
-        public void update() {
+        public void update(boolean button) {
             this.last = this.current;
-            this.current = this.button.getAsBoolean();
+            this.current = button;
 
             // If it was just turned on (schedule task)
             if (!this.last && this.current && this.hasOnPress) {
@@ -218,29 +213,24 @@ public class Controller {
         this.trackpad = new Trackpad(this.gamepad);
         this.dpad = new Dpad(this.gamepad);
         this.bumpers = new Bumpers(this.gamepad);
-        this.A = new Button(this::a);
-        this.B = new Button(this::b);
-        this.X = new Button(this::x);
-        this.Y = new Button(this::y);
+        this.A = new Button();
+        this.B = new Button();
+        this.X = new Button();
+        this.Y = new Button();
     }
 
     /**
      * Poll the controller for all buttons. This must be called once per loop cycle.
      */
-    public void update() {
-        this.dpad.update();
-        this.leftJoystick.update();
-        this.rightJoystick.update();
-        this.bumpers.update();
-        this.trackpad.update();
-        this.A.update();
-        this.B.update();
-        this.X.update();
-        this.Y.update();
+    public void update(Gamepad gamepad) {
+        this.dpad.update(gamepad);
+        this.leftJoystick.update(gamepad);
+        this.rightJoystick.update(gamepad);
+        this.bumpers.update(gamepad);
+        this.trackpad.update(gamepad);
+        this.A.update(gamepad.a);
+        this.B.update(gamepad.b);
+        this.X.update(gamepad.x);
+        this.Y.update(gamepad.y);
     }
-
-    private boolean a() { return this.gamepad.a; }
-    private boolean b() { return this.gamepad.b; }
-    private boolean x() { return this.gamepad.x; }
-    private boolean y() { return this.gamepad.y; }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems;
 
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -41,7 +42,7 @@ public class IntakeSlides extends SystemBase {
     }
 
     @Override
-    public void update(Telemetry telemetry) {
+    public void update(TelemetryManager telemetry) {
 
         this.motorController.setConstants(
                 Software.PID.Intake.P,

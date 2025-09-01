@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.lioncore.systems;
 
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public abstract class SystemBase {
     /**
@@ -19,5 +18,5 @@ public abstract class SystemBase {
     /**
      * Runs once per cycle, after task execution. Should be used to set motor powers and servo positions based on state
      */
-    public abstract void update(Telemetry telemetry);
+    public abstract void update(TelemetryManager telemetry);
 }

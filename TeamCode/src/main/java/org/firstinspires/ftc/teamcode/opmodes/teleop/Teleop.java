@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Forever;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
 import org.firstinspires.ftc.teamcode.systems.IntakeSlides;
@@ -31,10 +32,8 @@ public class Teleop extends TaskOpMode {
             new CycleIntake(this.intakeSlides)
         );
 
-        return new Jobs(
-                new Forever(this.telemetry::update),
-                drivebase,
-                intakeSlides
-        );
+        return Jobs.create()
+                .registerSystem(drivebase)
+                .registerSystem(intakeSlides);
     }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems;
 
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -43,7 +44,7 @@ public class Drivebase extends SystemBase {
 
     public void init() {}
 
-    public void update(Telemetry telemetry) {
+    public void update(TelemetryManager telemetry) {
         Vector drive = Vector.cartesian(this.driveX.getAsDouble(), this.driveY.getAsDouble());
         double yaw = this.yaw.getAsDouble();
         frontRight.setPower(drive.y() + drive.x() + yaw);
