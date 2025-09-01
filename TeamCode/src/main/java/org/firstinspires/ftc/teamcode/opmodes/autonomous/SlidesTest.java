@@ -29,10 +29,10 @@ public class SlidesTest extends TaskOpMode {
                         new Forever(follower::update),
                         new Series(
                             new ExtendIntake(intake).with(
-                                    new FollowPath(follower, TestPath.firstSegment)
+                                    new FollowPath(follower, TestPath.part1(follower))
                             ),
                             new RetractIntake(intake).with(
-                                    new FollowPath(follower, TestPath.secondSegment)
+                                    new FollowPath(follower, TestPath.part2(follower))
                             )
                         )
                 ),
