@@ -33,13 +33,6 @@ public class Teleop extends TaskOpMode {
         );
 
         return Jobs.create()
-                .addTask(
-                        new Forever(
-                            new Run(() -> panelsTelemetry.addData("UPDATE", intakeSlides.getPosition())).then(
-                                new Sleep(1)
-                            )
-                        )
-                )
                 .registerSystem(drivebase)
                 .registerSystem(intakeSlides);
     }

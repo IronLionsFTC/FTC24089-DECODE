@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.lioncore.tasks.Forever;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Repeat;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Series;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Sleep;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
@@ -26,13 +26,14 @@ public class SlidesTest extends TaskOpMode {
 
                 // Add a singular task (a series that repeats forever) to the OpMode.
                 .addTask(
-                    new Forever(
+                    new Repeat(
                         new Series(
                             new Sleep(1),
                             new ExtendIntake(intake),
                             new Sleep(1),
                             new RetractIntake(intake)
-                        )
+                        ),
+                3
                     )
                 )
 
