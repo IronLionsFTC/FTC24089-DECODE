@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Series extends TaskBase {
-    private List<TaskBase> tasks;
+public class Series extends Task {
+    private List<Task> tasks;
     private int index;
 
-    public Series(TaskBase... tasks) {
+    public Series(Task... tasks) {
         this.tasks = new ArrayList<>();
         this.tasks.addAll(Arrays.asList(tasks));
         this.index = 0;
@@ -16,14 +16,14 @@ public class Series extends TaskBase {
 
     @Override
     public void init() {
-        TaskBase task = this.tasks.get(this.index);
+        Task task = this.tasks.get(this.index);
         task.init();
     }
 
     @Override
     public void run() {
         if (this.index >= tasks.size()) { return; }
-        TaskBase task = this.tasks.get(this.index);
+        Task task = this.tasks.get(this.index);
         task.run();
         if (task.finished()) {
             task.end(false);
@@ -42,7 +42,7 @@ public class Series extends TaskBase {
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            TaskBase task = this.tasks.get(this.index);
+            Task task = this.tasks.get(this.index);
             if (task != null) {
                 task.end(true);
             }

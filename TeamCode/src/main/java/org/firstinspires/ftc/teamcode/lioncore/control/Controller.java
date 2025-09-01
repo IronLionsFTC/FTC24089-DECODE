@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.lioncore.control;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.lioncore.math.types.Vector;
-import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskBase;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
 
 import java.util.function.BooleanSupplier;
 
@@ -130,11 +130,11 @@ public class Controller {
 
         private boolean hasOnPress = false;
         private boolean cancelOnRelease = false;
-        private TaskBase onPress;
+        private Task onPress;
         private boolean onPressRunning = false;
 
         private boolean hasOnRelease = false;
-        private TaskBase onRelease;
+        private Task onRelease;
         private boolean onReleaseRunning = false;
 
         private Button(BooleanSupplier button) {
@@ -184,7 +184,7 @@ public class Controller {
          * Schedules a task that is init when the button is pressed and run forever until it finishes.
          * @param task
          */
-        public void onPress(TaskBase task) {
+        public void onPress(Task task) {
             this.onPress = task;
             this.hasOnPress = true;
         }
@@ -193,7 +193,7 @@ public class Controller {
          * Schedules a task that is init when the button is pressed and runs until either the button is released or it finishes.
          * @param task
          */
-        public void whilePressed(TaskBase task) {
+        public void whilePressed(Task task) {
             this.onPress = task;
             this.hasOnPress = true;
             this.cancelOnRelease = true;
@@ -203,7 +203,7 @@ public class Controller {
          * Schedules a task that is init when the button is released and runs forever until it finishes.
          * @param task
          */
-        public void onRelease(TaskBase task) {
+        public void onRelease(Task task) {
             this.onRelease = task;
             this.hasOnRelease = true;
         }

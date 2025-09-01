@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.lioncore.tasks;
 
-public class Sleep extends TaskBase {
+public class Sleep extends Task {
 
     private final double seconds;
     private long startTime;

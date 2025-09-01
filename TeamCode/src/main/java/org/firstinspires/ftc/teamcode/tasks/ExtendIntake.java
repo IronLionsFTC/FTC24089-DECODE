@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
-import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskBase;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 import org.firstinspires.ftc.teamcode.systems.IntakeSlides;
 
-public class ExtendIntake extends TaskBase {
+public class ExtendIntake extends Task {
     private IntakeSlides slides;
     public ExtendIntake(IntakeSlides slides) {
         this.slides = slides;

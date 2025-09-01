@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.lioncore.tasks;
 
 import java.util.function.BooleanSupplier;
 
-public class Fork extends TaskBase {
+public class Fork extends Task {
     private BooleanSupplier condition;
-    private TaskBase optionA;
-    private TaskBase optionB;
+    private Task optionA;
+    private Task optionB;
     private boolean usingA;
 
     /**
@@ -14,13 +14,13 @@ public class Fork extends TaskBase {
      * @param optionB
      * @param condition
      */
-    public Fork(TaskBase optionA, TaskBase optionB, BooleanSupplier condition) {
+    public Fork(Task optionA, Task optionB, BooleanSupplier condition) {
         this.optionA = optionA;
         this.optionB = optionB;
         this.condition = condition;
     }
 
-    private TaskBase getActive() {
+    private Task getActive() {
         if (this.usingA) {
             return this.optionA;
         } else {

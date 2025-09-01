@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Race extends TaskBase {
+public class Race extends Task {
 
-    private List<TaskBase> tasks;
+    private List<Task> tasks;
     private List<Boolean> finished;
 
-    public Race(TaskBase... tasks) {
+    public Race(Task... tasks) {
         this.tasks = new ArrayList<>();
         this.finished = new ArrayList<>();
         this.tasks.addAll(Arrays.asList(tasks));
@@ -20,7 +20,7 @@ public class Race extends TaskBase {
     }
 
     @Override
-    public void init() { for (TaskBase task : this.tasks) task.init(); }
+    public void init() { for (Task task : this.tasks) task.init(); }
 
     @Override
     public void run() {

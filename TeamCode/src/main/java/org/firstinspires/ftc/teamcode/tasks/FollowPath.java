@@ -4,10 +4,10 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Parallel;
-import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskBase;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.WaitUntil;
 
-public class FollowPath extends TaskBase {
+public class FollowPath extends Task {
     private Follower follower;
     private PathChain pathChain;
     private double speed;
@@ -20,12 +20,12 @@ public class FollowPath extends TaskBase {
         this.holdEnd = false;
     }
 
-    public TaskBase setSpeed(double speed) {
+    public Task setSpeed(double speed) {
         this.speed = speed;
         return this;
     }
 
-    public TaskBase holdEnd(boolean holdEnd) {
+    public Task holdEnd(boolean holdEnd) {
         this.holdEnd = holdEnd;
         return this;
     }
@@ -56,7 +56,7 @@ public class FollowPath extends TaskBase {
      * @param tasks Tasks to execute (in parallel)
      * @return
      */
-    public TaskBase uponProgress(double progress, TaskBase... tasks) {
+    public Task uponProgress(double progress, Task... tasks) {
         return this.with(
                 new WaitUntil(() -> this.follower.getCurrentTValue() > progress).then(
                         new Parallel(tasks)
@@ -71,7 +71,7 @@ public class FollowPath extends TaskBase {
      * @param tasks Tasks to execute (in parallel)
      * @return
      */
-    public TaskBase uponProgressUntilPathComplete(double progress, TaskBase... tasks) {
+    public Task uponProgressUntilPathComplete(double progress, Task... tasks) {
         return this.master(
             tasks
         );

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class TaskOpMode extends OpMode {
-    private TaskBase task;
+    private Task task;
     public Controller controller1;
     public Controller controller2;
 
@@ -17,10 +17,10 @@ public abstract class TaskOpMode extends OpMode {
     private List<SystemBase> systems;
 
     public class Jobs {
-        public TaskBase task;
+        public Task task;
         public List<SystemBase> systems;
 
-        public Jobs(TaskBase task, SystemBase... systems) {
+        public Jobs(Task task, SystemBase... systems) {
             this.task = task;
             this.systems = new ArrayList<>();
             this.systems.addAll(Arrays.asList(systems));

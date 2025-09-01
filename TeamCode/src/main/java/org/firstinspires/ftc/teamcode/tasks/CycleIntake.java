@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
-import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskBase;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
 import org.firstinspires.ftc.teamcode.systems.IntakeSlides;
 
-public class CycleIntake extends TaskBase {
+public class CycleIntake extends Task {
     private IntakeSlides intake;
 
     public CycleIntake(IntakeSlides intake) {

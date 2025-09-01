@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.lioncore.tasks;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Master extends TaskBase {
+public class Master extends Task {
 
-    private TaskBase master;
-    private List<TaskBase> slaves;
+    private Task master;
+    private List<Task> slaves;
     private List<Boolean> slaveStatus;
     private boolean running;
 
@@ -15,10 +15,10 @@ public class Master extends TaskBase {
      * @param master
      * @param slaves
      */
-    public Master(TaskBase master, TaskBase... slaves) {
+    public Master(Task master, Task... slaves) {
         this.master = master;
         this.slaves = new ArrayList<>();
-        for (TaskBase slave : slaves) {
+        for (Task slave : slaves) {
             this.slaves.add(slave);
             this.slaveStatus.add(false);
         }

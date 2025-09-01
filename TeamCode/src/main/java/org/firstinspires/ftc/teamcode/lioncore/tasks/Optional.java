@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.lioncore.tasks;
 
 import java.util.function.BooleanSupplier;
 
-public class Optional extends TaskBase {
+public class Optional extends Task {
 
-    private TaskBase task;
+    private Task task;
     private BooleanSupplier condition;
     private boolean evaluated;
 
-    public Optional(TaskBase task, BooleanSupplier condition) {
+    public Optional(Task task, BooleanSupplier condition) {
         this.task = task;
         this.condition = condition;
         this.evaluated = false;

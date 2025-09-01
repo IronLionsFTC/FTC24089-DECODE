@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.lioncore.tasks;
 
 import java.util.function.BooleanSupplier;
 
-public class WaitUntil extends TaskBase {
+public class WaitUntil extends Task {
     private BooleanSupplier condition;
 
     public WaitUntil(BooleanSupplier condition) {

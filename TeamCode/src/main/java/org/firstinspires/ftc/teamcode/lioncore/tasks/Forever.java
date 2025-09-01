@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.lioncore.tasks;
 
-public class Forever extends TaskBase {
-    private TaskBase task;
+public class Forever extends Task {
+    private Task task;
 
-    public Forever(TaskBase task) {
+    public Forever(Task task) {
         this.task = task;
     }
 

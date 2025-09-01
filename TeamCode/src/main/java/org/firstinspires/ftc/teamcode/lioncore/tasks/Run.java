@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.lioncore.tasks;
 
-public class Run extends TaskBase {
+public class Run extends Task {
     private Runnable runnable;
 
     public Run(Runnable runnable) {
