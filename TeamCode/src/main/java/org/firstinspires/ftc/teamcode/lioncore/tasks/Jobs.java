@@ -9,10 +9,12 @@ import java.util.List;
 public class Jobs {
     private List<Task> tasks;
     private List<SystemBase> systems;
+    private boolean endWhenTasksFinished;
 
     private Jobs(List<Task> tasks, List<SystemBase> systems) {
         this.tasks = tasks;
         this.systems = systems;
+        this.endWhenTasksFinished = false;
     }
 
     /**
@@ -74,6 +76,11 @@ public class Jobs {
         return this;
     }
 
+    public Jobs endWhenTasksFinished() {
+        this.endWhenTasksFinished = true;
+        return this;
+    }
+
     /**
      * Produces a parallel task containing all scheduled tasks.
      * @return
@@ -88,5 +95,9 @@ public class Jobs {
      */
     public List<SystemBase> getSystems() {
         return this.systems;
+    }
+
+    public boolean getEndWhenTasksFinished() {
+        return this.endWhenTasksFinished;
     }
 }

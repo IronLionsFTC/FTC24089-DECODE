@@ -1,41 +1,42 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Forever;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
-import org.firstinspires.ftc.teamcode.lioncore.tasks.Parallel;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Series;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Sleep;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
-import org.firstinspires.ftc.teamcode.paths.core.Core;
-import org.firstinspires.ftc.teamcode.paths.testing.TestPath;
 import org.firstinspires.ftc.teamcode.systems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.tasks.ExtendIntake;
-import org.firstinspires.ftc.teamcode.tasks.FollowPath;
 import org.firstinspires.ftc.teamcode.tasks.RetractIntake;
 
 @Autonomous
 public class SlidesTest extends TaskOpMode {
 
     private IntakeSlides intake;
-    private Follower follower;
 
     public Jobs spawn() {
         intake = new IntakeSlides();
-        follower = Core.loadFollower(hardwareMap);
 
         return Jobs.create()
+
+                // Register any subsystems used in this OpMode.
                 .registerSystem(intake)
 
-                .addTask(new Forever(follower::update))
-                .addSeries(
-                    new ExtendIntake(intake).with(
-                            new FollowPath(follower, TestPath.part1(follower))
-                    ),
-                    new RetractIntake(intake).with(
-                            new FollowPath(follower, TestPath.part2(follower))
+                // Add a singular task (a series that repeats forever) to the OpMode.
+                .addTask(
+                    new Forever(
+                        new Series(
+                            new Sleep(1),
+                            new ExtendIntake(intake),
+                            new Sleep(1),
+                            new RetractIntake(intake)
+                        )
                     )
-                );
+                )
+
+                // Tell the OpMode it should end when the task has finished (which is never in this example).
+                .endWhenTasksFinished();
     }
 }

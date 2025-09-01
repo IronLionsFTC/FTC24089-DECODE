@@ -6,7 +6,6 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.lioncore.control.Controller;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
@@ -15,6 +14,8 @@ import java.util.List;
 
 public abstract class TaskOpMode extends OpMode {
     private Task task;
+    private boolean endWhenTasksFinished;
+    private boolean taskHasFinished;
     public Controller controller1;
     public Controller controller2;
 
@@ -55,6 +56,8 @@ public abstract class TaskOpMode extends OpMode {
         Jobs jobs = this.spawn();
         this.task = jobs.compileTask();
         this.systems = jobs.getSystems();
+        this.endWhenTasksFinished = jobs.getEndWhenTasksFinished();
+        this.taskHasFinished = false;
 
         for (SystemBase system : this.systems) {
             system.loadHardware(this.hardwareMap);
@@ -83,10 +86,11 @@ public abstract class TaskOpMode extends OpMode {
             hub.clearBulkCache();
         }
 
-        this.task.run();
-        if (this.task.finished()) {
+        if (!this.taskHasFinished) this.task.run();
+        if (this.task.finished() && !this.taskHasFinished) {
             task.end(false);
-            this.requestOpModeStop();
+            this.taskHasFinished = true;
+            if (!this.endWhenTasksFinished) this.requestOpModeStop();
         }
 
         for (SystemBase system : this.systems) {
