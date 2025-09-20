@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.systems.Outtake;
 public class ToggleOuttake extends Task {
     private Outtake outtake;
 
-    public ToggleOuttake(Outtake intake) {
+    public ToggleOuttake(Outtake outtake) {
         this.outtake = outtake;
     }
 
