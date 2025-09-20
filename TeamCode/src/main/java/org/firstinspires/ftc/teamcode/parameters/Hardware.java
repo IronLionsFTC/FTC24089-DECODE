@@ -10,8 +10,8 @@ public class Hardware {
             public static String backRight = "rightRear";
             public static String backLeft = "leftRear";
 
-            public static String outtake1 = "outtake1";
-            public static String outtake2 = "outtake2";
+            public static String topShooter = "topShooter";
+            public static String bottomShooter = "bottomShooter";
 
             public static String intake = "intakeMotor";
         }
@@ -22,8 +22,8 @@ public class Hardware {
             public static boolean backRight = true;
             public static boolean backLeft = false;
 
-            public static boolean outtake1 = false;
-            public static boolean outtake2 = false;
+            public static boolean topShooter = true;
+            public static boolean bottomShooter = false;
 
             public static boolean intake = false;
         }
