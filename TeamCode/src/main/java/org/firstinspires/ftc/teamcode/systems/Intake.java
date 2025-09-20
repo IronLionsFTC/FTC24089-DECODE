@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.parameters.Hardware;
 public class Intake extends SystemBase {
 
     private LionMotor motor;
+    private boolean running;
 
     public Intake() {}
 
@@ -21,9 +22,19 @@ public class Intake extends SystemBase {
         this.motor.setPower(0);
         this.motor.setZPB(Hardware.Motors.ZPB.intakeMotor);
         this.motor.setReversed(Hardware.Motors.Reversed.intake);
+        this.running = false;
     }
 
     public void update(TelemetryManager telemetry) {
+        if (this.running) this.motor.setPower(1);
+        else this.motor.setPower(0);
+    }
 
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public boolean isRunning() {
+        return this.running;
     }
 }

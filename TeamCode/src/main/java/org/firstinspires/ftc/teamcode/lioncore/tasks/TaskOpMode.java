@@ -90,7 +90,7 @@ public abstract class TaskOpMode extends OpMode {
         if (this.task.finished() && !this.taskHasFinished) {
             task.end(false);
             this.taskHasFinished = true;
-            if (!this.endWhenTasksFinished) this.requestOpModeStop();
+            if (this.endWhenTasksFinished) this.requestOpModeStop();
         }
 
         for (SystemBase system : this.systems) {

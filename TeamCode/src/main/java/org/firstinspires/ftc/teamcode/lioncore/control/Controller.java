@@ -144,6 +144,7 @@ public class Controller {
             if (!this.last && this.current && this.hasOnPress) {
                 if (this.onPressRunning) this.onPress.end(true);
                 this.onPress.init();
+                this.onPressRunning = true;
             }
 
             if (this.last && !this.current && this.cancelOnRelease && this.hasOnPress && this.onPressRunning) {
@@ -156,6 +157,7 @@ public class Controller {
             if (this.last && !this.current && this.hasOnRelease) {
                 if (this.onReleaseRunning) this.onRelease.end(true);
                 this.onRelease.init();
+                this.onReleaseRunning = true;
             }
 
             if (this.hasOnPress && this.onPressRunning) {

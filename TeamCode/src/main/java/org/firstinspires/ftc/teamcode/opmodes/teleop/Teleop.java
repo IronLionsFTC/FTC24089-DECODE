@@ -5,11 +5,14 @@ import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
+import org.firstinspires.ftc.teamcode.systems.Intake;
+import org.firstinspires.ftc.teamcode.tasks.ToggleIntake;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
 
-    private SystemBase drivebase;
+    private Drivebase drivebase;
+    private Intake intake;
 
     public Jobs spawn() {
 
@@ -19,7 +22,12 @@ public class Teleop extends TaskOpMode {
                 controller1.rightJoystick::y
         );
 
+        this.intake = new Intake();
+
+        this.controller1.X.onPress(new ToggleIntake(this.intake));
+
         return Jobs.create()
+                .registerSystem(intake)
                 .registerSystem(drivebase);
     }
 }
