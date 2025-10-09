@@ -5,13 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
+import org.firstinspires.ftc.teamcode.systems.Intake;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
 
     private Drivebase drivebase;
+    private Intake intake;
 
     public Jobs spawn() {
+        this.intake = new Intake();
 
         this.drivebase = new Drivebase(
                 controller1.leftJoystick::x,
@@ -20,6 +23,8 @@ public class Teleop extends TaskOpMode {
         );
 
         return Jobs.create()
-                .registerSystem(drivebase);
+                .registerSystem(drivebase)
+                .registerSystem(intake);
+
     }
 }
