@@ -12,8 +12,6 @@ public class Hardware {
 
             public static String topShooter = "topShooter";
             public static String bottomShooter = "bottomShooter";
-
-            public static String intake = "intakeMotor";
         }
 
         public static class Reversed {
@@ -22,23 +20,14 @@ public class Hardware {
             public static boolean backRight = true;
             public static boolean backLeft = false;
 
-            public static boolean topShooter = true;
-            public static boolean bottomShooter = false;
-
-            public static boolean intake = false;
+            // Ensure these are opposing as motors are geared together.
+            public static boolean topShooter = false;
+            public static boolean bottomShooter = true;
         }
 
         public static class ZPB {
             public static DcMotor.ZeroPowerBehavior driveMotors = DcMotor.ZeroPowerBehavior.BRAKE;
-            public static DcMotor.ZeroPowerBehavior outtakeMotors = DcMotor.ZeroPowerBehavior.FLOAT;
-            public static DcMotor.ZeroPowerBehavior intakeMotor = DcMotor.ZeroPowerBehavior.FLOAT;
-        }
-    }
-
-    public static class Ranges {
-        public static class Slides {
-            public static double intakeMaximumExtension = 750.0;
-            public static double intakeExtension = intakeMaximumExtension;
+            public static DcMotor.ZeroPowerBehavior shooterMotors = DcMotor.ZeroPowerBehavior.FLOAT;
         }
     }
 }

@@ -33,7 +33,8 @@ public class PID {
         integral += error * deltaTime;
 
         // Change in error over time (approx)
-        double derivative = (error - previousError) / deltaTime;
+        Double derivative = (error - previousError) / deltaTime;
+        if (derivative.isNaN() || derivative.isInfinite()) return P * error + I * integral;
         previousError = error;
 
         // Output

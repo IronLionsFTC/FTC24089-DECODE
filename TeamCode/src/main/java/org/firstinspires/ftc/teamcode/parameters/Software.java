@@ -6,17 +6,15 @@ public class Software {
     public static class PID {
 
         @Config
-        public static class Intake {
-            public static double P = 0.007;
-            public static double I = 0.0;
-            public static double D = 0.0001;
-        }
-
-        @Config
-        public static class Outtake {
+        public static class VelocityController {
             public static double P = 0.0;
             public static double I = 0.0;
             public static double D = 0.0;
         }
+    }
+
+    @Config
+    public static class Constants {
+        public static double CruiseSpeed = 1000;
     }
 }

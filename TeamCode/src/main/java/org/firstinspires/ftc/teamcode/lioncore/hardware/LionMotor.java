@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.lioncore.hardware;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LionMotor {
-    private List<DcMotor> motors;
+    private List<DcMotorEx> motors;
     private double position;
     private double power;
 
     private LionMotor(HardwareMap hardwareMap, String... names) {
         this.motors = new ArrayList<>();
         for (String name : names) {
-            this.motors.add(hardwareMap.get(DcMotor.class, name));
+            this.motors.add(hardwareMap.get(DcMotorEx.class, name));
         }
         this.position = 0;
         this.power = 0;
@@ -41,7 +41,7 @@ public class LionMotor {
 
     public void setPower(double power) {
         this.power = power;
-        for (DcMotor motor : this.motors) {
+        for (DcMotorEx motor : this.motors) {
             motor.setPower(power);
         }
     }
@@ -56,14 +56,24 @@ public class LionMotor {
         return this.cachedPosition();
     }
 
+    /**
+     * Calculate the current RPM of the motor using DcMotorEx sliding window getVelocity().
+     * @param tpr Ticks per revolution of the required motor.
+     * @return RPM (approx)
+     */
+    public double getVelocity(double tpr) {
+        if (this.motors.isEmpty()) return 0.0;
+        return this.motors.get(0).getVelocity() * 60 * (360 / tpr);
+    }
+
     public double cachedPosition() {
         return this.position;
     }
 
     public void resetPosition() {
         if (this.motors.isEmpty()) return;
-        this.motors.get(0).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.motors.get(0).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.motors.get(0).setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        this.motors.get(0).setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
     public void setReversed(boolean... reversed) {
@@ -74,8 +84,8 @@ public class LionMotor {
         }
     }
 
-    public void setZPB(DcMotor.ZeroPowerBehavior zpb) {
-        for (DcMotor motor : this.motors) {
+    public void setZPB(DcMotorEx.ZeroPowerBehavior zpb) {
+        for (DcMotorEx motor : this.motors) {
             motor.setZeroPowerBehavior(zpb);
         }
     }
