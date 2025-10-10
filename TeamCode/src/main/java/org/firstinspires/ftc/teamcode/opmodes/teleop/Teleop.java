@@ -6,15 +6,18 @@ import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
 import org.firstinspires.ftc.teamcode.systems.Intake;
+import org.firstinspires.ftc.teamcode.systems.Shooter;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
 
     private Drivebase drivebase;
     private Intake intake;
+    private Shooter shooter;
 
     public Jobs spawn() {
         this.intake = new Intake();
+        this.shooter = new Shooter();
 
         this.drivebase = new Drivebase(
                 controller1.leftJoystick::x,
