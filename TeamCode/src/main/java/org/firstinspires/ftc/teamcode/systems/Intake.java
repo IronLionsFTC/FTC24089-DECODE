@@ -13,6 +13,7 @@ public class Intake extends SystemBase {
         Negative,
         Zero,
         Positive,
+        Idle
     }
 
     private LionMotor intakeMotor;
@@ -47,6 +48,9 @@ public class Intake extends SystemBase {
                 break;
             case Positive:
                 power = 1;
+                break;
+            case Idle:
+                power = 0.3;
                 break;
 
         }
