@@ -57,4 +57,12 @@ public class Hardware {
             public static double hood = 0;
         }
     }
+
+    public static class ColourSensors {
+        public static class Names {
+            public static String firstLeft = "lc1";
+            public static String secondLeft = "lc2";
+            public static String thirdLeft = "lc3";
+        }
+    }
 }
