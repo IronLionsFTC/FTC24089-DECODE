@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Transfer;
 import org.firstinspires.ftc.teamcode.tasks.IntakeUntilFull;
+import org.firstinspires.ftc.teamcode.tasks.ReverseIntakeUntilEmpty;
 import org.firstinspires.ftc.teamcode.tasks.SpinIntakeToKeepBallsIn;
 
 @TeleOp
@@ -35,6 +36,10 @@ public class Teleop extends TaskOpMode {
 
         this.controller1.X.onPressToggle(
                 new IntakeUntilFull(intake, transfer, colourChamber)
+        );
+
+        this.controller1.Y.onPress(
+                new ReverseIntakeUntilEmpty(intake, transfer, colourChamber)
         );
 
         return Jobs.create()
