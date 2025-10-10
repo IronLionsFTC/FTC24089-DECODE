@@ -61,7 +61,7 @@ public class ColourSensor {
         }
 
         sm = minS <= s && s <= maxS;
-        vm = minS <= v && v <= maxS;
+        vm = minV <= v && v <= maxV;
 
         return hm && sm && vm;
     }
