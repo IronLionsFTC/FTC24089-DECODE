@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
+import org.firstinspires.ftc.teamcode.systems.ColourChamber;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
@@ -16,11 +17,13 @@ public class Teleop extends TaskOpMode {
     private Intake intake;
     private Shooter shooter;
     private Transfer transfer;
+    private ColourChamber colourChamber;
 
     public Jobs spawn() {
         this.intake = new Intake();
         this.shooter = new Shooter();
         this.transfer = new Transfer();
+        this.colourChamber = new ColourChamber();
 
         this.drivebase = new Drivebase(
                 controller1.leftJoystick::x,
@@ -32,6 +35,7 @@ public class Teleop extends TaskOpMode {
                 .registerSystem(drivebase)
                 .registerSystem(shooter)
                 .registerSystem(transfer)
+                .registerSystem(colourChamber)
                 .registerSystem(intake);
 
     }
