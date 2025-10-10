@@ -53,7 +53,7 @@ public class Software {
             }
 
             public static class V {
-                public static double min = 0.3;
+                public static double min = 0.8;
                 public static double max = 100;
             }
         }

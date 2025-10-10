@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.systems.Drivebase;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Transfer;
+import org.firstinspires.ftc.teamcode.tasks.IntakeUntilFull;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -29,6 +30,10 @@ public class Teleop extends TaskOpMode {
                 controller1.leftJoystick::x,
                 controller1.leftJoystick::y,
                 controller1.rightJoystick::y
+        );
+
+        this.controller1.X.onPressToggle(
+                new IntakeUntilFull(intake, transfer, colourChamber)
         );
 
         return Jobs.create()

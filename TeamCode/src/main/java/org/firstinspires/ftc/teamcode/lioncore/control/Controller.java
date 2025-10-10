@@ -126,7 +126,7 @@ public class Controller {
         private boolean current;
 
         private boolean hasOnPress = false;
-        private boolean cancelOnRelease = false;
+        private boolean cancelOnPressAgain = false; // changed from cancelOnRelease
         private Task onPress;
         private boolean onPressRunning = false;
 
@@ -142,24 +142,27 @@ public class Controller {
 
             // If it was just turned on (schedule task)
             if (!this.last && this.current && this.hasOnPress) {
-                if (this.onPressRunning) this.onPress.end(true);
-                this.onPress.init();
-                this.onPressRunning = true;
-            }
-
-            if (this.last && !this.current && this.cancelOnRelease && this.hasOnPress && this.onPressRunning) {
-                if (!this.onPress.finished()) {
-                    this.onPress.end(true);
+                // If task is already running and should cancel on next press
+                if (this.onPressRunning && this.cancelOnPressAgain) {
+                    if (!this.onPress.finished()) {
+                        this.onPress.end(true);
+                    }
+                    this.onPressRunning = false;
+                } else {
+                    if (this.onPressRunning) this.onPress.end(true);
+                    this.onPress.init();
+                    this.onPressRunning = true;
                 }
-                this.onPressRunning = false;
             }
 
+            // On release logic (unchanged)
             if (this.last && !this.current && this.hasOnRelease) {
                 if (this.onReleaseRunning) this.onRelease.end(true);
                 this.onRelease.init();
                 this.onReleaseRunning = true;
             }
 
+            // Run onPress task if active
             if (this.hasOnPress && this.onPressRunning) {
                 this.onPress.run();
                 if (this.onPress.finished()) {
@@ -168,6 +171,7 @@ public class Controller {
                 }
             }
 
+            // Run onRelease task if active
             if (this.hasOnRelease && this.onReleaseRunning) {
                 this.onRelease.run();
                 if (this.onRelease.finished()) {
@@ -187,13 +191,13 @@ public class Controller {
         }
 
         /**
-         * Schedules a task that is init when the button is pressed and runs until either the button is released or it finishes.
+         * Schedules a task that is init when the button is pressed and runs until pressed again or it finishes.
          * @param task
          */
-        public void whilePressed(Task task) {
+        public void onPressToggle(Task task) {
             this.onPress = task;
             this.hasOnPress = true;
-            this.cancelOnRelease = true;
+            this.cancelOnPressAgain = true; // changed
         }
 
         /**
