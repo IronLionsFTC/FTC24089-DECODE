@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionServo;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
+import org.firstinspires.ftc.teamcode.parameters.Software;
 
 public class Transfer extends SystemBase {
 
@@ -45,21 +46,23 @@ public class Transfer extends SystemBase {
     @Override
     public void update(TelemetryManager telemetry) {
         double power = 0;
-        double blockPosition = 0;
+        double blockPosition = Hardware.Servos.ZeroPositions.blockPosition;
 
         switch (this.state) {
-            case Rest:
-                power = 0;
-                break;
             case Reverse:
                 power = -0.5;
+                blockPosition = Software.Constants.Unblock;
                 break;
             case Intaking:
                 power = 0.5;
                 break;
             case Shooting:
                 power = 1;
+                blockPosition = Software.Constants.Unblock;
                 break;
         }
+
+        this.transferMotor.setPower(power);
+        this.transferServo.setPosition(blockPosition);
     }
 }
