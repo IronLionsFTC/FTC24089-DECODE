@@ -25,8 +25,8 @@ public class Hardware {
             public static boolean topShooter = false;
             public static boolean bottomShooter = true;
 
-            public static boolean intakeMotor = false;
-            public static boolean transferMotor = false;
+            public static boolean intakeMotor = true;
+            public static boolean transferMotor = true;
         }
 
         public static class ZPB {
@@ -52,9 +52,9 @@ public class Hardware {
         }
 
         public static class ZeroPositions {
-            public static double blockPosition = 0;
-            public static double limelight = 0;
-            public static double hood = 0;
+            public static double blockPosition = 0.17;
+            public static double limelight = 1;
+            public static double hood = 1;
         }
     }
 
