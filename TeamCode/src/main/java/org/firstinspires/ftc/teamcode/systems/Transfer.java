@@ -65,4 +65,12 @@ public class Transfer extends SystemBase {
         this.transferMotor.setPower(power);
         this.transferServo.setPosition(blockPosition);
     }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public State getState() {
+        return this.state;
+    }
 }
