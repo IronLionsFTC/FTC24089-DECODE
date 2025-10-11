@@ -4,6 +4,7 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
+import org.firstinspires.ftc.teamcode.lioncore.hardware.LionServo;
 import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
@@ -18,8 +19,10 @@ public class Shooter extends SystemBase {
     }
 
     private LionMotor shooter;
+    private LionServo hood;
     private State state;
     private double targetRPM;
+    private double nomalisedHoodAngle;
 
     // PID controller
     private PID velocityController;
@@ -29,6 +32,7 @@ public class Shooter extends SystemBase {
         this.state = State.Rest;
         this.targetRPM = 3000;
         this.rpm = 0;
+        this.nomalisedHoodAngle = 0;
     }
 
     @Override
@@ -36,6 +40,7 @@ public class Shooter extends SystemBase {
         this.shooter = LionMotor.masterSlaves(hwmp, Hardware.Motors.Names.topShooter, Hardware.Motors.Names.bottomShooter);
         this.shooter.setReversed(Hardware.Motors.Reversed.topShooter, Hardware.Motors.Reversed.bottomShooter);
         this.shooter.setZPB(Hardware.Motors.ZPB.shooterMotors);
+        this.hood = LionServo.single(hwmp, Hardware.Servos.Names.shooterHood, Hardware.Servos.ZeroPositions.hood);
     }
 
     @Override
@@ -66,6 +71,9 @@ public class Shooter extends SystemBase {
         );
 
         this.shooter.setPower(response);
+        this.hood.setPosition(Hardware.Servos.ZeroPositions.hood + this.nomalisedHoodAngle * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood));
+
+        telemetry.addData("POS", this.shooter.getPosition());
         telemetry.addData("RPM", this.rpm);
     }
 
@@ -92,5 +100,13 @@ public class Shooter extends SystemBase {
 
     public State getState() {
         return this.state;
+    }
+
+    public void setHoodAngle(double normalisedAngle) {
+        this.nomalisedHoodAngle = normalisedAngle;
+    }
+
+    public double getHoodAngle(double hoodAngle) {
+        return this.nomalisedHoodAngle;
     }
 }

@@ -63,7 +63,7 @@ public class LionMotor {
      */
     public double getVelocity(double tpr) {
         if (this.motors.isEmpty()) return 0.0;
-        return this.motors.get(0).getVelocity() * 60 * (360 / tpr);
+        return this.motors.get(0).getVelocity() * 60 * (1 / tpr);
     }
 
     public double cachedPosition() {
