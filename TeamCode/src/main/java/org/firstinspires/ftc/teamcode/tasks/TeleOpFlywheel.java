@@ -13,6 +13,8 @@ public class TeleOpFlywheel extends Task {
 
     public TeleOpFlywheel(Intake intake, Transfer transfer, Shooter shooter) {
         this.shooter = shooter;
+        this.intake = intake;
+        this.transfer = transfer;
     }
 
     @Override

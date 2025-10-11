@@ -4,20 +4,17 @@ import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
 import org.firstinspires.ftc.teamcode.systems.Intake;
-import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Transfer;
 
 public class TeleOpShootOne extends Task {
 
     private Intake intake;
     private Transfer transfer;
-    private Shooter shooter;
     private Timer timer;
 
-    public TeleOpShootOne(Intake intake, Transfer transfer, Shooter shooter) {
+    public TeleOpShootOne(Intake intake, Transfer transfer) {
         this.intake = intake;
         this.transfer = transfer;
-        this.shooter = shooter;
         this.timer = new Timer();
     }
 

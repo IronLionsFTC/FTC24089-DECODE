@@ -72,9 +72,12 @@ public class Shooter extends SystemBase {
 
         if (response < 0) response += 0.4;
 
-        this.shooter.setPower(response);
         if (this.state == State.Target) this.hood.setPosition(Hardware.Servos.ZeroPositions.hood + this.nomalisedHoodAngle * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood));
         else this.hood.setPosition(Hardware.Servos.ZeroPositions.hood);
+
+        if (this.state == State.Rest) response = 0;
+
+        this.shooter.setPower(response);
 
         telemetry.addData("POS", this.shooter.getPosition());
         telemetry.addData("RPM", this.rpm);
