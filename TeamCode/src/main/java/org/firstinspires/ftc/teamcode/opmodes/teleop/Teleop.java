@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.systems.Transfer;
 import org.firstinspires.ftc.teamcode.tasks.IntakeUntilFull;
 import org.firstinspires.ftc.teamcode.tasks.ReverseIntakeUntilEmpty;
 import org.firstinspires.ftc.teamcode.tasks.SpinIntakeToKeepBallsIn;
+import org.firstinspires.ftc.teamcode.tasks.TeleOpFlywheel;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -43,6 +44,12 @@ public class Teleop extends TaskOpMode {
         this.controller1.Y.onPress(
                 new ReverseIntakeUntilEmpty(intake, transfer, colourChamber)
         );
+
+        this.controller1.A.onPressToggle(
+                new TeleOpFlywheel(intake, transfer, shooter)
+        );
+
+        this.controller1.t
 
         return Jobs.create()
                 .registerSystem(drivebase)

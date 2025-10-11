@@ -11,6 +11,8 @@ public class Controller {
     private Gamepad gamepad;
     public LeftJoystick leftJoystick;
     public RightJoystick rightJoystick;
+    public LeftTrigger leftTrigger;
+    public RightTrigger rightTrigger;
     public Trackpad trackpad;
 
     public Button A;
@@ -96,6 +98,40 @@ public class Controller {
         private void update(Gamepad gamepad) {
             this.gamepad = gamepad;
             this.button.update(gamepad.right_stick_button);
+        }
+    }
+
+    public class LeftTrigger {
+        private Gamepad gamepad;
+        public Button asButton;
+
+        private LeftTrigger(Gamepad gamepad) {
+            this.gamepad = gamepad;
+            this.asButton = new Button();
+        }
+
+        public double value() { return this.gamepad.left_trigger; }
+
+        private void update(Gamepad gamepad) {
+            this.gamepad = gamepad;
+            this.asButton.update(this.gamepad.left_trigger > 0.9);
+        }
+    }
+
+    public class RightTrigger {
+        private Gamepad gamepad;
+        public Button asButton;
+
+        private RightTrigger(Gamepad gamepad) {
+            this.gamepad = gamepad;
+            this.asButton = new Button();
+        }
+
+        public double value() { return this.gamepad.right_trigger; }
+
+        private void update(Gamepad gamepad) {
+            this.gamepad = gamepad;
+            this.asButton.update(this.gamepad.right_trigger > 0.9);
         }
     }
 
@@ -216,6 +252,8 @@ public class Controller {
         this.gamepad = gamepad;
         this.leftJoystick = new LeftJoystick(this.gamepad);
         this.rightJoystick = new RightJoystick(this.gamepad);
+        this.leftTrigger = new LeftTrigger(this.gamepad);
+        this.rightTrigger = new RightTrigger(this.gamepad);
         this.trackpad = new Trackpad(this.gamepad);
         this.dpad = new Dpad(this.gamepad);
         this.bumpers = new Bumpers(this.gamepad);
@@ -233,6 +271,8 @@ public class Controller {
         this.leftJoystick.update(gamepad);
         this.rightJoystick.update(gamepad);
         this.bumpers.update(gamepad);
+        this.leftTrigger.update(gamepad);
+        this.rightTrigger.update(gamepad);
         this.trackpad.update(gamepad);
         this.A.update(gamepad.a);
         this.B.update(gamepad.b);

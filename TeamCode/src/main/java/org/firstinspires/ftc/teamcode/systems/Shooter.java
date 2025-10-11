@@ -73,7 +73,8 @@ public class Shooter extends SystemBase {
         if (response < 0) response += 0.4;
 
         this.shooter.setPower(response);
-        this.hood.setPosition(Hardware.Servos.ZeroPositions.hood + this.nomalisedHoodAngle * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood));
+        if (this.state == State.Target) this.hood.setPosition(Hardware.Servos.ZeroPositions.hood + this.nomalisedHoodAngle * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood));
+        else this.hood.setPosition(Hardware.Servos.ZeroPositions.hood);
 
         telemetry.addData("POS", this.shooter.getPosition());
         telemetry.addData("RPM", this.rpm);
@@ -112,7 +113,11 @@ public class Shooter extends SystemBase {
         this.nomalisedHoodAngle = normalisedAngle;
     }
 
-    public double getHoodAngle(double hoodAngle) {
+    public double getHoodAngle() {
         return this.nomalisedHoodAngle;
+    }
+
+    public double getRawTargetRPM() {
+        return this.targetRPM;
     }
 }
