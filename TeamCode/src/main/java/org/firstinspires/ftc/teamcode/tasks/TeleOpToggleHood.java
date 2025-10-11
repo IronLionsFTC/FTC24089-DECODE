@@ -13,7 +13,13 @@ public class TeleOpToggleHood extends Task {
 
     @Override
     public void init() {
-        this.shooter.setHoodAngle(1 - this.shooter.getHoodAngle());
+        if (this.shooter.getHoodAngle() == 0) {
+            this.shooter.setHoodAngle(1);
+        } else if (this.shooter.getHoodAngle() == 1) {
+            this.shooter.setHoodAngle(1.4);
+        } else {
+            this.shooter.setHoodAngle(0);
+        }
     }
 
     @Override
