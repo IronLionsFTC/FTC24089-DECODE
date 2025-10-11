@@ -46,7 +46,7 @@ public class Drivebase extends SystemBase {
 
     public void update(TelemetryManager telemetry) {
         Vector drive = Vector.cartesian(this.driveX.getAsDouble(), this.driveY.getAsDouble());
-        double yaw = Math.pow(this.yaw.getAsDouble(), 3);
+        double yaw = this.yaw.getAsDouble() * 0.4;
         frontRight.setPower(drive.y() + drive.x() + yaw);
         frontLeft.setPower(drive.y() - drive.x() - yaw);
         backRight.setPower(drive.y() - drive.x() + yaw);

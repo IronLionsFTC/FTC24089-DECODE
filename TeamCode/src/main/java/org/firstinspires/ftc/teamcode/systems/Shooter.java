@@ -69,6 +69,10 @@ public class Shooter extends SystemBase {
         telemetry.addData("RPM", this.rpm);
     }
 
+    public void setTargetRPM(double targetRPM) {
+        this.targetRPM = targetRPM;
+    }
+
     public double getTargetRPM() {
         switch (this.state) {
             case Rest:
@@ -80,5 +84,13 @@ public class Shooter extends SystemBase {
         }
 
         return 0.0;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public State getState() {
+        return this.state;
     }
 }
