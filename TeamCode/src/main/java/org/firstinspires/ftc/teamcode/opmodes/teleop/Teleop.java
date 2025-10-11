@@ -33,6 +33,7 @@ public class Teleop extends TaskOpMode {
         this.shooter = new Shooter();
         this.transfer = new Transfer();
         this.colourChamber = new ColourChamber();
+        this.ordering = new Ordering();
 
         this.drivebase = new Drivebase(
                 controller1.leftJoystick::x,
