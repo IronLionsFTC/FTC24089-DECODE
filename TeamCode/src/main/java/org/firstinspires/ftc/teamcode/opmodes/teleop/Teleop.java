@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.cache.Ordering;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.ColourChamber;
@@ -21,6 +22,7 @@ public class Teleop extends TaskOpMode {
     private Shooter shooter;
     private Transfer transfer;
     private ColourChamber colourChamber;
+    private Ordering ordering;
 
     public Jobs spawn() {
         this.intake = new Intake();
@@ -35,7 +37,7 @@ public class Teleop extends TaskOpMode {
         );
 
         this.controller1.X.onPressToggle(
-                new IntakeUntilFull(intake, transfer, colourChamber, panelsTelemetry)
+                new IntakeUntilFull(intake, transfer, colourChamber, ordering)
         );
 
         this.controller1.Y.onPress(

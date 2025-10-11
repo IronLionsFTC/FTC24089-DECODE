@@ -8,8 +8,8 @@ public class Ordering {
         InOrder,
         FirstToSecond,
         SecondToThird,
-        FirstToThird,
         ThirdToFirst,
+        FirstToThird,
         Impossible
     }
 
@@ -70,8 +70,8 @@ public class Ordering {
         }
 
         if (m3 == ColourChamber.Ball.Green) {
-            // If the third is green and we need it to land first, perform a third to first swap
-            if (s1 == ColourChamber.Ball.Green) return AirsortPattern.ThirdToFirst;
+            // If the first is green and we need it to land third, perform a first to third swap
+            if (s1 == ColourChamber.Ball.Green) return AirsortPattern.FirstToThird;
             // If the third is green and we need it to land second, arrange for the second ball to land third
             if (s2 == ColourChamber.Ball.Green) return AirsortPattern.SecondToThird;
         }
