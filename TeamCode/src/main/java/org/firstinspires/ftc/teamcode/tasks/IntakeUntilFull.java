@@ -48,7 +48,7 @@ public class IntakeUntilFull extends Task {
     @Override
     public void end(boolean _) {
         telemetry.addLine("ENDING");
-        this.intake.setState(Intake.State.Zero);
+        this.intake.setState(Intake.State.Idle);
         this.transfer.setState(Transfer.State.Rest);
     }
 

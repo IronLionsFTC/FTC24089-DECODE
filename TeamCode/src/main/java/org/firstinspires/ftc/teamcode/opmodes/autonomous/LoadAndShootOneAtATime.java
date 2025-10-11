@@ -32,10 +32,10 @@ public class LoadAndShootOneAtATime extends TaskOpMode {
 
                 .addSeries(
                         new IntakeUntilFull(intake, transfer, colourChamber, panelsTelemetry),
-                        new RevFlywheel(shooter, 4400),
-                        new ShootOneNoBlock(intake, transfer, shooter, 4400, 0.15),
-                        new ShootOneNoBlock(intake, transfer, shooter, 3600, 1.1),
-                        new ShootOneNoBlock(intake, transfer, shooter, 3600, 1.1)
+                        new RevFlywheel(shooter, 4800, 0.25),
+                        new ShootOneNoBlock(intake, transfer, shooter, 4400, 0.3),
+                        new ShootOneNoBlock(intake, transfer, shooter, 3400, 1.4),
+                        new ShootOneNoBlock(intake, transfer, shooter, 3400, 1.4)
                 )
                 .endWhenTasksFinished()
 
