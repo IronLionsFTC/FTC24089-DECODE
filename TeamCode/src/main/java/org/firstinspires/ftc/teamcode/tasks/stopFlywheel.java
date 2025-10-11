@@ -12,10 +12,6 @@ public class stopFlywheel extends Task {
 
     @Override
     public void init() {
-    }
-
-    @Override
-    public void stop() {
         this.stop.setState(Shooter.State.Rest);
     }
 

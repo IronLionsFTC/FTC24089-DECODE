@@ -39,6 +39,6 @@ public class ShootOneNoBlock extends Task {
 
     @Override
     public boolean finished() {
-        return (this.timer.getElapsedTimeSeconds() > 0.2);
+        return (this.timer.getElapsedTimeSeconds() > 0.15);
     }
 }

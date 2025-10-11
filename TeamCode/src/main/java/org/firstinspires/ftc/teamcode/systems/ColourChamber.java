@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 import org.firstinspires.ftc.teamcode.parameters.Software;
 
+import java.util.ArrayList;
+
 public class ColourChamber extends SystemBase {
 
     public enum Ball {
@@ -16,17 +18,21 @@ public class ColourChamber extends SystemBase {
         None
     }
 
+    private static final int BUFFER_SIZE = 5;
+
     private ColourSensor firstLeft;
     private ColourSensor secondLeft;
     private ColourSensor thirdLeft;
 
-    private Ball top = Ball.None;
-    private Ball middle = Ball.None;
+    private final ArrayList<Ball> bottomBuffer = new ArrayList<>();
+    private final ArrayList<Ball> middleBuffer = new ArrayList<>();
+    private final ArrayList<Ball> topBuffer = new ArrayList<>();
+
     private Ball bottom = Ball.None;
+    private Ball middle = Ball.None;
+    private Ball top = Ball.None;
 
-    public ColourChamber() {
-
-    }
+    public ColourChamber() {}
 
     @Override
     public void loadHardware(HardwareMap hwmp) {
@@ -40,6 +46,7 @@ public class ColourChamber extends SystemBase {
 
     @Override
     public void update(TelemetryManager telemetry) {
+        // Read HSV and distance data
         float[] firstHSV = this.firstLeft.getHSV();
         float[] secondHSV = this.secondLeft.getHSV();
         float[] thirdHSV = this.thirdLeft.getHSV();
@@ -48,80 +55,26 @@ public class ColourChamber extends SystemBase {
         double secondDistance = this.secondLeft.getDistance();
         double thirdDistance = this.thirdLeft.getDistance();
 
-        String firstHSVString = String.format("H: %.1f  S: %.2f  V: %.2f", firstHSV[0], firstHSV[1], firstHSV[2]);
-        String secondHSVString = String.format("H: %.1f  S: %.2f  V: %.2f", secondHSV[0], secondHSV[1], secondHSV[2]);
-        String thirdHSVString = String.format("H: %.1f  S: %.2f  V: %.2f", thirdHSV[0], thirdHSV[1], thirdHSV[2]);
+        // Determine detected color for each sensor
+        Ball bottomReading = detectColor(this.firstLeft);
+        Ball middleReading = detectColor(this.secondLeft);
+        Ball topReading = detectColor(this.thirdLeft);
 
-        if (this.firstLeft.matchFilter(
-                Software.HSVFilter.Purple.H.min,
-                Software.HSVFilter.Purple.H.max,
-                Software.HSVFilter.Purple.S.min,
-                Software.HSVFilter.Purple.S.max,
-                Software.HSVFilter.Purple.V.min,
-                Software.HSVFilter.Purple.V.max
-        )) {
-            this.bottom = Ball.Purple;
-        } else if (this.firstLeft.matchFilter(
-                Software.HSVFilter.Green.H.min,
-                Software.HSVFilter.Green.H.max,
-                Software.HSVFilter.Green.S.min,
-                Software.HSVFilter.Green.S.max,
-                Software.HSVFilter.Green.V.min,
-                Software.HSVFilter.Green.V.max
-        )) {
-            this.bottom = Ball.Green;
-        } else {
-            this.bottom = Ball.None;
-        }
+        // Update buffers
+        updateBuffer(bottomBuffer, bottomReading);
+        updateBuffer(middleBuffer, middleReading);
+        updateBuffer(topBuffer, topReading);
 
-        if (this.secondLeft.matchFilter(
-                Software.HSVFilter.Purple.H.min,
-                Software.HSVFilter.Purple.H.max,
-                Software.HSVFilter.Purple.S.min,
-                Software.HSVFilter.Purple.S.max,
-                Software.HSVFilter.Purple.V.min,
-                Software.HSVFilter.Purple.V.max
-        )) {
-            this.middle = Ball.Purple;
-        } else if (this.secondLeft.matchFilter(
-                Software.HSVFilter.Green.H.min,
-                Software.HSVFilter.Green.H.max,
-                Software.HSVFilter.Green.S.min,
-                Software.HSVFilter.Green.S.max,
-                Software.HSVFilter.Green.V.min,
-                Software.HSVFilter.Green.V.max
-        )) {
-            this.middle = Ball.Green;
-        } else {
-            this.middle = Ball.None;
-        }
+        // Compute stable color for each position
+        this.bottom = computeStableColor(bottomBuffer);
+        this.middle = computeStableColor(middleBuffer);
+        this.top = computeStableColor(topBuffer);
 
-        if (this.thirdLeft.matchFilter(
-                Software.HSVFilter.Purple.H.min,
-                Software.HSVFilter.Purple.H.max,
-                Software.HSVFilter.Purple.S.min,
-                Software.HSVFilter.Purple.S.max,
-                Software.HSVFilter.Purple.V.min,
-                Software.HSVFilter.Purple.V.max
-        )) {
-            this.top = Ball.Purple;
-        } else if (this.thirdLeft.matchFilter(
-                Software.HSVFilter.Green.H.min,
-                Software.HSVFilter.Green.H.max,
-                Software.HSVFilter.Green.S.min,
-                Software.HSVFilter.Green.S.max,
-                Software.HSVFilter.Green.V.min,
-                Software.HSVFilter.Green.V.max
-        )) {
-            this.top = Ball.Green;
-        } else {
-            this.top = Ball.None;
-        }
-
+        // Telemetry
         if (Software.HSVFilter.showRaw) {
-            telemetry.addData("First HSV", firstHSVString);
-            telemetry.addData("Second HSV", secondHSVString);
-            telemetry.addData("Third HSV", thirdHSVString);
+            telemetry.addData("First HSV", formatHSV(firstHSV));
+            telemetry.addData("Second HSV", formatHSV(secondHSV));
+            telemetry.addData("Third HSV", formatHSV(thirdHSV));
             telemetry.addData("FIRST DISTANCE", firstDistance);
             telemetry.addData("SECOND DISTANCE", secondDistance);
             telemetry.addData("THIRD DISTANCE", thirdDistance);
@@ -129,7 +82,58 @@ public class ColourChamber extends SystemBase {
 
         telemetry.addData("BOTTOM", this.bottom);
         telemetry.addData("MIDDLE", this.middle);
-        telemetry.addData("TOp", this.top);
+        telemetry.addData("TOP", this.top);
+    }
+
+    /** Detects a single instantaneous color reading from a sensor */
+    private Ball detectColor(ColourSensor sensor) {
+        if (sensor.matchFilter(
+                Software.HSVFilter.Purple.H.min,
+                Software.HSVFilter.Purple.H.max,
+                Software.HSVFilter.Purple.S.min,
+                Software.HSVFilter.Purple.S.max,
+                Software.HSVFilter.Purple.V.min,
+                Software.HSVFilter.Purple.V.max
+        )) {
+            return Ball.Purple;
+        } else if (sensor.matchFilter(
+                Software.HSVFilter.Green.H.min,
+                Software.HSVFilter.Green.H.max,
+                Software.HSVFilter.Green.S.min,
+                Software.HSVFilter.Green.S.max,
+                Software.HSVFilter.Green.V.min,
+                Software.HSVFilter.Green.V.max
+        )) {
+            return Ball.Green;
+        } else {
+            return Ball.None;
+        }
+    }
+
+    /** Keeps buffer size within limit */
+    private void updateBuffer(ArrayList<Ball> buffer, Ball newReading) {
+        if (buffer.size() >= BUFFER_SIZE) {
+            buffer.remove(0);
+        }
+        buffer.add(newReading);
+    }
+
+    /** Returns Purple/Green only if the entire buffer matches that color */
+    private Ball computeStableColor(ArrayList<Ball> buffer) {
+        if (buffer.size() < BUFFER_SIZE) {
+            return Ball.None; // not enough samples yet
+        }
+
+        boolean allPurple = buffer.stream().allMatch(b -> b == Ball.Purple);
+        boolean allGreen = buffer.stream().allMatch(b -> b == Ball.Green);
+
+        if (allPurple) return Ball.Purple;
+        if (allGreen) return Ball.Green;
+        return Ball.None;
+    }
+
+    private String formatHSV(float[] hsv) {
+        return String.format("H: %.1f  S: %.2f  V: %.2f", hsv[0], hsv[1], hsv[2]);
     }
 
     public Ball getBottom() { return this.bottom; }

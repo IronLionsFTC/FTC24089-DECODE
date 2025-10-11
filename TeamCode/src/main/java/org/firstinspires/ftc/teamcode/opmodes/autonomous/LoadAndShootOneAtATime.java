@@ -9,7 +9,8 @@ import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Transfer;
 import org.firstinspires.ftc.teamcode.tasks.IntakeUntilFull;
-import org.firstinspires.ftc.teamcode.tasks.ShootOne;
+import org.firstinspires.ftc.teamcode.tasks.RevFlywheel;
+import org.firstinspires.ftc.teamcode.tasks.ShootOneNoBlock;
 
 @Autonomous
 public class LoadAndShootOneAtATime extends TaskOpMode {
@@ -31,9 +32,10 @@ public class LoadAndShootOneAtATime extends TaskOpMode {
 
                 .addSeries(
                         new IntakeUntilFull(intake, transfer, colourChamber, panelsTelemetry),
-                        new ShootOne(intake, transfer, shooter, 4000, 0),
-                        new ShootOne(intake, transfer, shooter, 3000, 1),
-                        new ShootOne(intake, transfer, shooter, 3000, 1)
+                        new RevFlywheel(shooter, 4400),
+                        new ShootOneNoBlock(intake, transfer, shooter, 4400, 0.15),
+                        new ShootOneNoBlock(intake, transfer, shooter, 3600, 1.1),
+                        new ShootOneNoBlock(intake, transfer, shooter, 3600, 1.1)
                 )
                 .endWhenTasksFinished()
 
