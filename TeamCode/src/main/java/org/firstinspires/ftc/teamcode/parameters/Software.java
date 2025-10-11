@@ -7,9 +7,9 @@ public class Software {
 
         @Config
         public static class VelocityController {
-            public static double P = 0.002;
+            public static double P = 0.004;
             public static double I = 0.0;
-            public static double D = 0.000002;
+            public static double D = 0.0;
         }
     }
 

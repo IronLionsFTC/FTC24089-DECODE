@@ -20,9 +20,9 @@ public class ColourChamber extends SystemBase {
     private ColourSensor secondLeft;
     private ColourSensor thirdLeft;
 
-    private Ball top;
-    private Ball middle;
-    private Ball bottom;
+    private Ball top = Ball.None;
+    private Ball middle = Ball.None;
+    private Ball bottom = Ball.None;
 
     public ColourChamber() {
 

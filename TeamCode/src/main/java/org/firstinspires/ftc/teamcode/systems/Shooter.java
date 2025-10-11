@@ -70,6 +70,8 @@ public class Shooter extends SystemBase {
                 this.getTargetRPM()
         );
 
+        if (response < 0) response = 0;
+
         this.shooter.setPower(response);
         this.hood.setPosition(Hardware.Servos.ZeroPositions.hood + this.nomalisedHoodAngle * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood));
 

@@ -35,7 +35,7 @@ public class Teleop extends TaskOpMode {
         );
 
         this.controller1.X.onPressToggle(
-                new IntakeUntilFull(intake, transfer, colourChamber)
+                new IntakeUntilFull(intake, transfer, colourChamber, panelsTelemetry)
         );
 
         this.controller1.Y.onPress(

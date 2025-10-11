@@ -15,6 +15,7 @@ public class Transfer extends SystemBase {
         Shooting,
         Reverse,
         Intaking,
+        Queueing,
         Rest
     }
 
@@ -59,6 +60,9 @@ public class Transfer extends SystemBase {
             case Shooting:
                 power = 1;
                 blockPosition = Software.Constants.Unblock;
+                break;
+            case Queueing:
+                power = 0.6;
                 break;
         }
 

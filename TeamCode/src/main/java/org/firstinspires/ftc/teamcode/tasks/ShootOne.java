@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
+import com.pedropathing.util.Timer;
+
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
@@ -16,6 +18,7 @@ public class ShootOne extends Task {
 
     // State of task
     boolean begunShooting = false;
+    Timer timer;
 
     public ShootOne(Intake intake, Transfer transfer, Shooter shooter, double targetRPM, double angle) {
         this.intake = intake;
@@ -23,12 +26,13 @@ public class ShootOne extends Task {
         this.shooter = shooter;
         this.targetRPM = targetRPM;
         this.angle = angle;
+        this.timer = new Timer();
     }
 
     @Override
     public void init() {
-        this.intake.setState(Intake.State.Idle);
-        this.transfer.setState(Transfer.State.Rest);
+        this.intake.setState(Intake.State.Zero);
+        this.transfer.setState(Transfer.State.Queueing);
 
         this.shooter.setTargetRPM(this.targetRPM);
         this.shooter.setHoodAngle(this.angle);
@@ -37,19 +41,26 @@ public class ShootOne extends Task {
 
     @Override
     public void run() {
-        if (this.shooter.getRPM() > this.shooter.getTargetRPM() * 0.9 && !this.begunShooting) {
+        if (
+                this.shooter.getRPM() > this.shooter.getTargetRPM() - 200
+                && !this.begunShooting
+                && this.shooter.getRPM() < this.shooter.getTargetRPM() + 200
+        ) {
             this.begunShooting = true;
+            this.timer.resetTimer();
+            this.intake.setState(Intake.State.Positive);
             this.transfer.setState(Transfer.State.Shooting);
         }
     }
 
     @Override
     public boolean finished() {
-        return (this.transfer.timeSinceOpening() > 0.3);
+        return (this.timer.getElapsedTimeSeconds() > 0.2 && this.begunShooting);
     }
 
     @Override
     public void end(boolean _) {
-        this.transfer.setState(Transfer.State.Rest);
+        this.intake.setState(Intake.State.Zero);
+        this.transfer.setState(Transfer.State.Queueing);
     }
 }
