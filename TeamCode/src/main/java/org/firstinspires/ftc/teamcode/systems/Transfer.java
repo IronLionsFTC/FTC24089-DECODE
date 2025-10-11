@@ -73,4 +73,9 @@ public class Transfer extends SystemBase {
     public State getState() {
         return this.state;
     }
+
+    public double timeSinceOpening() {
+        if (this.state != State.Shooting) { return 0; }
+        return this.transferServo.timeSinceLastMovement();
+    }
 }
