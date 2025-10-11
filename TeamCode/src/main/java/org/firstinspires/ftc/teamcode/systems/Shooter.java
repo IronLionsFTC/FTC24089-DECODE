@@ -94,6 +94,10 @@ public class Shooter extends SystemBase {
         return 0.0;
     }
 
+    public double getRPM() {
+        return this.rpm;
+    }
+
     public void setState(State state) {
         this.state = state;
     }
