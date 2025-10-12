@@ -14,9 +14,9 @@ import org.firstinspires.ftc.teamcode.tasks.IntakeUntilFull;
 import org.firstinspires.ftc.teamcode.tasks.ReverseIntakeUntilEmpty;
 import org.firstinspires.ftc.teamcode.tasks.SpinIntakeToKeepBallsIn;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpFlywheel;
+import org.firstinspires.ftc.teamcode.tasks.TeleOpShootAll;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpShootOne;
-import org.firstinspires.ftc.teamcode.tasks.TeleOpToggleHood;
-import org.firstinspires.ftc.teamcode.tasks.TeleOpTogglePower;
+import org.firstinspires.ftc.teamcode.tasks.TeleOpToggleZone;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -54,15 +54,11 @@ public class Teleop extends TaskOpMode {
         );
 
         this.controller1.rightTrigger.asButton.onPress(
-                new TeleOpShootOne(intake, transfer)
+                new TeleOpShootAll(intake, transfer)
         );
 
         this.controller1.dpad.up.onPress(
-                new TeleOpToggleHood(shooter)
-        );
-
-        this.controller1.dpad.right.onPress(
-                new TeleOpTogglePower(shooter)
+                new TeleOpToggleZone(shooter)
         );
 
         return Jobs.create()

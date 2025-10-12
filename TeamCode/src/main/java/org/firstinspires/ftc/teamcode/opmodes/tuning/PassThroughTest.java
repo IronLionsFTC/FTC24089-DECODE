@@ -52,15 +52,9 @@ public class PassThroughTest extends OpMode {
 
         double currentTime = this.timer.getElapsedTimeSeconds();
 
-        if (currentTime > 8 && currentTime < 8.5) {
+        if (currentTime > 7) {
             this.block.setPosition(Software.Constants.Unblock);
             this.hood.setPosition(Hardware.Servos.ZeroPositions.hood);
-        } else if (currentTime < 12) {
-            this.block.setPosition(Hardware.Servos.ZeroPositions.blockPosition);
-            this.hood.setPosition(Software.Constants.HoodMax);
-        } else {
-            this.hood.setPosition(Software.Constants.HoodMax);
-            this.block.setPosition(Software.Constants.Unblock);
         }
     }
 }
