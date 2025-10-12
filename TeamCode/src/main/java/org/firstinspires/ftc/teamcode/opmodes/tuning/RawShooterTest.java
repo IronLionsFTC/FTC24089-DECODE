@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionServo;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
+import org.firstinspires.ftc.teamcode.systems.ColourChamber;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 
 @TeleOp
@@ -24,6 +25,8 @@ public class RawShooterTest extends OpMode {
     private TelemetryManager telemetryManager;
     private Telemetry multiTelemetry;
     private LionServo hood;
+    private LionServo block;
+    private ColourChamber colourChamber;
 
     @Config
     @Configurable
@@ -31,6 +34,7 @@ public class RawShooterTest extends OpMode {
         public static double targetRPM = 0;
         public static double feedPower = 0;
         public static double hoodAngle = Hardware.Servos.ZeroPositions.hood;
+        public static double blockArm = Hardware.Servos.ZeroPositions.blockPosition;
     }
 
     public void init() {
@@ -46,6 +50,15 @@ public class RawShooterTest extends OpMode {
         this.intakeMotor.setZPB(Hardware.Motors.ZPB.intakeMotor);
         this.transferMotor.setZPB(Hardware.Motors.ZPB.transferMotor);
         this.hood = LionServo.single(hardwareMap, Hardware.Servos.Names.shooterHood, Hardware.Servos.ZeroPositions.hood);
+        this.colourChamber = new ColourChamber();
+        this.colourChamber.loadHardware(hardwareMap);
+        this.colourChamber.init();
+        this.block = LionServo.mirrored(
+                hardwareMap,
+                Hardware.Servos.Names.leftBlock,
+                Hardware.Servos.Names.rightBlock,
+                Hardware.Servos.ZeroPositions.blockPosition
+        );
     }
 
     public void loop() {
@@ -55,6 +68,8 @@ public class RawShooterTest extends OpMode {
         this.intakeMotor.setPower(ShooterTest.feedPower);
         this.transferMotor.setPower(ShooterTest.feedPower);
         this.hood.setPosition(ShooterTest.hoodAngle);
+        this.block.setPosition(ShooterTest.blockArm);
+        this.colourChamber.update(telemetryManager);
         telemetryManager.addData("STATE", this.shooter.getState());
         telemetryManager.addData("TARGET", this.shooter.getTargetRPM());
         this.telemetryManager.update(multiTelemetry);

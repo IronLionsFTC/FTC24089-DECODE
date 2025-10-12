@@ -18,7 +18,7 @@ public class ColourChamber extends SystemBase {
         None
     }
 
-    private static final int BUFFER_SIZE = 5;
+    private static final int BUFFER_SIZE = 3;
 
     private ColourSensor firstLeft;
     private ColourSensor secondLeft;

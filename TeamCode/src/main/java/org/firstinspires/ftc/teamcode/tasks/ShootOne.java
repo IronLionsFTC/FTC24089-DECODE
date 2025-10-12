@@ -55,7 +55,7 @@ public class ShootOne extends Task {
 
     @Override
     public boolean finished() {
-        return (this.timer.getElapsedTimeSeconds() > 0.2 && this.begunShooting);
+        return (this.timer.getElapsedTimeSeconds() > 0.1 && this.begunShooting);
     }
 
     @Override
