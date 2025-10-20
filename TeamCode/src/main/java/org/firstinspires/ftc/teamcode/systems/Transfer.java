@@ -13,6 +13,7 @@ public class Transfer extends SystemBase {
 
     public enum State {
         Shooting,
+        ShootingSlower,
         Reverse,
         Intaking,
         Queueing,
@@ -59,6 +60,10 @@ public class Transfer extends SystemBase {
                 break;
             case Shooting:
                 power = 1;
+                blockPosition = Software.Constants.Unblock;
+                break;
+            case ShootingSlower:
+                power = 0.8;
                 blockPosition = Software.Constants.Unblock;
                 break;
             case Queueing:

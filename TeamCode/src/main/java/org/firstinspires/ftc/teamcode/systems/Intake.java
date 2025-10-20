@@ -13,11 +13,13 @@ public class Intake extends SystemBase {
         Negative,
         Zero,
         Positive,
-        Idle
+        Idle,
+        CVAssist
     }
 
     private LionMotor intakeMotor;
     private State state;
+    private Limelight limelight;
 
     public Intake() {
         this.state = State.Zero;
@@ -28,6 +30,7 @@ public class Intake extends SystemBase {
         this.intakeMotor = LionMotor.withoutEncoder(hwmp, Hardware.Motors.Names.intakeMotor);
         this.intakeMotor.setReversed(Hardware.Motors.Reversed.intakeMotor);
         this.intakeMotor.setZPB(Hardware.Motors.ZPB.intakeMotor);
+        this.limelight = new Limelight(hwmp);
     }
 
     @Override
@@ -55,13 +58,14 @@ public class Intake extends SystemBase {
 
         }
         this.intakeMotor.setPower(power);
-
-
-
-
     }
 
     public void setState(State state) {
+        if (state == State.CVAssist) {
+            this.limelight.start();
+        } else {
+            this.limelight.stop();
+        }
         this.state = state;
     }
 

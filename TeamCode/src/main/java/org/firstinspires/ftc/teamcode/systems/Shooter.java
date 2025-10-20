@@ -15,7 +15,8 @@ public class Shooter extends SystemBase {
     public enum State {
         Rest,
         Coast,
-        Target
+        Target,
+        Compensate
     }
 
     private LionMotor shooter;
@@ -56,6 +57,8 @@ public class Shooter extends SystemBase {
     @Override
     public void update(TelemetryManager telemetry) {
 
+        if (this.rpm > this.getTargetRPM() + 200 && this.state == State.Compensate) this.state = State.Target;
+
         // Update PID constants in case of tuning, costless
         this.velocityController.setConstants(
                 Software.PID.VelocityController.P,
@@ -70,9 +73,10 @@ public class Shooter extends SystemBase {
                 this.getTargetRPM()
         );
 
-        if (response < 0) response += 0.4;
+        if (response < 0) response *= 0.3;
+        if (this.state == State.Compensate) response = 1;
 
-        if (this.state == State.Target) this.hood.setPosition(Hardware.Servos.ZeroPositions.hood + this.nomalisedHoodAngle * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood));
+        if (this.state == State.Target || this.state == State.Compensate) this.hood.setPosition(Hardware.Servos.ZeroPositions.hood + this.nomalisedHoodAngle * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood));
         else this.hood.setPosition(Hardware.Servos.ZeroPositions.hood);
 
         if (this.state == State.Rest) response = 0;
@@ -94,7 +98,7 @@ public class Shooter extends SystemBase {
             case Coast:
                 return Software.Constants.CruiseSpeed;
             case Target:
-                return this.targetRPM;
+                return this.targetRPM + 200;
         }
 
         return 0.0;

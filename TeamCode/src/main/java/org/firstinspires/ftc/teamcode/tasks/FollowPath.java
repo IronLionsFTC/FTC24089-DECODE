@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
-import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Parallel;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.WaitUntil;
+import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 
 public class FollowPath extends Task {
-    private Follower follower;
+    private FollowerWrapper follower;
     private PathChain pathChain;
     private double speed;
     private boolean holdEnd;
 
-    public FollowPath(Follower follower, PathChain pathChain) {
+    public FollowPath(FollowerWrapper follower, PathChain pathChain) {
         this.follower = follower;
         this.pathChain = pathChain;
         this.speed = 1;
@@ -32,20 +32,20 @@ public class FollowPath extends Task {
 
     @Override
     public void init() {
-        this.follower.setMaxPower(this.speed);
-        this.follower.followPath(this.pathChain, this.holdEnd);
+        this.follower.follower.setMaxPower(this.speed);
+        this.follower.follower.followPath(this.pathChain, this.holdEnd);
     }
 
     @Override
     public boolean finished() {
-        return !this.follower.isBusy();
+        return !this.follower.follower.isBusy();
     }
 
     @Override
     public void end(boolean interrupted) {
-        this.follower.setMaxPower(1);
+        this.follower.follower.setMaxPower(1);
         if (interrupted) {
-            this.follower.breakFollowing();
+            this.follower.follower.breakFollowing();
         }
     }
 
@@ -58,7 +58,7 @@ public class FollowPath extends Task {
      */
     public Task uponProgress(double progress, Task... tasks) {
         return this.with(
-                new WaitUntil(() -> this.follower.getCurrentTValue() > progress).then(
+                new WaitUntil(() -> this.follower.follower.getCurrentTValue() > progress).then(
                         new Parallel(tasks)
                 )
         );

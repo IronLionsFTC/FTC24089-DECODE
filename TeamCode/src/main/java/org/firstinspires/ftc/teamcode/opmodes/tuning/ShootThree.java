@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.tuning;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.cache.Ordering;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Sleep;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.ColourChamber;
 import org.firstinspires.ftc.teamcode.systems.Intake;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.tasks.ShootOne;
 import org.firstinspires.ftc.teamcode.tasks.ShootOneNoBlock;
 
 @TeleOp
-public class ThirdBallLandFirst extends TaskOpMode {
+public class ShootThree extends TaskOpMode {
 
     private Intake intake;
     private Shooter shooter;
@@ -36,10 +37,10 @@ public class ThirdBallLandFirst extends TaskOpMode {
 
                 .addSeries(
                         new IntakeUntilFull(intake, transfer, colourChamber, ordering),
-                        new RevFlywheel(shooter, 3600, 0),
-                        new ShootOneNoBlock(intake, transfer, shooter, 3600, 0),
-                        new ShootOneNoBlock(intake, transfer, shooter, 3600, 0),
-                        new ShootOneNoBlock(intake, transfer, shooter, 3300, 1.3)
+                        new RevFlywheel(shooter, 2700, 0.5),
+                        new ShootOne(intake, transfer, shooter, 2700, 0.5),
+                        new ShootOne(intake, transfer, shooter, 2700, 0.5),
+                        new ShootOne(intake, transfer, shooter, 2700, 0.5)
                 )
 
                 .registerSystem(shooter)

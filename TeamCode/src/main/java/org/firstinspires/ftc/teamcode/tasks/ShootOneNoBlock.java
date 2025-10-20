@@ -33,12 +33,12 @@ public class ShootOneNoBlock extends Task {
         this.transfer.setState(Transfer.State.Shooting);
         this.shooter.setTargetRPM(this.targetRPM);
         this.shooter.setHoodAngle(this.angle);
-        this.shooter.setState(Shooter.State.Target);
+        this.shooter.setState(Shooter.State.Compensate);
         this.timer.resetTimer();
     }
 
     @Override
     public boolean finished() {
-        return (this.timer.getElapsedTimeSeconds() > 0.1);
+        return (this.timer.getElapsedTimeSeconds() > 0.09);
     }
 }

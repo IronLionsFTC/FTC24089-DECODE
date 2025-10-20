@@ -4,36 +4,40 @@ import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
 import org.firstinspires.ftc.teamcode.systems.Intake;
+import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Transfer;
 
-public class TeleOpShootOne extends Task {
+public class IntakeForTime extends Task {
 
     private Intake intake;
     private Transfer transfer;
     private Timer timer;
+    private double time;
 
-    public TeleOpShootOne(Intake intake, Transfer transfer) {
+    public IntakeForTime(Intake intake, Transfer transfer, double time) {
         this.intake = intake;
         this.transfer = transfer;
         this.timer = new Timer();
+        this.time = time;
     }
 
     @Override
     public void init() {
         this.intake.setState(Intake.State.Positive);
-        this.transfer.setState(Transfer.State.ShootingSlower);
+        this.transfer.setState(Transfer.State.Intaking);
         this.timer.resetTimer();
     }
 
     @Override
     public boolean finished() {
-        return this.timer.getElapsedTimeSeconds() > 0.1;
+        double ctime = timer.getElapsedTimeSeconds();
+        return ctime > time;
     }
 
     @Override
     public void end(boolean _) {
-        this.intake.setState(Intake.State.Idle);
-        this.transfer.setState(Transfer.State.Queueing);
+        this.intake.setState(Intake.State.Zero);
+        this.transfer.setState(Transfer.State.Rest);
     }
 
 }

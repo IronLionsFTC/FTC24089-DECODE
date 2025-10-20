@@ -68,7 +68,7 @@ public abstract class TaskOpMode extends OpMode {
         this.hubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : this.hubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
             hub.clearBulkCache();
         }
 
@@ -80,11 +80,6 @@ public abstract class TaskOpMode extends OpMode {
 
         this.controller1.update(PanelsGamepad.INSTANCE.getFirstManager().asCombinedFTCGamepad(gamepad1));
         this.controller2.update(PanelsGamepad.INSTANCE.getSecondManager().asCombinedFTCGamepad(gamepad2));
-
-        // Fully update all sensor values, motor positions, ect, once per loop cycle.
-        for (LynxModule hub : this.hubs) {
-            hub.clearBulkCache();
-        }
 
         if (!this.taskHasFinished) this.task.run();
         if (this.task.finished() && !this.taskHasFinished) {
@@ -99,5 +94,10 @@ public abstract class TaskOpMode extends OpMode {
 
         this.mainloop();
         this.panelsTelemetry.update(telemetry);
+
+        // Fully update all sensor values, motor positions, ect, once per loop cycle.
+        for (LynxModule hub : this.hubs) {
+           hub.clearBulkCache();
+        }
     }
 }

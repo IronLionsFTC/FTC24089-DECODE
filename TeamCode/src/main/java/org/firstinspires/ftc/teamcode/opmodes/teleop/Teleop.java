@@ -54,7 +54,7 @@ public class Teleop extends TaskOpMode {
         );
 
         this.controller1.rightTrigger.asButton.onPress(
-                new TeleOpShootAll(intake, transfer)
+                new TeleOpShootAll(intake, transfer, shooter)
         );
 
         this.controller1.leftTrigger.asButton.onPress(

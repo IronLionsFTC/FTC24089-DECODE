@@ -47,6 +47,7 @@ public class ShootOne extends Task {
                 && this.shooter.getRPM() < this.shooter.getTargetRPM() + 200
         ) {
             this.begunShooting = true;
+            this.shooter.setState(Shooter.State.Compensate);
             this.timer.resetTimer();
             this.intake.setState(Intake.State.Positive);
             this.transfer.setState(Transfer.State.Shooting);
@@ -55,7 +56,7 @@ public class ShootOne extends Task {
 
     @Override
     public boolean finished() {
-        return (this.timer.getElapsedTimeSeconds() > 0.1 && this.begunShooting);
+        return (this.timer.getElapsedTimeSeconds() > 0.09 && this.begunShooting);
     }
 
     @Override
