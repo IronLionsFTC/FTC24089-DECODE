@@ -17,8 +17,8 @@ public class TeleOpToggleZone extends Task {
             this.shooter.setTargetRPM(2400);
             this.shooter.setHoodAngle(0);
         } else {
-            this.shooter.setTargetRPM(3550);
-            this.shooter.setHoodAngle(0.4);
+            this.shooter.setTargetRPM(3700);
+            this.shooter.setHoodAngle(0.5);
         }
     }
 
