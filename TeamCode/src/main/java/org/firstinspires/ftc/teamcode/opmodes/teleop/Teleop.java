@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.tasks.TeleOpFlywheel;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpShootAll;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpShootOne;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpToggleZone;
+import org.firstinspires.ftc.teamcode.tasks.ToggleDrivebaseMode;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -63,6 +64,10 @@ public class Teleop extends TaskOpMode {
 
         this.controller1.dpad.up.onPress(
                 new TeleOpToggleZone(shooter)
+        );
+
+        this.controller1.bumpers.right.onPress(
+                new ToggleDrivebaseMode(drivebase)
         );
 
         return Jobs.create()
