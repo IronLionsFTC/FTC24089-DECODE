@@ -29,7 +29,6 @@ public class Teleop extends TaskOpMode {
     private Transfer transfer;
 
     public Jobs spawn() {
-        this.intake = new Intake();
 
         this.drivebase = new Drivebase(
                 controller1.leftJoystick::x,
@@ -39,6 +38,7 @@ public class Teleop extends TaskOpMode {
 
         this.shooter = new Shooter(drivebase::getDistance);
         this.transfer = new Transfer(() -> drivebase.getDistance() > 70);
+        this.intake = new Intake(() -> drivebase.getDistance() > 70);
 
         this.controller1.X.onPressToggle(
                 new ToggleIntake(intake, transfer)

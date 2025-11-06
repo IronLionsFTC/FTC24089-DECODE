@@ -26,7 +26,7 @@ public class TeleOpShootAll extends Task {
 
     @Override
     public void init() {
-        this.intake.setState(Intake.State.Positive);
+        this.intake.setState(Intake.State.Shooting);
         this.transfer.setState(Transfer.State.ShootingSlower);
         this.timer.resetTimer();
         this.originalHood = this.shooter.getHoodAngle();
