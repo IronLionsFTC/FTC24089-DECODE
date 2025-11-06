@@ -26,17 +26,13 @@ public class CloseZone extends TaskOpMode {
     public Intake intake;
     public Transfer transfer;
     public Shooter shooter;
-    public ColourChamber colourChamber;
-    public Ordering ordering;
 
     @Override
     public Jobs spawn() {
 
         this.intake = new Intake();
         this.transfer = new Transfer();
-        this.shooter = new Shooter();
-        //this.colourChamber = new ColourChamber();
-        this.ordering = new Ordering();
+        this.shooter = new Shooter(() -> 0);
         this.follower = new FollowerWrapper(hardwareMap);
 
         return Jobs.create()
@@ -79,6 +75,5 @@ public class CloseZone extends TaskOpMode {
                 .registerSystem(intake)
                 .registerSystem(transfer)
                 .registerSystem(shooter);
-                //.registerSystem(colourChamber);
     }
 }

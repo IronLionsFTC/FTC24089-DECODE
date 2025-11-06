@@ -13,7 +13,6 @@ public class TeleOpShootAll extends Task {
     private Transfer transfer;
     private Timer timer;
     private Shooter shooter;
-    private int stage;
 
     private double originalHood;
 
@@ -22,7 +21,6 @@ public class TeleOpShootAll extends Task {
         this.transfer = transfer;
         this.shooter = shooter;
         this.timer = new Timer();
-        this.stage = 0;
         this.originalHood = 0;
     }
 
@@ -30,9 +28,9 @@ public class TeleOpShootAll extends Task {
     public void init() {
         this.intake.setState(Intake.State.Positive);
         this.transfer.setState(Transfer.State.ShootingSlower);
-        this.shooter.setState(Shooter.State.Compensate);
         this.timer.resetTimer();
         this.originalHood = this.shooter.getHoodAngle();
+        this.shooter.setState(Shooter.State.AutoAimedFullPower);
     }
 
     @Override
@@ -46,7 +44,7 @@ public class TeleOpShootAll extends Task {
     public void end(boolean _) {
         this.intake.setState(Intake.State.Zero);
         this.transfer.setState(Transfer.State.Rest);
-        this.shooter.setState(Shooter.State.Target);
+        this.shooter.setState(Shooter.State.AutoAimed);
         this.shooter.setHoodAngle(this.originalHood);
     }
 

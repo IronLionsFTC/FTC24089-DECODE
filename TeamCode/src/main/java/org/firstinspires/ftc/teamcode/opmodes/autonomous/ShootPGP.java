@@ -27,7 +27,7 @@ public class ShootPGP extends TaskOpMode {
 
         this.intake = new Intake();
         this.transfer = new Transfer();
-        this.shooter = new Shooter();
+        this.shooter = new Shooter(() -> 0);
         this.colourChamber = new ColourChamber();
         this.ordering = new Ordering();
         this.motif = new Ordering();

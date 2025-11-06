@@ -13,7 +13,7 @@ public class TeleOpToggleZone extends Task {
 
     @Override
     public void init() {
-        if (shooter.getRawTargetRPM() == 3550) {
+        if (shooter.getRawTargetRPM() == 3700) {
             this.shooter.setTargetRPM(2400);
             this.shooter.setHoodAngle(0);
         } else {

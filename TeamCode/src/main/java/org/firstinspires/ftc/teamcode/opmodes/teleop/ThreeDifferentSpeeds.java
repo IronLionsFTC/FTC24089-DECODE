@@ -26,7 +26,7 @@ public class ThreeDifferentSpeeds extends TaskOpMode {
     public Jobs spawn() {
 
         this.intake = new Intake();
-        this.shooter = new Shooter();
+        this.shooter = new Shooter(() -> 0);
         this.transfer = new Transfer();
         this.colourChamber = new ColourChamber();
         this.ordering = new Ordering();

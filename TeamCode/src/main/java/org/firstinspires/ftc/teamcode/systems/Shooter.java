@@ -10,13 +10,17 @@ import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 import org.firstinspires.ftc.teamcode.parameters.Software;
 
+import java.util.function.DoubleSupplier;
+
 public class Shooter extends SystemBase {
 
     public enum State {
         Rest,
         Coast,
         Target,
-        Compensate
+        Compensate,
+        AutoAimed,
+        AutoAimedFullPower
     }
 
     private LionMotor shooter;
@@ -25,15 +29,18 @@ public class Shooter extends SystemBase {
     private double targetRPM;
     private double nomalisedHoodAngle;
 
+    private DoubleSupplier distanceOmeter;
+
     // PID controller
     private PID velocityController;
     private double rpm;
 
-    public Shooter() {
+    public Shooter(DoubleSupplier distanceOmeter) {
         this.state = State.Rest;
         this.targetRPM = 3000;
         this.rpm = 0;
         this.nomalisedHoodAngle = 0;
+        this.distanceOmeter = distanceOmeter;
     }
 
     @Override
@@ -68,23 +75,56 @@ public class Shooter extends SystemBase {
 
         this.rpm = this.shooter.getVelocity(28.0);
 
+        double angle;
+        double trpm;
+        double distance = this.distanceOmeter.getAsDouble();
+
+        if (this.state == State.Target || this.state == State.Compensate) {
+            angle = this.nomalisedHoodAngle;
+            trpm = this.getTargetRPM();
+        }
+        else if (this.state == State.AutoAimed || this.state == State.AutoAimedFullPower) {
+            // Approximate the RPM and hood angle required at distance
+            trpm = distance * 10.7 + 2000;
+
+            // Hood angle
+            angle = distance * 0.004;
+        }
+        else {
+            angle = 0;
+            trpm = 0;
+        }
+
+        // Adjustment for RPM error
+        double absE = Math.abs(trpm - this.rpm);
+        angle -= absE * 0.0005;
+        if (angle < 0) angle = 0;
+
         double response = this.velocityController.calculate(
                 this.rpm,
-                this.getTargetRPM()
+                trpm
         );
 
-        if (response < 0) response *= 0.3;
-        if (this.state == State.Compensate) response = 1;
+        if (trpm == 0) response = 0;
 
-        if (this.state == State.Target || this.state == State.Compensate) this.hood.setPosition(Hardware.Servos.ZeroPositions.hood + this.nomalisedHoodAngle * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood));
-        else this.hood.setPosition(Hardware.Servos.ZeroPositions.hood);
+        if (response < 0) response *= 0.3;
+        if ((this.state == State.Compensate || this.state == State.AutoAimedFullPower) && rpm < trpm - 100){
+            response = 1;
+        }
 
         if (this.state == State.Rest) response = 0;
 
         this.shooter.setPower(response);
+        this.hood.setPosition(this.calculateHoodAngle(angle));
 
         telemetry.addData("POS", this.shooter.getPosition());
         telemetry.addData("RPM", this.rpm);
+    }
+
+    private double calculateHoodAngle(double angle) {
+        return Hardware.Servos.ZeroPositions.hood
+                + angle
+                * (Software.Constants.HoodMax - Hardware.Servos.ZeroPositions.hood);
     }
 
     public void setTargetRPM(double targetRPM) {
@@ -107,23 +147,18 @@ public class Shooter extends SystemBase {
     public double getRPM() {
         return this.rpm;
     }
-
     public void setState(State state) {
         this.state = state;
     }
-
     public State getState() {
         return this.state;
     }
-
     public void setHoodAngle(double normalisedAngle) {
         this.nomalisedHoodAngle = normalisedAngle;
     }
-
     public double getHoodAngle() {
         return this.nomalisedHoodAngle;
     }
-
     public double getRawTargetRPM() {
         return this.targetRPM;
     }

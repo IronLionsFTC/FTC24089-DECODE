@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 import org.firstinspires.ftc.teamcode.parameters.Software;
 
+import java.util.function.BooleanSupplier;
+
 public class Transfer extends SystemBase {
 
     public enum State {
@@ -22,10 +24,15 @@ public class Transfer extends SystemBase {
 
     private LionMotor transferMotor;
     private LionServo transferServo;
+    private BooleanSupplier longShot;
     private State state;
 
-    public Transfer() {
+    public Transfer(BooleanSupplier longShot) {
+        this.longShot = longShot;
+    }
 
+    public Transfer() {
+        this.longShot = () -> false;
     }
 
     @Override
@@ -63,7 +70,8 @@ public class Transfer extends SystemBase {
                 blockPosition = Software.Constants.Unblock;
                 break;
             case ShootingSlower:
-                power = 0.8;
+                if (longShot.getAsBoolean()) power = 0.25;
+                else power = 0.6;
                 blockPosition = Software.Constants.Unblock;
                 break;
             case Queueing:

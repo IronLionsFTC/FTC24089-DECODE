@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 
+import java.util.function.BooleanSupplier;
+
 public class Intake extends SystemBase {
 
     public enum State {
@@ -14,15 +16,23 @@ public class Intake extends SystemBase {
         Zero,
         Positive,
         Idle,
-        CVAssist
+        CVAssist,
+        Shooting
     }
 
     private LionMotor intakeMotor;
     private State state;
     private Limelight limelight;
+    private BooleanSupplier farZone;
 
     public Intake() {
         this.state = State.Zero;
+        this.farZone = () -> false;
+    }
+
+    public Intake(BooleanSupplier farZone) {
+        this.state = State.Zero;
+        this.farZone = farZone;
     }
 
     @Override
@@ -54,6 +64,10 @@ public class Intake extends SystemBase {
                 break;
             case Idle:
                 power = 0.3;
+                break;
+            case Shooting:
+                if (this.farZone.getAsBoolean()) power = 0.7;
+                else power = 1;
                 break;
 
         }

@@ -26,7 +26,6 @@ public class RawShooterTest extends OpMode {
     private Telemetry multiTelemetry;
     private LionServo hood;
     private LionServo block;
-    private ColourChamber colourChamber;
 
     @Config
     @Configurable
@@ -38,7 +37,7 @@ public class RawShooterTest extends OpMode {
     }
 
     public void init() {
-        this.shooter = new Shooter();
+        this.shooter = new Shooter(() -> 0);
         this.shooter.loadHardware(hardwareMap);
         this.shooter.init();
         this.telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -50,9 +49,6 @@ public class RawShooterTest extends OpMode {
         this.intakeMotor.setZPB(Hardware.Motors.ZPB.intakeMotor);
         this.transferMotor.setZPB(Hardware.Motors.ZPB.transferMotor);
         this.hood = LionServo.single(hardwareMap, Hardware.Servos.Names.shooterHood, Hardware.Servos.ZeroPositions.hood);
-        this.colourChamber = new ColourChamber();
-        this.colourChamber.loadHardware(hardwareMap);
-        this.colourChamber.init();
         this.block = LionServo.mirrored(
                 hardwareMap,
                 Hardware.Servos.Names.leftBlock,
@@ -69,7 +65,6 @@ public class RawShooterTest extends OpMode {
         this.transferMotor.setPower(ShooterTest.feedPower);
         this.hood.setPosition(ShooterTest.hoodAngle);
         this.block.setPosition(ShooterTest.blockArm);
-        this.colourChamber.update(telemetryManager);
         telemetryManager.addData("STATE", this.shooter.getState());
         telemetryManager.addData("TARGET", this.shooter.getTargetRPM());
         this.telemetryManager.update(multiTelemetry);

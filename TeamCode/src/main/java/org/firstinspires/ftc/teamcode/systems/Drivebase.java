@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
+import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
 import org.firstinspires.ftc.teamcode.lioncore.math.types.Vector;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
@@ -30,6 +30,7 @@ public class Drivebase extends SystemBase {
     private DoubleSupplier driveY;
     private DoubleSupplier yaw;
     private GoBildaPinpointDriver pinpoint;
+    private PID controller;
 
     private State state;
 
@@ -38,6 +39,7 @@ public class Drivebase extends SystemBase {
         this.driveY = driveY;
         this.yaw = yaw;
         this.state = State.Manual;
+        this.controller = new PID(0.02, 0, 0.002);
     }
 
     public void loadHardware(HardwareMap hardwareMap) {
@@ -57,8 +59,9 @@ public class Drivebase extends SystemBase {
     }
 
     public void init() {
-        this.pinpoint.setPosX(12, DistanceUnit.INCH);
+        this.pinpoint.setPosX(0, DistanceUnit.INCH);
         this.pinpoint.setPosY(0, DistanceUnit.INCH);
+        this.pinpoint.setHeading(0, AngleUnit.DEGREES);
     }
 
     public void update(TelemetryManager telemetry) {
@@ -66,20 +69,38 @@ public class Drivebase extends SystemBase {
         double currentHeading = pinpoint.getHeading(AngleUnit.DEGREES);
         double currentX = pinpoint.getPosX(DistanceUnit.INCH);
         double currentY = pinpoint.getPosY(DistanceUnit.INCH);
-        double targetHeading = Math.toDegrees(Math.atan2(-currentY, -currentX));
+        double targetHeading = 90 - Math.toDegrees(Math.atan2(-currentX, -currentY));
+
+        if (targetHeading < -180) { targetHeading += 360; }
+        if (targetHeading > 180) { targetHeading -= 360; }
 
         telemetry.addData("CurrentX", currentX);
         telemetry.addData("CurrentY", currentY);
         telemetry.addData("CurrentHeading", currentHeading);
         telemetry.addData("TargetHeading", targetHeading);
+        telemetry.addData("State", state);
 
         Vector drive = Vector.cartesian(this.driveX.getAsDouble(), this.driveY.getAsDouble());
-        double yaw = this.yaw.getAsDouble() * 0.6;
+        double response = -this.controller.calculate(currentHeading, targetHeading);
+
+        double yaw;
+        switch (this.state) {
+            case Manual:
+                yaw = this.yaw.getAsDouble() * 0.6;
+                break;
+            case AutoAlign:
+                yaw = response;
+                break;
+            default:
+                yaw = 0;
+        }
 
         frontRight.setPower(drive.y() + drive.x() + yaw);
         frontLeft.setPower(drive.y() - drive.x() - yaw);
         backRight.setPower(drive.y() - drive.x() + yaw);
         backLeft.setPower(drive.y() + drive.x() - yaw);
+
+        this.pinpoint.update();
     }
 
     public void setState(State state) {
@@ -88,5 +109,12 @@ public class Drivebase extends SystemBase {
 
     public State getState() {
         return this.state;
+    }
+
+    public double getDistance() {
+        return Math.sqrt(
+                Math.pow(this.pinpoint.getPosX(DistanceUnit.INCH), 2)
+                + Math.pow(this.pinpoint.getPosY(DistanceUnit.INCH), 2)
+        );
     }
 }

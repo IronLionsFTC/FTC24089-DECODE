@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.tasks.TeleOpShootAll;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpShootOne;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpToggleZone;
 import org.firstinspires.ftc.teamcode.tasks.ToggleDrivebaseMode;
+import org.firstinspires.ftc.teamcode.tasks.ToggleIntake;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -26,15 +27,9 @@ public class Teleop extends TaskOpMode {
     private Intake intake;
     private Shooter shooter;
     private Transfer transfer;
-    private ColourChamber colourChamber;
-    private Ordering ordering;
 
     public Jobs spawn() {
         this.intake = new Intake();
-        this.shooter = new Shooter();
-        this.transfer = new Transfer();
-        this.colourChamber = new ColourChamber();
-        this.ordering = new Ordering();
 
         this.drivebase = new Drivebase(
                 controller1.leftJoystick::x,
@@ -42,12 +37,11 @@ public class Teleop extends TaskOpMode {
                 controller1.rightJoystick::y
         );
 
-        this.controller1.X.onPressToggle(
-                new IntakeUntilFull(intake, transfer, colourChamber, ordering)
-        );
+        this.shooter = new Shooter(drivebase::getDistance);
+        this.transfer = new Transfer(() -> drivebase.getDistance() > 70);
 
-        this.controller1.Y.onPress(
-                new ReverseIntakeUntilEmpty(intake, transfer, colourChamber)
+        this.controller1.X.onPressToggle(
+                new ToggleIntake(intake, transfer)
         );
 
         this.controller1.A.onPressToggle(
@@ -74,10 +68,7 @@ public class Teleop extends TaskOpMode {
                 .registerSystem(drivebase)
                 .registerSystem(shooter)
                 .registerSystem(transfer)
-                .registerSystem(colourChamber)
-                .registerSystem(intake)
-
-                .addTask(new SpinIntakeToKeepBallsIn(intake, colourChamber));
+                .registerSystem(intake);
 
     }
 }
