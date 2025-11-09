@@ -34,8 +34,8 @@ public class Drivebase extends SystemBase {
     private GoBildaPinpointDriver pinpoint;
     private PID controller;
 
-    private Vector3 position;
-    private Vector3 velocity;
+    private Vector3 position = new Vector3(0, 0, 0);
+    private Vector3 velocity = new Vector3(0, 0, 0);
     private State state;
 
     public Drivebase(DoubleSupplier driveX, DoubleSupplier driveY, DoubleSupplier yaw) {

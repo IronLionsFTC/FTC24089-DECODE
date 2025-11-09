@@ -36,8 +36,8 @@ public class Shooter extends SystemBase {
 
     private DoubleSupplier distanceOmeter;
 
-    private Vector3.Vector3Supplier robotPosition;
-    private Vector3.Vector3Supplier robotVelocity;
+    private Vector3.Vector3Supplier robotPosition = () -> new Vector3(0, 0, 0);
+    private Vector3.Vector3Supplier robotVelocity = () -> new Vector3(0, 0, 0);
     private boolean flatShot = false;
     private double lastAzimuth = 0;
 
@@ -60,9 +60,9 @@ public class Shooter extends SystemBase {
         this.targetRPM = 3000;
         this.rpm = 0;
         this.nomalisedHoodAngle = 0;
-        this.distanceOmeter = () -> p.get().sub(v.get()).length();
         this.robotPosition = p;
         this.robotVelocity = v;
+        this.distanceOmeter = () -> this.robotPosition.get().sub(this.robotVelocity.get()).length();
 
         this.target = new Vector3(0, 0, 40);
     }
@@ -107,7 +107,7 @@ public class Shooter extends SystemBase {
             angle = this.nomalisedHoodAngle;
             trpm = this.getTargetRPM();
         }
-        else if (this.state == State.AutoAimed || this.state == State.AutoAimedFullPower) {
+        else if (this.state == State.AutoAimed || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargetting || this.state == State.AdvancedTargettingCompensation) {
             // Approximate the RPM and hood angle required at distance
             trpm = distance * 11.2 + 1980;
 
@@ -163,7 +163,7 @@ public class Shooter extends SystemBase {
 
             telemetry.addData("ROBOT POSITION", robotPosition.get());
             telemetry.addData("ROBOT VELOCITY", robotVelocity.get());
-            telemetry.addData("PROJECTED VELOCITY", possibleSolution.bestInitialVelocity.toString());
+            if (possibleSolution.bestInitialVelocity != null) telemetry.addData("PROJECTED VELOCITY", possibleSolution.bestInitialVelocity.toString());
             telemetry.addData("TARGET ANGLE", altitude);
         }
 
