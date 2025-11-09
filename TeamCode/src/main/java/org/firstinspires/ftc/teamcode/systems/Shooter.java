@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionServo;
 import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
+import org.firstinspires.ftc.teamcode.math.BallisticsSolver;
+import org.firstinspires.ftc.teamcode.math.Vector3;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 import org.firstinspires.ftc.teamcode.parameters.Software;
 
@@ -20,7 +22,8 @@ public class Shooter extends SystemBase {
         Target,
         Compensate,
         AutoAimed,
-        AutoAimedFullPower
+        AutoAimedFullPower,
+        AdvancedTargetting
     }
 
     private LionMotor shooter;
@@ -28,8 +31,14 @@ public class Shooter extends SystemBase {
     private State state;
     private double targetRPM;
     private double nomalisedHoodAngle;
+    private final Vector3 target;
 
     private DoubleSupplier distanceOmeter;
+
+    private Vector3.Vector3Supplier robotPosition;
+    private Vector3.Vector3Supplier robotVelocity;
+    private boolean flatShot = false;
+    private double lastAzimuth = 0;
 
     // PID controller
     private PID velocityController;
@@ -41,6 +50,20 @@ public class Shooter extends SystemBase {
         this.rpm = 0;
         this.nomalisedHoodAngle = 0;
         this.distanceOmeter = distanceOmeter;
+
+        this.target = new Vector3(0, 0, 40);
+    }
+
+    public Shooter(Vector3.Vector3Supplier p, Vector3.Vector3Supplier v) {
+        this.state = State.Rest;
+        this.targetRPM = 3000;
+        this.rpm = 0;
+        this.nomalisedHoodAngle = 0;
+        this.distanceOmeter = () -> p.get().sub(v.get()).length();
+        this.robotPosition = p;
+        this.robotVelocity = v;
+
+        this.target = new Vector3(0, 0, 40);
     }
 
     @Override
@@ -114,10 +137,39 @@ public class Shooter extends SystemBase {
 
         if (this.state == State.Rest) response = 0;
 
+        if (this.state == State.AdvancedTargetting) {
+            BallisticsSolver.Solution possibleSolution = BallisticsSolver.solveIntercept(
+                    this.robotPosition.get(),
+                    this.target,
+                    this.robotVelocity.get(),
+                    this.rpm * 0.07
+            );
+
+            this.lastAzimuth = possibleSolution.azimuthDeg;
+            double altitude = 0;
+            boolean angleFound = false;
+
+            if (this.flatShot) {
+                if (possibleSolution.foundUp) {
+                    altitude = this.mapElevationToDouble(possibleSolution.elevationUpDeg);
+                    angleFound = true;
+                }
+            } else {
+                if (possibleSolution.foundDown) {
+                    altitude = this.mapElevationToDouble(possibleSolution.elevationDownDeg);
+                    angleFound = true;
+                }
+            }
+
+            if (angleFound) angle = altitude;
+
+            telemetry.addData("PROJECTED VELOCITY", possibleSolution.bestInitialVelocity.toString());
+            telemetry.addData("TARGET ANGLE", altitude);
+        }
+
         this.shooter.setPower(response);
         this.hood.setPosition(this.calculateHoodAngle(angle));
 
-        telemetry.addData("POS", this.shooter.getPosition());
         telemetry.addData("RPM", this.rpm);
     }
 
@@ -161,5 +213,18 @@ public class Shooter extends SystemBase {
     }
     public double getRawTargetRPM() {
         return this.targetRPM;
+    }
+
+    public void setFlatShot(boolean flatShot) { this.flatShot = flatShot; }
+    public boolean getFlatShot() { return this.flatShot;}
+
+    private double mapElevationToDouble(double elevationDeg) {
+        double angleMin = 45.0;
+        double angleMax = 70.0;
+        return (angleMax - elevationDeg) / (angleMax - angleMin);
+    }
+
+    public double yieldAzimuth() {
+        return this.lastAzimuth;
     }
 }
