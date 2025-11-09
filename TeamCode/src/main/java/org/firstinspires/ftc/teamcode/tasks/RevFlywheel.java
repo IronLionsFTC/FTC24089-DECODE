@@ -17,7 +17,7 @@ public class RevFlywheel extends Task {
 
     @Override
     public void init() {
-        this.shooter.setState(Shooter.State.Target);
+        this.shooter.setState(Shooter.State.AutoAimed);
         this.shooter.setTargetRPM(target);
         this.shooter.setHoodAngle(angle);
     }

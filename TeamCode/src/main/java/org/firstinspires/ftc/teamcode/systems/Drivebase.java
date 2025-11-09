@@ -59,7 +59,7 @@ public class Drivebase extends SystemBase {
     }
 
     public void init() {
-        this.pinpoint.setPosX(0, DistanceUnit.INCH);
+        this.pinpoint.setPosX(-18, DistanceUnit.INCH);
         this.pinpoint.setPosY(0, DistanceUnit.INCH);
         this.pinpoint.setHeading(0, AngleUnit.DEGREES);
     }

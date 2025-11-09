@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Transfer;
+import org.firstinspires.ftc.teamcode.tasks.AutoShootAll;
 import org.firstinspires.ftc.teamcode.tasks.FollowPath;
 import org.firstinspires.ftc.teamcode.tasks.IntakeForTime;
 import org.firstinspires.ftc.teamcode.tasks.IntakeUntilFull;
@@ -32,17 +34,16 @@ public class CloseZone extends TaskOpMode {
 
         this.intake = new Intake();
         this.transfer = new Transfer();
-        this.shooter = new Shooter(() -> 0);
+        this.shooter = new Shooter(() -> follower.follower.getPose().distanceFrom(new Pose(0, 0, 0)));
         this.follower = new FollowerWrapper(hardwareMap);
 
         return Jobs.create()
                 .addSeries(
-                        new RevFlywheel(shooter, 2650, 0.3).with(
+                        new RevFlywheel(shooter, 2000, 0.1).with(
                                 new FollowPath(follower, TestPath.startToShoot(follower))
                         ),
-                        new TeleOpShootAll(intake, transfer, shooter).with(
-                                new FollowPath(follower, TestPath.shootPath(follower))
-                        ),
+
+                        new AutoShootAll(intake, transfer, shooter),
 
                         new FollowPath(follower, TestPath.intakeA(follower)),
                         new FollowPath(follower, TestPath.intakeCreepA(follower)).setSpeed(0.7).with(
@@ -50,25 +51,24 @@ public class CloseZone extends TaskOpMode {
                         ),
                         new FollowPath(follower, TestPath.hitLeverFromA(follower)),
                         new FollowPath(follower, TestPath.shootA(follower)),
-                        new TeleOpShootAll(intake, transfer, shooter).with(
-                                new FollowPath(follower, TestPath.shootPath(follower))
-                        ),
+
+                        new AutoShootAll(intake, transfer, shooter),
+
                         new FollowPath(follower, TestPath.intakeB(follower)),
                         new FollowPath(follower, TestPath.intakeCreepB(follower)).setSpeed(0.7).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
                         new FollowPath(follower, TestPath.shootB(follower)),
-                        new TeleOpShootAll(intake, transfer, shooter).with(
-                                new FollowPath(follower, TestPath.shootPath(follower))
-                        ),
+
+                        new AutoShootAll(intake, transfer, shooter),
+
                         new FollowPath(follower, TestPath.intakeC(follower)),
                         new FollowPath(follower, TestPath.intakeCreepC(follower)).setSpeed(0.7).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
                         new FollowPath(follower, TestPath.shootC(follower)),
-                        new TeleOpShootAll(intake, transfer, shooter).with(
-                                new FollowPath(follower, TestPath.shootPath(follower))
-                        )
+
+                        new AutoShootAll(intake, transfer, shooter)
                 )
 
                 .registerSystem(follower)

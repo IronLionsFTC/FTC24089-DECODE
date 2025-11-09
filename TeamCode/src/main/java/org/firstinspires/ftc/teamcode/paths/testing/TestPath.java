@@ -9,47 +9,39 @@ import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 public class TestPath {
 
     public static Pose start = new Pose(0, 0, 0);
-    public static Pose intakeA = new Pose(-5, 51, 0);
-    public static Pose intakeAEnd = new Pose(20, 51, 0);
-    public static Pose hitLever = new Pose(24, 61);
-    public static Pose intakeB = new Pose(-5, 75, 0);
-    public static Pose intakeBEnd = new Pose(22, 75, 0);
-    public static Pose intakeC = new Pose(-5, 99, 0);
-    public static Pose intakeCEnd = new Pose(26, 99, 0);
-    public static Pose shoot = new Pose(-20, 55, Math.toRadians(-45));
-    public static Pose shootEnd = new Pose(-10, 45, Math.toRadians(-45));
+    public static Pose intakeA = new Pose(-5, -51, 0);
+    public static Pose intakeAEnd = new Pose(20, -51, 0);
+    public static Pose hitLever = new Pose(24, -61);
+    public static Pose intakeB = new Pose(-5, -75, 0);
+    public static Pose intakeBEnd = new Pose(22, -75, 0);
+    public static Pose intakeC = new Pose(-5, -99, 0);
+    public static Pose intakeCEnd = new Pose(26, -99, 0);
+    public static Pose shoot = new Pose(5, -28, Math.toRadians(45));
 
     public static PathChain startToShoot(FollowerWrapper follower) {
         return follower.follower.pathBuilder()
                 .addPath(new BezierLine(start, shoot))
-                .setConstantHeadingInterpolation(Math.toRadians(-45))
-                .build();
-    }
-
-    public static PathChain shootPath(FollowerWrapper follower) {
-        return follower.follower.pathBuilder()
-                .addPath(new BezierLine(shoot, shootEnd))
-                .setConstantHeadingInterpolation(Math.toRadians(-45))
+                .setConstantHeadingInterpolation(Math.toRadians(45))
                 .build();
     }
 
     public static PathChain intakeA(FollowerWrapper follower) {
         return follower.follower.pathBuilder()
-                .addPath(new BezierLine(shootEnd, intakeA))
+                .addPath(new BezierLine(shoot, intakeA))
                 .setConstantHeadingInterpolation(0)
                 .build();
     }
 
     public static PathChain intakeB(FollowerWrapper follower) {
         return follower.follower.pathBuilder()
-                .addPath(new BezierLine(shootEnd, intakeB))
+                .addPath(new BezierLine(shoot, intakeB))
                 .setConstantHeadingInterpolation(0)
                 .build();
     }
 
     public static PathChain intakeC(FollowerWrapper follower) {
         return follower.follower.pathBuilder()
-                .addPath(new BezierLine(shootEnd, intakeC))
+                .addPath(new BezierLine(shoot, intakeC))
                 .setConstantHeadingInterpolation(0)
                 .build();
     }

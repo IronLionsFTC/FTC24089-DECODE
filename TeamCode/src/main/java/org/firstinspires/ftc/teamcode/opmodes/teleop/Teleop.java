@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.cache.Ordering;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Run;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.ColourChamber;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
@@ -62,6 +63,10 @@ public class Teleop extends TaskOpMode {
 
         this.controller1.bumpers.right.onPress(
                 new ToggleDrivebaseMode(drivebase)
+        );
+
+        this.controller1.bumpers.left.onPress(
+                new Run(drivebase::init)
         );
 
         return Jobs.create()

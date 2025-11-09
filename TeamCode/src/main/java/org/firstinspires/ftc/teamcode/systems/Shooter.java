@@ -85,7 +85,7 @@ public class Shooter extends SystemBase {
         }
         else if (this.state == State.AutoAimed || this.state == State.AutoAimedFullPower) {
             // Approximate the RPM and hood angle required at distance
-            trpm = distance * 11.3 + 2000;
+            trpm = distance * 11.2 + 1980;
 
             // Hood angle
             angle = distance * 0.004;
