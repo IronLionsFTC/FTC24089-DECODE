@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
 import org.firstinspires.ftc.teamcode.lioncore.math.types.Vector;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
+import org.firstinspires.ftc.teamcode.math.Vector3;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 
 import java.util.function.DoubleSupplier;
@@ -29,9 +30,12 @@ public class Drivebase extends SystemBase {
     private DoubleSupplier driveX;
     private DoubleSupplier driveY;
     private DoubleSupplier yaw;
+    private DoubleSupplier azimuth = () -> 0;
     private GoBildaPinpointDriver pinpoint;
     private PID controller;
 
+    private Vector3 position;
+    private Vector3 velocity;
     private State state;
 
     public Drivebase(DoubleSupplier driveX, DoubleSupplier driveY, DoubleSupplier yaw) {
@@ -40,6 +44,10 @@ public class Drivebase extends SystemBase {
         this.yaw = yaw;
         this.state = State.Manual;
         this.controller = new PID(0.02, 0, 0.002);
+    }
+
+    public void setAzimuthSupplier(DoubleSupplier azimuth) {
+        this.azimuth = azimuth;
     }
 
     public void loadHardware(HardwareMap hardwareMap) {
@@ -69,7 +77,7 @@ public class Drivebase extends SystemBase {
         double currentHeading = pinpoint.getHeading(AngleUnit.DEGREES);
         double currentX = pinpoint.getPosX(DistanceUnit.INCH);
         double currentY = pinpoint.getPosY(DistanceUnit.INCH);
-        double targetHeading = 90 - Math.toDegrees(Math.atan2(-currentX, -currentY));
+        double targetHeading = 90 - this.azimuth.getAsDouble();
 
         if (targetHeading < -180) { targetHeading += 360; }
         if (targetHeading > 180) { targetHeading -= 360; }
@@ -117,4 +125,7 @@ public class Drivebase extends SystemBase {
                 + Math.pow(this.pinpoint.getPosY(DistanceUnit.INCH), 2)
         );
     }
+
+    public Vector3.Vector3Supplier getPosition() { return () -> this.position; }
+    public Vector3.Vector3Supplier getVelocity() { return () -> this.velocity; }
 }

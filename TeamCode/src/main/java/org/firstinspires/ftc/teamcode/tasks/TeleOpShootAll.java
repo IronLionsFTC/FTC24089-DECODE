@@ -30,7 +30,7 @@ public class TeleOpShootAll extends Task {
         this.transfer.setState(Transfer.State.ShootingSlower);
         this.timer.resetTimer();
         this.originalHood = this.shooter.getHoodAngle();
-        this.shooter.setState(Shooter.State.AutoAimedFullPower);
+        this.shooter.setState(Shooter.State.AdvancedTargetting);
     }
 
     @Override

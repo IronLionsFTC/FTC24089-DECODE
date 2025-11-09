@@ -23,7 +23,8 @@ public class Shooter extends SystemBase {
         Compensate,
         AutoAimed,
         AutoAimedFullPower,
-        AdvancedTargetting
+        AdvancedTargetting,
+        AdvancedTargettingCompensation
     }
 
     private LionMotor shooter;
@@ -131,13 +132,10 @@ public class Shooter extends SystemBase {
         if (trpm == 0) response = 0;
 
         if (response < 0) response *= 0.3;
-        if ((this.state == State.Compensate || this.state == State.AutoAimedFullPower) && rpm < trpm - 100){
-            response = 1;
-        }
 
         if (this.state == State.Rest) response = 0;
 
-        if (this.state == State.AdvancedTargetting) {
+        if (this.state == State.AdvancedTargetting || this.state == State.AdvancedTargettingCompensation) {
             BallisticsSolver.Solution possibleSolution = BallisticsSolver.solveIntercept(
                     this.robotPosition.get(),
                     this.target,
@@ -163,8 +161,14 @@ public class Shooter extends SystemBase {
 
             if (angleFound) angle = altitude;
 
+            telemetry.addData("ROBOT POSITION", robotPosition.get());
+            telemetry.addData("ROBOT VELOCITY", robotVelocity.get());
             telemetry.addData("PROJECTED VELOCITY", possibleSolution.bestInitialVelocity.toString());
             telemetry.addData("TARGET ANGLE", altitude);
+        }
+
+        if ((this.state == State.Compensate || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargettingCompensation) && rpm < trpm - 100){
+            response = 1;
         }
 
         this.shooter.setPower(response);

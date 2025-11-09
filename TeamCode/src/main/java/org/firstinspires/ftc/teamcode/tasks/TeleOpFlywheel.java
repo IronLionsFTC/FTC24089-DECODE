@@ -19,7 +19,7 @@ public class TeleOpFlywheel extends Task {
 
     @Override
     public void init() {
-        this.shooter.setState(Shooter.State.AutoAimed);
+        this.shooter.setState(Shooter.State.AdvancedTargettingCompensation);
     }
 
     @Override

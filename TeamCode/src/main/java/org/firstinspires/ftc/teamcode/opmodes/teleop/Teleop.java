@@ -37,7 +37,8 @@ public class Teleop extends TaskOpMode {
                 controller1.rightJoystick::y
         );
 
-        this.shooter = new Shooter(drivebase::getDistance);
+        this.shooter = new Shooter(drivebase.getPosition(), drivebase.getVelocity());
+        this.drivebase.setAzimuthSupplier(() -> this.shooter.yieldAzimuth());
         this.transfer = new Transfer(() -> drivebase.getDistance() > 70);
         this.intake = new Intake(() -> drivebase.getDistance() > 70);
 
