@@ -109,7 +109,7 @@ public class Shooter extends SystemBase {
         }
         else if (this.state == State.AutoAimed || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargetting || this.state == State.AdvancedTargettingCompensation) {
             // Approximate the RPM and hood angle required at distance
-            trpm = distance * 11.2 + 1980;
+            trpm = distance * 12.2 + 1980;
 
             // Hood angle
             angle = distance * 0.004;
@@ -124,6 +124,53 @@ public class Shooter extends SystemBase {
         angle -= absE * 0.0005;
         if (angle < 0) angle = 0;
 
+        //if (this.state == State.AdvancedTargetting || this.state == State.AdvancedTargettingCompensation) {
+
+            Vector3 pos = this.robotPosition.get();
+            Vector3 vel = this.robotVelocity.get();
+
+            Vector3 r = this.target.sub(pos);
+            Vector3 rHat = r.normalize();
+            double velocityToward = vel.dot(rHat);
+            trpm -= velocityToward * 11.8; // Subtract flywheel RPM based on movement toward target
+
+            Vector3 vRadial = r.multiply(vel.dot(r) / r.dot(r));
+            Vector3 vPerp = vel.sub(vRadial);
+            double perpSpeed = vPerp.length();
+            Vector3 axis = new Vector3(0, 0, 1);
+            double sign = Math.signum(r.cross(vel).dot(axis));
+            double signedPerpSpeed = sign * perpSpeed;
+
+            BallisticsSolver.LaunchSolution  possibleSolution = BallisticsSolver.solveLaunch(
+                    pos,
+                    vel,
+                    this.target,
+                    this.rpm * 0.07
+            );
+
+            this.lastAzimuth = possibleSolution.azimuthDeg + signedPerpSpeed * 0.5;
+            double altitude = 0;
+            boolean angleFound = false;
+
+            if (this.flatShot) {
+                if (possibleSolution.lowValid) {
+                    altitude = this.mapElevationToDouble(possibleSolution.lowElevationDeg);
+                    angleFound = true;
+                }
+            } else {
+                if (possibleSolution.highValid) {
+                    altitude = this.mapElevationToDouble(possibleSolution.highElevationDeg);
+                    angleFound = true;
+                }
+            }
+
+            if (angleFound) angle = altitude;
+
+            telemetry.addData("ROBOT POSITION", robotPosition.get());
+            telemetry.addData("ROBOT VELOCITY", robotVelocity.get());
+            telemetry.addData("TARGET ANGLE", altitude);
+        //}
+
         double response = this.velocityController.calculate(
                 this.rpm,
                 trpm
@@ -135,37 +182,6 @@ public class Shooter extends SystemBase {
 
         if (this.state == State.Rest) response = 0;
 
-        if (this.state == State.AdvancedTargetting || this.state == State.AdvancedTargettingCompensation) {
-            BallisticsSolver.Solution possibleSolution = BallisticsSolver.solveIntercept(
-                    this.robotPosition.get(),
-                    this.target,
-                    this.robotVelocity.get(),
-                    this.rpm * 0.07
-            );
-
-            this.lastAzimuth = possibleSolution.azimuthDeg;
-            double altitude = 0;
-            boolean angleFound = false;
-
-            if (this.flatShot) {
-                if (possibleSolution.foundUp) {
-                    altitude = this.mapElevationToDouble(possibleSolution.elevationUpDeg);
-                    angleFound = true;
-                }
-            } else {
-                if (possibleSolution.foundDown) {
-                    altitude = this.mapElevationToDouble(possibleSolution.elevationDownDeg);
-                    angleFound = true;
-                }
-            }
-
-            if (angleFound) angle = altitude;
-
-            telemetry.addData("ROBOT POSITION", robotPosition.get());
-            telemetry.addData("ROBOT VELOCITY", robotVelocity.get());
-            if (possibleSolution.bestInitialVelocity != null) telemetry.addData("PROJECTED VELOCITY", possibleSolution.bestInitialVelocity.toString());
-            telemetry.addData("TARGET ANGLE", altitude);
-        }
 
         if ((this.state == State.Compensate || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargettingCompensation) && rpm < trpm - 100){
             response = 1;

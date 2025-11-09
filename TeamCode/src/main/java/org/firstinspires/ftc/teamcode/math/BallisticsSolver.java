@@ -1,344 +1,265 @@
 package org.firstinspires.ftc.teamcode.math;
 
-// BallisticsSolver.java
+/**
+ * Ballistics solver — closed-form approximation with quadratic-drag correction and
+ * robot-velocity compensation (single-step, non-iterative).
+ *
+ * Usage:
+ *   LaunchSolution sol = BallisticsSolver.solveLaunch(robotPosition, robotVelocity, targetPosition, launchSpeedInInchesPerSec);
+ *
+ * All returned angles are in degrees. Azimuth is the horizontal bearing to aim (0 = +X, 90 = +Y).
+ */
 public class BallisticsSolver {
 
-    // Physical constants (inches, slugs, seconds)
-    private static final double G = 386.0; // in/s^2 downward
-    private static final double RHO = 0.00000237; // slugs/in^3
-    private static final double CD = 0.3; // drag coefficient (hollow ball)
-    private static final double BALL_DIAM_IN = 5.0; // inches
-    private static final double EFFECTIVE_AREA = 0.7 * Math.PI * Math.pow(BALL_DIAM_IN/2.0, 2.0); // in^2
-    private static final double MASS_KG = 0.075; // 75 g
-    private static final double KG_PER_SLUG = 14.5939029372;
-    private static final double MASS_SLUGS = MASS_KG / KG_PER_SLUG;
+    public static class LaunchSolution {
+        public double azimuthDeg;
+        public double lowElevationDeg;
+        public boolean lowValid;
+        public double highElevationDeg;
+        public boolean highValid;
 
-    // Simulation params (tuned for speed)
-    private static final double DT = 0.01; // integration timestep (s)
-    private static final double MAX_SIM_TIME = 10.0; // seconds per shot simulation
-    private static final double ACCEPT_RADIUS = 5.0; // inches — user-specified "good enough"
-    private static final long TIME_BUDGET_MS_DEFAULT = 5; // milliseconds maximum CPU time to spend
-    private static final int AZ_SAMPLES_COARSE = 5;   // few samples to be fast
-    private static final int ELEV_SAMPLES_COARSE = 16;
-    private static final int REFINEMENT_SAMPLES = 7; // small local refinement
-    private static final int MAX_REFINEMENTS = 4;
-
-    // returned solution
-    public static class Solution {
-        public double azimuthDeg;    // CCW from +X
-        public double elevationUpDeg;   // degrees up from horizontal (NaN if none)
-        public double elevationDownDeg; // degrees up from horizontal (NaN if none)
-        public double impactTimeUp = Double.NaN;
-        public double impactTimeDown = Double.NaN;
-        public double chosenImpactTime = Double.NaN;
-        public boolean foundUp = false;
-        public boolean foundDown = false;
-        public boolean timedOut = false;
-        public boolean unreachableByNoDrag = false;
-        public double bestMissInches = Double.POSITIVE_INFINITY;
-        public Vector3 bestInitialVelocity = null; // v0 = sourceVel + launchSpeed * dir for best candidate
+        @Override
         public String toString() {
-            return String.format("az=%.3f, elevUp=%.3f (t=%.3f) elevDown=%.3f (t=%.3f) timedOut=%b unreachableNoDrag=%b bestMiss=%.2f",
-                    azimuthDeg, elevationUpDeg, impactTimeUp, elevationDownDeg, impactTimeDown, timedOut, unreachableByNoDrag, bestMissInches);
+            return String.format("azimuth=%.3f°, low=%.3f° (valid=%b), high=%.3f° (valid=%b)",
+                    azimuthDeg, lowElevationDeg, lowValid, highElevationDeg, highValid);
         }
     }
+
+    // ---- Tunable physical constants (SI units internally) ----
+    private static final double INCH_TO_M = 0.0254;
+    private static final double M_TO_INCH = 1.0 / INCH_TO_M;
+    private static final double G_IN_SI = 9.80665; // m/s^2
+    private static final double G_IN_INCH_S2 = 386.09; // in/s^2 (for reference only)
+
+    // Ball properties (approx for a 5" holed plastic ball)
+    private static final double BALL_DIAMETER_M = 5.0 * INCH_TO_M; // 5 in -> m
+    private static final double BALL_RADIUS_M = BALL_DIAMETER_M / 2.0;
+    private static final double BALL_AREA_M2 = Math.PI * BALL_RADIUS_M * BALL_RADIUS_M;
+    private static final double BALL_MASS_KG = 0.075; // 75 grams
+
+    // Aerodynamic properties (reasonable defaults; tune empirically if needed)
+    private static final double AIR_DENSITY = 1.225; // kg/m^3 at sea level
+    private static final double DRAG_COEFF = 0.8; // approximate for holed plastic ball
+
+    // Derived drag constant: k = 0.5 * rho * Cd * A / m  (units 1 / m)
+    private static final double DRAG_K = 0.5 * AIR_DENSITY * DRAG_COEFF * BALL_AREA_M2 / BALL_MASS_KG;
 
     /**
-     * Fast solver with time budget (5ms default). Returns best solution found within budget.
+     * Solve for azimuth and both elevation angles (low and high) in degrees.
+     *
+     * @param robotPosition inches
+     * @param robotVelocity inches/sec
+     * @param targetPosition inches
+     * @param launchSpeedInchesPerSec inches/sec (magnitude relative to robot)
+     * @return LaunchSolution with azimuthDeg, lowElevationDeg, highElevationDeg and validity flags
      */
-    public static Solution solveIntercept(Vector3 source, Vector3 target, Vector3 sourceVel, double launchSpeed) {
-        return solveIntercept(source, target, sourceVel, launchSpeed, TIME_BUDGET_MS_DEFAULT);
-    }
+    public static LaunchSolution solveLaunch(Vector3 robotPosition,
+                                             Vector3 robotVelocity,
+                                             Vector3 targetPosition,
+                                             double launchSpeedInchesPerSec) {
 
-    public static Solution solveIntercept(Vector3 source, Vector3 target, Vector3 sourceVel, double launchSpeed, long timeBudgetMs) {
-        long startNano = System.nanoTime();
-        long budgetNano = timeBudgetMs * 1_000_000L;
+        LaunchSolution out = new LaunchSolution();
 
-        Solution out = new Solution();
+        // Convert positions and velocities to SI (meters, m/s)
+        double rx = robotPosition.x * INCH_TO_M;
+        double ry = robotPosition.y * INCH_TO_M;
+        double rz = robotPosition.z * INCH_TO_M;
 
-        // trivial checks
-        if (launchSpeed <= 0) {
-            out.timedOut = false;
-            out.unreachableByNoDrag = true;
+        double tx = targetPosition.x * INCH_TO_M;
+        double ty = targetPosition.y * INCH_TO_M;
+        double tz = targetPosition.z * INCH_TO_M;
+
+        double vrx = robotVelocity.x * INCH_TO_M;
+        double vry = robotVelocity.y * INCH_TO_M;
+        double vrz = robotVelocity.z * INCH_TO_M;
+
+        double vLaunch = launchSpeedInchesPerSec * INCH_TO_M; // m/s
+
+        // Vector from robot to target (SI)
+        double dx = tx - rx;
+        double dy = ty - ry;
+        double dz = tz - rz;
+
+        // Horizontal distance (meters) and height difference
+        double dHoriz = Math.hypot(dx, dy); // meters
+        double h = dz; // meters (target z relative to robot z)
+
+        // Azimuth: direction in XY plane to aim (radians)
+        double azimuthRad = Math.atan2(dy, dx);
+        out.azimuthDeg = Math.toDegrees(azimuthRad);
+
+        // ---------- ROBOT VELOCITY COMPENSATION (single-step approximation) ----------
+        // Project robot horizontal velocity onto the direction toward the target (approx)
+        double dirX = (dHoriz > 1e-9) ? (dx / dHoriz) : Math.cos(azimuthRad);
+        double dirY = (dHoriz > 1e-9) ? (dy / dHoriz) : Math.sin(azimuthRad);
+        double robotVelTowardTarget = vrx * dirX + vry * dirY; // m/s
+
+        // Effective scalar launch speed for ballistic calculation (approx)
+        // Subtract robot horizontal velocity component along the aim direction.
+        // (This approximates the world-frame horizontal speed of projectile.)
+        double vEff = vLaunch - robotVelTowardTarget;
+
+        // If the horizontal projection is larger than launch speed, the simple approx fails.
+        // We'll mark solutions invalid if vEff <= 0 later.
+        if (vEff <= 1e-6) {
+            // no physically meaningful solution under this approximation
+            out.lowValid = false;
+            out.highValid = false;
+            out.lowElevationDeg = 0.0;
+            out.highElevationDeg = 0.0;
             return out;
         }
 
-        Vector3 delta = target.sub(source);
-        double horizDist = Math.hypot(delta.x, delta.y);
-        double nominalAz = Math.atan2(delta.y, delta.x);
-        out.azimuthDeg = Math.toDegrees(nominalAz);
+        // ---------- FIRST: compute vacuum (no-drag) elevation solutions using vEff ----------
+        // Standard formula (for hitting target at horizontal distance d and vertical delta h):
+        // tan(theta) = (v^2 +/- sqrt(v^4 - g (g d^2 + 2 h v^2))) / (g d)
+        //
+        // Use g in SI.
+        double v = vEff;
+        double g = G_IN_SI;
 
-        // quick no-drag feasibility: standard ballistic discriminant test (conservative)
-        // if no-drag cannot reach, with drag it won't either -> fast exit
-        {
-            double v = launchSpeed;
-            double z = delta.z;
-            double g = G;
-            // using formula: v^4 - g*(g*R^2 + 2*z*v^2) >= 0 for real elevation angles
-            double disc = v*v*v*v - g * (g*horizDist*horizDist + 2.0*z*v*v);
-            if (disc < 0) {
-                out.unreachableByNoDrag = true;
-                out.timedOut = false;
-                return out; // quick early-out
+        // If horizontal distance is essentially zero, handle vertical shot specially:
+        if (dHoriz < 1e-6) {
+            // Aim straight up or down depending on target height and robot's vertical velocity.
+            // We still attempt an approximate solution:
+            // Use vertical kinematics: z(t) = (v*sinθ + vrz) t - 0.5 g t^2 = h
+            // For purely vertical, set sinθ = ±1; pick the one that gives a root.
+            // For simplicity, if target is above, choose 90deg; if below, choose -90deg (invalid).
+            if (h > 0) {
+                out.lowElevationDeg = 90.0;
+                out.highElevationDeg = 90.0;
+                out.lowValid = true;
+                out.highValid = true;
+            } else {
+                // can't hit below with vertical only
+                out.lowValid = false;
+                out.highValid = false;
             }
-        }
-
-        // Adaptive azimuth window to compensate for moving launcher
-        double tGuess = Math.max(0.01, horizDist / Math.max(0.01, launchSpeed));
-        double leadX = delta.x - sourceVel.x * tGuess;
-        double leadY = delta.y - sourceVel.y * tGuess;
-        double leadAz = Math.atan2(leadY, leadX);
-        double azShiftDeg = Math.toDegrees(Math.abs(leadAz - nominalAz));
-        double azWindowDeg = Math.max(8.0, azShiftDeg + 8.0); // at least ±8°, expanded if sourceVel large
-        double azStart = nominalAz - Math.toRadians(azWindowDeg);
-        double azEnd   = nominalAz + Math.toRadians(azWindowDeg);
-
-        // sampling strategy: coarse az × coarse elev, keep best candidate (min miss distance),
-        // accept immediately if within ACCEPT_RADIUS.
-        Candidate bestUp = null;
-        Candidate bestDown = null;
-        Candidate bestOverall = null;
-
-        // coarse samples
-        for (int ia = 0; ia < AZ_SAMPLES_COARSE; ia++) {
-            // time budget check
-            if (System.nanoTime() - startNano > budgetNano) { out.timedOut = true; break; }
-
-            double at = (AZ_SAMPLES_COARSE == 1) ? 0.5 : (double)ia / (AZ_SAMPLES_COARSE - 1);
-            double az = azStart + at * (azEnd - azStart);
-
-            // elevation sampling range: from -10 to +80 degrees (radians)
-            double elevMin = Math.toRadians(-10.0);
-            double elevMax = Math.toRadians(80.0);
-
-            for (int ie = 0; ie < ELEV_SAMPLES_COARSE; ie++) {
-                if (System.nanoTime() - startNano > budgetNano) { out.timedOut = true; break; }
-
-                double ut = (ELEV_SAMPLES_COARSE == 1) ? 0.5 : (double)ie / (ELEV_SAMPLES_COARSE - 1);
-                double elev = elevMin + ut * (elevMax - elevMin);
-                Candidate c = simulateShotLimited(source, target, sourceVel, launchSpeed, az, elev, startNano, budgetNano);
-                // update bestOverall and categorize
-                if (c != null) {
-                    // immediate accept if within ACCEPT_RADIUS
-                    if (c.hitDistance <= ACCEPT_RADIUS) {
-                        // accept immediately, fill outputs and return
-                        populateSolutionFromCandidate(out, c);
-                        out.timedOut = false;
-                        return out;
-                    }
-                    // otherwise track bests by sign of vz
-                    if (bestOverall == null || c.hitDistance < bestOverall.hitDistance) bestOverall = c;
-                    if (c.vzAtImpact > 0) {
-                        if (bestUp == null || c.hitDistance < bestUp.hitDistance) bestUp = c;
-                    } else {
-                        if (bestDown == null || c.hitDistance < bestDown.hitDistance) bestDown = c;
-                    }
-                }
-            } // elev samples
-            if (out.timedOut) break;
-        } // az samples
-
-        // If timed out during coarse sampling, return best we have (if any)
-        if (out.timedOut) {
-            fillFromBestIfAny(out, bestOverall, bestUp, bestDown, startNano, budgetNano);
             return out;
         }
 
-        // Refinement: around best overall candidate(s) do a few local refinements while respecting time budget
-        Candidate[] seeds = { bestUp, bestDown, bestOverall };
-        for (Candidate seed : seeds) {
-            if (seed == null) continue;
-            Candidate localBest = localRefineAround(seed, source, target, sourceVel, launchSpeed, startNano, budgetNano);
-            if (localBest != null) {
-                if (localBest.hitDistance <= ACCEPT_RADIUS) {
-                    populateSolutionFromCandidate(out, localBest);
-                    out.timedOut = false;
-                    return out;
-                }
-                // update best trackers
-                if (bestOverall == null || localBest.hitDistance < bestOverall.hitDistance) bestOverall = localBest;
-                if (localBest.vzAtImpact > 0) {
-                    if (bestUp == null || localBest.hitDistance < bestUp.hitDistance) bestUp = localBest;
-                } else {
-                    if (bestDown == null || localBest.hitDistance < bestDown.hitDistance) bestDown = localBest;
-                }
-            }
-            if (System.nanoTime() - startNano > budgetNano) { out.timedOut = true; break; }
+        // Discriminant for vacuum quadratic
+        double v4 = v * v * v * v;
+        double disc = v4 - g * (g * dHoriz * dHoriz + 2.0 * h * v * v);
+
+        if (disc < 0) {
+            // No solution even ignoring drag
+            out.lowValid = false;
+            out.highValid = false;
+            out.lowElevationDeg = 0.0;
+            out.highElevationDeg = 0.0;
+            return out;
         }
 
-        // done sampling / refining or timed out. Fill solution from best candidate(s) we saw.
-        fillFromBestIfAny(out, bestOverall, bestUp, bestDown, startNano, budgetNano);
+        double sqrtDisc = Math.sqrt(disc);
+
+        // Two candidate tan(theta) values
+        double tanThetaLow = (v * v - sqrtDisc) / (g * dHoriz);
+        double tanThetaHigh = (v * v + sqrtDisc) / (g * dHoriz);
+
+        // Convert to angles (radians)
+        double thetaLowRad_vac = Math.atan(tanThetaLow);
+        double thetaHighRad_vac = Math.atan(tanThetaHigh);
+
+        // ---------- Estimate time of flight for each (accounting for robot vertical velocity) ----------
+        // World-frame initial vertical speed = robot vertical velocity + v * sin(theta)
+        double v0zLow = vrz + v * Math.sin(thetaLowRad_vac);
+        double v0zHigh = vrz + v * Math.sin(thetaHighRad_vac);
+
+        // Solve 0.5 g t^2 - v0z t + h = 0  -> positive root is time of flight
+        double tLow = solvePositiveQuadraticTime(0.5 * g, -v0zLow, h);
+        double tHigh = solvePositiveQuadraticTime(0.5 * g, -v0zHigh, h);
+
+        // If no positive time, mark invalid (vacuum)
+        boolean vacLowValid = (tLow > 0 && !Double.isNaN(tLow));
+        boolean vacHighValid = (tHigh > 0 && !Double.isNaN(tHigh));
+
+        // ---------- DRAG CORRECTION (single-step) ----------
+        // Use dimensionless factor f = 1 / (1 + k * v * t)  (derived from 1D quadratic-drag horizontal approx)
+        // where DRAG_K has units 1/m, v in m/s, t in s -> k*v*t dimensionless
+        // deff = dHoriz * f
+        double fLow = 1.0, fHigh = 1.0;
+        if (vacLowValid) {
+            double kvt = DRAG_K * v * tLow; // dimensionless
+            fLow = 1.0 / (1.0 + kvt);
+        }
+        if (vacHighValid) {
+            double kvt = DRAG_K * v * tHigh;
+            fHigh = 1.0 / (1.0 + kvt);
+        }
+
+        double dEffLow = dHoriz * fLow;
+        double dEffHigh = dHoriz * fHigh;
+
+        // ---------- Recompute angles using drag-corrected horizontal range (single pass) ----------
+        // Recompute discriminants with dEffLow/dEffHigh
+        double discLow = v * v * v * v - g * (g * dEffLow * dEffLow + 2.0 * h * v * v);
+        double discHigh = v * v * v * v - g * (g * dEffHigh * dEffHigh + 2.0 * h * v * v);
+
+        boolean finalLowValid = discLow >= 0.0;
+        boolean finalHighValid = discHigh >= 0.0;
+
+        double thetaLowRad = 0.0;
+        double thetaHighRad = 0.0;
+
+        if (finalLowValid) {
+            double sd = Math.sqrt(Math.max(0.0, discLow));
+            double tanTheta = (v * v - sd) / (g * dEffLow);
+            thetaLowRad = Math.atan(tanTheta);
+        }
+
+        if (finalHighValid) {
+            double sd = Math.sqrt(Math.max(0.0, discHigh));
+            double tanTheta = (v * v + sd) / (g * dEffHigh);
+            thetaHighRad = Math.atan(tanTheta);
+        }
+
+        // Final validity: also ensure v_eff>0 and times are positive when using world vertical speed
+        boolean lowValid = finalLowValid;
+        boolean highValid = finalHighValid;
+
+        if (lowValid) {
+            double v0z = vrz + v * Math.sin(thetaLowRad);
+            double t = solvePositiveQuadraticTime(0.5 * g, -v0z, h);
+            if (!(t > 0)) lowValid = false;
+        }
+        if (highValid) {
+            double v0z = vrz + v * Math.sin(thetaHighRad);
+            double t = solvePositiveQuadraticTime(0.5 * g, -v0z, h);
+            if (!(t > 0)) highValid = false;
+        }
+
+        // Convert to degrees for output. Azimuth already set above.
+        out.lowElevationDeg = Math.toDegrees(thetaLowRad);
+        out.highElevationDeg = Math.toDegrees(thetaHighRad);
+        out.lowValid = lowValid;
+        out.highValid = highValid;
+
         return out;
     }
 
-    // helper: populate Solution fields from candidate
-    private static void populateSolutionFromCandidate(Solution out, Candidate c) {
-        out.azimuthDeg = Math.toDegrees(c.azimuth);
-        if (c.vzAtImpact > 0) {
-            out.elevationUpDeg = Math.toDegrees(c.elevation);
-            out.impactTimeUp = c.timeToImpact;
-            out.foundUp = true;
-        } else {
-            out.elevationDownDeg = Math.toDegrees(c.elevation);
-            out.impactTimeDown = c.timeToImpact;
-            out.foundDown = true;
+    /**
+     * Solve quadratic a t^2 + b t + c = 0 and return the positive root (if any).
+     * Returns -1 if no positive root exists.
+     */
+    private static double solvePositiveQuadraticTime(double a, double b, double c) {
+        // a t^2 + b t + c = 0
+        // a should normally be > 0 (0.5*g)
+        if (Math.abs(a) < 1e-12) {
+            // linear case: b t + c = 0 -> t = -c/b
+            if (Math.abs(b) < 1e-12) return -1.0;
+            double t = -c / b;
+            return (t > 0) ? t : -1.0;
         }
-        out.bestMissInches = c.hitDistance;
-        out.bestInitialVelocity = c.initialVelocity;
-        out.chosenImpactTime = c.timeToImpact;
-    }
-
-    private static void fillFromBestIfAny(Solution out, Candidate overall, Candidate up, Candidate down, long startNano, long budgetNano) {
-        out.timedOut = (System.nanoTime() - startNano > budgetNano);
-        Candidate chosen = null;
-        // prefer any candidate within twice ACCEPT_RADIUS; else pick smallest miss
-        if (up != null && up.hitDistance <= 2*ACCEPT_RADIUS) chosen = up;
-        if (down != null && down.hitDistance <= 2*ACCEPT_RADIUS) {
-            if (chosen == null || down.hitDistance < chosen.hitDistance) chosen = down;
-        }
-        if (chosen == null) chosen = overall;
-
-        if (chosen != null) {
-            populateSolutionFromCandidate(out, chosen);
-            if (chosen.vzAtImpact > 0) out.foundUp = true;
-            else out.foundDown = true;
-        } else {
-            // nothing found -> leave NaNs and report bestMissInches = +inf
-        }
-    }
-
-    // local refinement around a seed candidate: small window refinement with time checks
-    private static Candidate localRefineAround(Candidate seed, Vector3 src, Vector3 tgt, Vector3 srcVel, double launchSpeed, long startNano, long budgetNano) {
-        if (seed == null) return null;
-        Candidate best = seed;
-        double az = seed.azimuth;
-        double elevCenter = seed.elevation;
-        double elevRange = Math.toRadians(6.0); // +/- 6 deg
-        for (int r = 0; r < MAX_REFINEMENTS; r++) {
-            if (System.nanoTime() - startNano > budgetNano) break;
-            double low = elevCenter - elevRange;
-            double high = elevCenter + elevRange;
-            Candidate localBest = null;
-            for (int i = 0; i < REFINEMENT_SAMPLES; i++) {
-                if (System.nanoTime() - startNano > budgetNano) break;
-                double t = (REFINEMENT_SAMPLES==1) ? 0.5 : (double)i / (REFINEMENT_SAMPLES - 1);
-                double elev = low + t*(high - low);
-                Candidate c = simulateShotLimited(src, tgt, srcVel, launchSpeed, az, elev, startNano, budgetNano);
-                if (c == null) continue;
-                if (localBest == null || c.hitDistance < localBest.hitDistance) localBest = c;
-                if (c.hitDistance <= ACCEPT_RADIUS) return c;
-            }
-            if (localBest == null) break;
-            best = localBest;
-            elevCenter = best.elevation;
-            elevRange *= 0.5; // narrow window
-        }
-        return best;
-    }
-
-    // Candidate struct (internal)
-    private static class Candidate {
-        double azimuth;
-        double elevation;
-        double timeToImpact;
-        double hitDistance; // inches; 0 = perfect hit
-        double vzAtImpact;
-        Vector3 initialVelocity;
-    }
-
-    // Simulate one shot but abort early if time budget is exceeded (using nano times passed in)
-    // Returns Candidate (even if hitDistance > ACCEPT_RADIUS) or null if nothing or timed out
-    private static Candidate simulateShotLimited(Vector3 source, Vector3 target, Vector3 sourceVel, double launchSpeed,
-                                                 double az, double elev, long startNano, long budgetNano) {
-        // direction
-        double cosE = Math.cos(elev);
-        Vector3 dir = new Vector3(cosE*Math.cos(az), cosE*Math.sin(az), Math.sin(elev));
-        Vector3 v0 = sourceVel.add(dir.scale(launchSpeed));
-        Vector3 pos = new Vector3(source.x, source.y, source.z);
-        double vx = v0.x, vy = v0.y, vz = v0.z;
-        double t = 0.0;
-
-        Candidate bestSeen = null;
-        double prevX = pos.x, prevY = pos.y, prevZ = pos.z;
-        double prevVx = vx, prevVy = vy, prevVz = vz;
-
-        while (t < MAX_SIM_TIME) {
-            // time budget check
-            if (System.nanoTime() - startNano > budgetNano) {
-                // return bestSeen if we have one, else null to indicate no progress
-                return bestSeen;
-            }
-
-            // compute drag acceleration
-            double vmag = Math.sqrt(vx*vx + vy*vy + vz*vz);
-            double ax, ay, azc;
-            if (vmag > 1e-8) {
-                double Fd = 0.5 * CD * RHO * EFFECTIVE_AREA * vmag * vmag;
-                double aDragMag = Fd / MASS_SLUGS; // in/s^2
-                ax = -aDragMag * (vx / vmag);
-                ay = -aDragMag * (vy / vmag);
-                azc = -aDragMag * (vz / vmag) - G;
-            } else {
-                ax = 0; ay = 0; azc = -G;
-            }
-
-            // semi-implicit Euler
-            vx += ax * DT;
-            vy += ay * DT;
-            vz += azc * DT;
-            pos.x += vx * DT;
-            pos.y += vy * DT;
-            pos.z += vz * DT;
-            t += DT;
-
-            // distance to target
-            double dx = pos.x - target.x;
-            double dy = pos.y - target.y;
-            double dz = pos.z - target.z;
-            double dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-
-            // track best seen candidate (min distance)
-            if (bestSeen == null || dist < bestSeen.hitDistance) {
-                bestSeen = new Candidate();
-                bestSeen.azimuth = az;
-                bestSeen.elevation = elev;
-                bestSeen.timeToImpact = t;
-                bestSeen.hitDistance = dist;
-                bestSeen.vzAtImpact = vz;
-                bestSeen.initialVelocity = new Vector3(v0.x, v0.y, v0.z);
-            }
-
-            // quick accept if within ACCEPT_RADIUS
-            if (dist <= ACCEPT_RADIUS) {
-                return bestSeen;
-            }
-
-            // interpolation across target.z plane to catch fast passes
-            if ((prevZ - target.z) * (pos.z - target.z) <= 0.0) { // sign change or touch
-                double denom = (pos.z - prevZ);
-                double alpha = Math.abs(denom) > 1e-9 ? (target.z - prevZ) / denom : 0.5;
-                double ix = prevX + alpha*(pos.x - prevX);
-                double iy = prevY + alpha*(pos.y - prevY);
-                double horiz = Math.hypot(ix - target.x, iy - target.y);
-                double combinedDist = Math.sqrt(horiz*horiz + 0.0); // dz is zero (we matched z)
-                if (combinedDist <= ACCEPT_RADIUS) {
-                    // accept interpolated hit
-                    bestSeen.timeToImpact = t - DT + alpha*DT;
-                    bestSeen.vzAtImpact = prevVz + alpha*(vz - prevVz);
-                    bestSeen.hitDistance = combinedDist;
-                    return bestSeen;
-                }
-            }
-
-            // bounds: stop if very low or extremely far away
-            if (pos.z < -100.0) break;
-            if (Math.abs(pos.x - source.x) > 2000 || Math.abs(pos.y - source.y) > 2000) break;
-
-            prevX = pos.x; prevY = pos.y; prevZ = pos.z;
-            prevVx = vx; prevVy = vy; prevVz = vz;
-        } // while
-
-        // return the best seen (may be far) or null if nothing
-        return bestSeen;
+        double disc = b * b - 4.0 * a * c;
+        if (disc < 0.0) return -1.0;
+        double sqrtD = Math.sqrt(disc);
+        double t1 = (-b + sqrtD) / (2.0 * a);
+        double t2 = (-b - sqrtD) / (2.0 * a);
+        double t = -1.0;
+        if (t1 > 0 && t2 > 0) t = Math.min(t1, t2);
+        else if (t1 > 0) t = t1;
+        else if (t2 > 0) t = t2;
+        return t;
     }
 }

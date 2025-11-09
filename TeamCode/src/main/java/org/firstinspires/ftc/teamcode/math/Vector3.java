@@ -20,4 +20,15 @@ public class Vector3 {
     public interface Vector3Supplier {
         Vector3 get();
     }
+    public Vector3 multiply(double scalar) {
+        return new Vector3(this.x * scalar, this.y * scalar, this.z * scalar);
+    }
+
+    public Vector3 cross(Vector3 other) {
+        return new Vector3(
+                this.y * other.z - this.z * other.y,
+                this.z * other.x - this.x * other.z,
+                this.x * other.y - this.y * other.x
+        );
+    }
 }

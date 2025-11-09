@@ -77,7 +77,11 @@ public class Drivebase extends SystemBase {
         double currentHeading = pinpoint.getHeading(AngleUnit.DEGREES);
         double currentX = pinpoint.getPosX(DistanceUnit.INCH);
         double currentY = pinpoint.getPosY(DistanceUnit.INCH);
-        double targetHeading = 90 - this.azimuth.getAsDouble();
+
+        this.position = new Vector3(currentX, currentY, 5);
+        this.velocity = new Vector3(pinpoint.getVelX(DistanceUnit.INCH), pinpoint.getVelY(DistanceUnit.INCH), 0);
+
+        double targetHeading = this.azimuth.getAsDouble();
 
         if (targetHeading < -180) { targetHeading += 360; }
         if (targetHeading > 180) { targetHeading -= 360; }
@@ -126,6 +130,6 @@ public class Drivebase extends SystemBase {
         );
     }
 
-    public Vector3.Vector3Supplier getPosition() { return () -> this.position; }
-    public Vector3.Vector3Supplier getVelocity() { return () -> this.velocity; }
+    public Vector3 getPosition() { return this.position; }
+    public Vector3 getVelocity() { return this.velocity; }
 }
