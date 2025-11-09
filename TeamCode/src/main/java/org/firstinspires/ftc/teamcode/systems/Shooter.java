@@ -134,21 +134,21 @@ public class Shooter extends SystemBase {
             double velocityToward = vel.dot(rHat);
             trpm -= velocityToward * 11.8; // Subtract flywheel RPM based on movement toward target
 
-            Vector3 vRadial = r.multiply(vel.dot(r) / r.dot(r));
-            Vector3 vPerp = vel.sub(vRadial);
-            double perpSpeed = vPerp.length();
-            Vector3 axis = new Vector3(0, 0, 1);
-            double sign = Math.signum(r.cross(vel).dot(axis));
-            double signedPerpSpeed = sign * perpSpeed;
+            Vector3 toTarget = target.sub(pos);
+            Vector3 dir = toTarget.normalize();
 
-            BallisticsSolver.LaunchSolution  possibleSolution = BallisticsSolver.solveLaunch(
+            Vector3 velXY = new Vector3(vel.x, vel.y, 0);
+            Vector3 adjustedDir = dir.sub(velXY.scale(1.0 / 100)).normalize();
+            double adjustedAzimuth = Math.atan2(adjustedDir.y, adjustedDir.x);
+
+            BallisticsSolver.LaunchSolution possibleSolution = BallisticsSolver.solveLaunch(
                     pos,
                     vel,
                     this.target,
                     this.rpm * 0.07
             );
 
-            this.lastAzimuth = possibleSolution.azimuthDeg + signedPerpSpeed * 0.5;
+            this.lastAzimuth = adjustedAzimuth;
             double altitude = 0;
             boolean angleFound = false;
 
