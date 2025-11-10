@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.math.Vector3;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
 import org.firstinspires.ftc.teamcode.parameters.Software;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
 public class Shooter extends SystemBase {
@@ -45,13 +47,14 @@ public class Shooter extends SystemBase {
     private PID velocityController;
     private double rpm;
 
+    List<Double> rpmBuf = new ArrayList<>();
+
     public Shooter(DoubleSupplier distanceOmeter) {
         this.state = State.Rest;
         this.targetRPM = 3000;
         this.rpm = 0;
         this.nomalisedHoodAngle = 0;
         this.distanceOmeter = distanceOmeter;
-
         this.target = new Vector3(0, 0, 40);
     }
 
@@ -98,6 +101,7 @@ public class Shooter extends SystemBase {
         );
 
         this.rpm = this.shooter.getVelocity(28.0);
+        this.rpmBuf.add(this.rpm);
 
         double angle;
         double trpm;
@@ -109,7 +113,7 @@ public class Shooter extends SystemBase {
         }
         else if (this.state == State.AutoAimed || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargetting || this.state == State.AdvancedTargettingCompensation) {
             // Approximate the RPM and hood angle required at distance
-            trpm = distance * 12.2 + 1980;
+            trpm = distance * 11 + 1980;
 
             // Hood angle
             angle = distance * 0.004;
@@ -132,7 +136,7 @@ public class Shooter extends SystemBase {
             Vector3 r = this.target.sub(pos);
             Vector3 rHat = r.normalize();
             double velocityToward = vel.dot(rHat);
-            trpm -= velocityToward * 11.8; // Subtract flywheel RPM based on movement toward target
+            trpm -= velocityToward * 19.8; // Subtract flywheel RPM based on movement toward target
 
             Vector3 toTarget = target.sub(pos);
             Vector3 dir = toTarget.normalize();
@@ -141,6 +145,13 @@ public class Shooter extends SystemBase {
             Vector3 adjustedDir = dir.sub(velXY.scale(1.0 / 100)).normalize();
             double adjustedAzimuth = Math.atan2(adjustedDir.y, adjustedDir.x);
 
+            double rpmAvg = 0;
+            for (double v : this.rpmBuf) {
+                rpmAvg += v;
+            }
+            if (!this.rpmBuf.isEmpty()) rpmAvg /= this.rpmBuf.size();
+            if (this.rpmBuf.size() > 5) this.rpmBuf.remove(0);
+
             BallisticsSolver.LaunchSolution possibleSolution = BallisticsSolver.solveLaunch(
                     pos,
                     vel,
@@ -148,7 +159,7 @@ public class Shooter extends SystemBase {
                     this.rpm * 0.07
             );
 
-            this.lastAzimuth = adjustedAzimuth;
+            this.lastAzimuth = possibleSolution.azimuthDeg;
             double altitude = 0;
             boolean angleFound = false;
 
@@ -183,7 +194,7 @@ public class Shooter extends SystemBase {
         if (this.state == State.Rest) response = 0;
 
 
-        if ((this.state == State.Compensate || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargettingCompensation) && rpm < trpm - 100){
+        if ((this.state == State.Compensate || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargettingCompensation) && rpm < trpm - 70){
             response = 1;
         }
 
@@ -239,8 +250,8 @@ public class Shooter extends SystemBase {
     public boolean getFlatShot() { return this.flatShot;}
 
     private double mapElevationToDouble(double elevationDeg) {
-        double angleMin = 45.0;
-        double angleMax = 70.0;
+        double angleMin = 35.0;
+        double angleMax = 60.0;
         return (angleMax - elevationDeg) / (angleMax - angleMin);
     }
 

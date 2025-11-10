@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 
 public class TestPath {
 
-    public static Pose start = new Pose(0, 0, 0);
+    public static Pose start = new Pose(14, -14, Math.toRadians(45));
     public static Pose intakeA = new Pose(-5, -51, 0);
     public static Pose intakeAEnd = new Pose(20, -51, 0);
     public static Pose hitLever = new Pose(24, -61);
