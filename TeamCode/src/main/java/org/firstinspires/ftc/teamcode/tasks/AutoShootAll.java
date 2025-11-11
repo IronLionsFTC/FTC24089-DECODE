@@ -30,7 +30,7 @@ public class AutoShootAll extends Task {
         this.transfer.setState(Transfer.State.ShootingSlower);
         this.timer.resetTimer();
         this.originalHood = this.shooter.getHoodAngle();
-        this.shooter.setState(Shooter.State.AutoAimedFullPower);
+        this.shooter.setState(Shooter.State.AdvancedTargetting);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class AutoShootAll extends Task {
     public void end(boolean _) {
         this.intake.setState(Intake.State.Zero);
         this.transfer.setState(Transfer.State.Rest);
-        this.shooter.setState(Shooter.State.AutoAimed);
+        this.shooter.setState(Shooter.State.AdvancedTargetting);
         this.shooter.setHoodAngle(this.originalHood);
     }
 

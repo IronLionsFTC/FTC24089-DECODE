@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.tasks.FollowPath;
 import org.firstinspires.ftc.teamcode.tasks.IntakeForTime;
 import org.firstinspires.ftc.teamcode.tasks.IntakeUntilFull;
 import org.firstinspires.ftc.teamcode.tasks.RevFlywheel;
+import org.firstinspires.ftc.teamcode.tasks.TeleOpFlywheel;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpShootAll;
 
 @TeleOp
@@ -36,17 +37,18 @@ public class CloseZone extends TaskOpMode {
         this.transfer = new Transfer();
         this.shooter = new Shooter(() -> follower.follower.getPose().distanceFrom(new Pose(0, 0, 0)));
         this.follower = new FollowerWrapper(hardwareMap);
+        this.follower.follower.setStartingPose(new Pose(14, -14, Math.toRadians(45)));
 
         return Jobs.create()
                 .addSeries(
-                        new RevFlywheel(shooter, 2000, 0.1).with(
+                        new TeleOpFlywheel(intake, transfer, shooter).with(
                                 new FollowPath(follower, TestPath.startToShoot(follower))
                         ),
 
                         new AutoShootAll(intake, transfer, shooter),
 
                         new FollowPath(follower, TestPath.intakeA(follower)),
-                        new FollowPath(follower, TestPath.intakeCreepA(follower)).setSpeed(0.7).with(
+                        new FollowPath(follower, TestPath.intakeCreepA(follower)).setSpeed(1).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
                         new FollowPath(follower, TestPath.hitLeverFromA(follower)),
@@ -55,7 +57,7 @@ public class CloseZone extends TaskOpMode {
                         new AutoShootAll(intake, transfer, shooter),
 
                         new FollowPath(follower, TestPath.intakeB(follower)),
-                        new FollowPath(follower, TestPath.intakeCreepB(follower)).setSpeed(0.7).with(
+                        new FollowPath(follower, TestPath.intakeCreepB(follower)).setSpeed(1).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
                         new FollowPath(follower, TestPath.shootB(follower)),
@@ -63,11 +65,18 @@ public class CloseZone extends TaskOpMode {
                         new AutoShootAll(intake, transfer, shooter),
 
                         new FollowPath(follower, TestPath.intakeC(follower)),
-                        new FollowPath(follower, TestPath.intakeCreepC(follower)).setSpeed(0.7).with(
+                        new FollowPath(follower, TestPath.intakeCreepC(follower)).setSpeed(1).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
                         new FollowPath(follower, TestPath.shootC(follower)),
+                        new AutoShootAll(intake, transfer, shooter),
+                        new FollowPath(follower, TestPath.intakeD(follower)),
 
+                        new FollowPath(follower, TestPath.intakeCreepD(follower)).with(
+                                new IntakeForTime(intake, transfer, 2)
+                        ),
+
+                        new FollowPath(follower, TestPath.shootD(follower)),
                         new AutoShootAll(intake, transfer, shooter)
                 )
 

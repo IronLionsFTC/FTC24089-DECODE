@@ -44,7 +44,7 @@ public class TeleOpShootAll extends Task {
     public void end(boolean _) {
         this.intake.setState(Intake.State.Zero);
         this.transfer.setState(Transfer.State.Rest);
-        this.shooter.setState(Shooter.State.AutoAimed);
+        this.shooter.setState(Shooter.State.AdvancedTargetting);
         this.shooter.setHoodAngle(this.originalHood);
     }
 
