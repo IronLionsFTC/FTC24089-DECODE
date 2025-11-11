@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.tasks.IntakeUntilFull;
 import org.firstinspires.ftc.teamcode.tasks.RevFlywheel;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpFlywheel;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpShootAll;
+import org.firstinspires.ftc.teamcode.tasks.TurnToDegrees;
 
 @TeleOp
 public class CloseZone extends TaskOpMode {
@@ -54,6 +55,7 @@ public class CloseZone extends TaskOpMode {
                         new FollowPath(follower, TestPath.hitLeverFromA(follower)),
                         new FollowPath(follower, TestPath.shootA(follower)),
 
+                        new TurnToDegrees(follower, shooter::yieldAzimuth),
                         new AutoShootAll(intake, transfer, shooter),
 
                         new FollowPath(follower, TestPath.intakeB(follower)),
@@ -62,6 +64,7 @@ public class CloseZone extends TaskOpMode {
                         ),
                         new FollowPath(follower, TestPath.shootB(follower)),
 
+                        new TurnToDegrees(follower, shooter::yieldAzimuth),
                         new AutoShootAll(intake, transfer, shooter),
 
                         new FollowPath(follower, TestPath.intakeC(follower)),
@@ -69,7 +72,10 @@ public class CloseZone extends TaskOpMode {
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
                         new FollowPath(follower, TestPath.shootC(follower)),
+
+                        new TurnToDegrees(follower, shooter::yieldAzimuth),
                         new AutoShootAll(intake, transfer, shooter),
+
                         new FollowPath(follower, TestPath.intakeD(follower)),
 
                         new FollowPath(follower, TestPath.intakeCreepD(follower)).with(
@@ -77,6 +83,8 @@ public class CloseZone extends TaskOpMode {
                         ),
 
                         new FollowPath(follower, TestPath.shootD(follower)),
+
+                        new TurnToDegrees(follower, shooter::yieldAzimuth),
                         new AutoShootAll(intake, transfer, shooter)
                 )
 
