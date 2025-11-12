@@ -7,7 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.cache.Ordering;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Sleep;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.WaitUntil;
+import org.firstinspires.ftc.teamcode.math.Vector3;
 import org.firstinspires.ftc.teamcode.paths.testing.TestPath;
 import org.firstinspires.ftc.teamcode.systems.ColourChamber;
 import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
@@ -36,15 +39,17 @@ public class CloseZone extends TaskOpMode {
 
         this.intake = new Intake();
         this.transfer = new Transfer();
-        this.shooter = new Shooter(() -> follower.follower.getPose().distanceFrom(new Pose(0, 0, 0)));
         this.follower = new FollowerWrapper(hardwareMap);
         this.follower.follower.setStartingPose(new Pose(14, -14, Math.toRadians(45)));
+        this.shooter = new Shooter(follower::position, follower::velocity, new Vector3(12, -10, 40));
 
         return Jobs.create()
                 .addSeries(
                         new TeleOpFlywheel(intake, transfer, shooter).with(
                                 new FollowPath(follower, TestPath.startToShoot(follower))
                         ),
+
+                        new Sleep(3),
 
                         new AutoShootAll(intake, transfer, shooter),
 

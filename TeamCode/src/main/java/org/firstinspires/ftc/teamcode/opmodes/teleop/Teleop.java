@@ -46,7 +46,7 @@ public class Teleop extends TaskOpMode {
                 new ToggleIntake(intake, transfer)
         );
 
-        this.controller1.A.onPressToggle(
+        this.controller1.A.onPress(
                 new TeleOpFlywheel(intake, transfer, shooter)
         );
 

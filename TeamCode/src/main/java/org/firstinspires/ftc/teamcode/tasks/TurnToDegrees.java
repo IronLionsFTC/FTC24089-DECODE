@@ -26,6 +26,6 @@ public class TurnToDegrees extends Task {
 
     @Override
     public boolean finished() {
-        return !this.follower.follower.isBusy();
+        return !this.follower.follower.isTurning();
     }
 }

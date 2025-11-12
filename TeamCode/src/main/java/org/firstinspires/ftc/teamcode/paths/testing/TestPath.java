@@ -47,14 +47,14 @@ public class TestPath {
     public static PathChain intakeB(FollowerWrapper follower) {
         return follower.follower.pathBuilder()
                 .addPath(new BezierLine(shootA, intakeB))
-                .setTangentHeadingInterpolation()
+                .setConstantHeadingInterpolation(0)
                 .build();
     }
 
     public static PathChain intakeC(FollowerWrapper follower) {
         return follower.follower.pathBuilder()
                 .addPath(new BezierLine(shootA, intakeC))
-                .setTangentHeadingInterpolation()
+                .setConstantHeadingInterpolation(0)
                 .build();
     }
 

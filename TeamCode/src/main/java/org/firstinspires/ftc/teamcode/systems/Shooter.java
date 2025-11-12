@@ -34,7 +34,7 @@ public class Shooter extends SystemBase {
     private State state;
     private double targetRPM;
     private double nomalisedHoodAngle;
-    private final Vector3 target;
+    private Vector3 target;
 
     private DoubleSupplier distanceOmeter;
 
@@ -66,8 +66,18 @@ public class Shooter extends SystemBase {
         this.robotPosition = p;
         this.robotVelocity = v;
         this.distanceOmeter = () -> this.robotPosition.get().sub(this.robotVelocity.get()).length();
-
         this.target = new Vector3(0, 0, 40);
+    }
+
+    public Shooter(Vector3.Vector3Supplier p, Vector3.Vector3Supplier v, Vector3 target) {
+        this.state = State.Rest;
+        this.targetRPM = 3000;
+        this.rpm = 0;
+        this.nomalisedHoodAngle = 0;
+        this.robotPosition = p;
+        this.robotVelocity = v;
+        this.distanceOmeter = () -> this.robotPosition.get().sub(this.robotVelocity.get()).length();
+        this.target = target;
     }
 
     @Override

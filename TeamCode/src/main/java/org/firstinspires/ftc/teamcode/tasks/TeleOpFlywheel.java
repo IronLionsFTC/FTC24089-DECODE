@@ -19,13 +19,12 @@ public class TeleOpFlywheel extends Task {
 
     @Override
     public void init() {
-        this.shooter.setState(Shooter.State.AdvancedTargettingCompensation);
+        if (this.shooter.getState() == Shooter.State.Rest) this.shooter.setState(Shooter.State.AdvancedTargettingCompensation);
+        else this.shooter.setState(Shooter.State.Rest);
     }
 
     @Override
-    public void end(boolean _) {
-        this.shooter.setState(Shooter.State.Rest);
-        this.intake.setState(Intake.State.Zero);
-        this.transfer.setState(Transfer.State.Rest);
+    public boolean finished() {
+        return true;
     }
 }
