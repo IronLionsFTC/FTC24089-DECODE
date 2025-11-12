@@ -66,8 +66,8 @@ public class Intake extends SystemBase {
                 power = 0.3;
                 break;
             case Shooting:
-                if (this.farZone.getAsBoolean()) power = 0.5;
-                else power = 0.9;
+                if (this.farZone.getAsBoolean()) power = 0.6;
+                else power = 0.6;
                 break;
 
         }

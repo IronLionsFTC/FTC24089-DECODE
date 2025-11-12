@@ -68,7 +68,7 @@ public abstract class TaskOpMode extends OpMode {
         this.hubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : this.hubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             hub.clearBulkCache();
         }
 

@@ -70,8 +70,8 @@ public class Transfer extends SystemBase {
                 blockPosition = Software.Constants.Unblock;
                 break;
             case ShootingSlower:
-                if (longShot.getAsBoolean()) power = 0.35;
-                else power = 0.6;
+                if (longShot.getAsBoolean()) power = 0.4;
+                else power = 0.4;
                 blockPosition = Software.Constants.Unblock;
                 break;
             case Queueing:

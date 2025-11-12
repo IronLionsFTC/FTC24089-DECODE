@@ -20,11 +20,6 @@ public class Shooter extends SystemBase {
 
     public enum State {
         Rest,
-        Coast,
-        Target,
-        Compensate,
-        AutoAimed,
-        AutoAimedFullPower,
         AdvancedTargetting,
         AdvancedTargettingCompensation
     }
@@ -42,6 +37,7 @@ public class Shooter extends SystemBase {
     private Vector3.Vector3Supplier robotVelocity = () -> new Vector3(0, 0, 0);
     private boolean flatShot = false;
     private double lastAzimuth = 0;
+    private double loopCount = 0;
 
     // PID controller
     private PID velocityController;
@@ -101,8 +97,6 @@ public class Shooter extends SystemBase {
     @Override
     public void update(TelemetryManager telemetry) {
 
-        if (this.rpm > this.getTargetRPM() + 200 && this.state == State.Compensate) this.state = State.Target;
-
         // Update PID constants in case of tuning, costless
         this.velocityController.setConstants(
                 Software.PID.VelocityController.P,
@@ -117,80 +111,39 @@ public class Shooter extends SystemBase {
         double trpm;
         double distance = this.distanceOmeter.getAsDouble();
 
-        if (this.state == State.Target || this.state == State.Compensate) {
-            angle = this.nomalisedHoodAngle;
-            trpm = this.getTargetRPM();
-        }
-        else if (this.state == State.AutoAimed || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargetting || this.state == State.AdvancedTargettingCompensation) {
-            // Approximate the RPM and hood angle required at distance
-            trpm = distance * 11 + 1980;
+        // Approximate the RPM and hood angle required at distance
+        trpm = distance * 11.7 + 1860;
+        // 0.004
+        angle = distance * 0.0063;
 
-            // Hood angle
-            angle = distance * 0.004;
-        }
-        else {
-            angle = 0;
-            trpm = 0;
+        loopCount += 1;
+
+        if (loopCount < 3) {
+            loopCount += 1;
+            return;
         }
 
-        // Adjustment for RPM error
-        double absE = Math.abs(trpm - this.rpm);
-        angle -= absE * 0.0005;
-        if (angle < 0) angle = 0;
+        loopCount = 0;
 
-        //if (this.state == State.AdvancedTargetting || this.state == State.AdvancedTargettingCompensation) {
+        Vector3 pos = this.robotPosition.get();
+        Vector3 vel = this.robotVelocity.get();
 
-            Vector3 pos = this.robotPosition.get();
-            Vector3 vel = this.robotVelocity.get();
+        Vector3 r = this.target.sub(pos);
+        Vector3 rHat = r.normalize();
+        double velocityToward = vel.dot(rHat);
+        trpm -= velocityToward * 19.8;
 
-            Vector3 r = this.target.sub(pos);
-            Vector3 rHat = r.normalize();
-            double velocityToward = vel.dot(rHat);
-            trpm -= velocityToward * 19.8; // Subtract flywheel RPM based on movement toward target
+        if (this.rpmBuf.size() > 5) this.rpmBuf.remove(0);
 
-            Vector3 toTarget = target.sub(pos);
-            Vector3 dir = toTarget.normalize();
+        double dy = target.y - (robotPosition.get().y + robotVelocity.get().y * 0.5);
+        double dx = target.x - (robotPosition.get().x + robotVelocity.get().x * 0.5);
 
-            Vector3 velXY = new Vector3(vel.x, vel.y, 0);
-            Vector3 adjustedDir = dir.sub(velXY.scale(1.0 / 100)).normalize();
-            double adjustedAzimuth = Math.atan2(adjustedDir.y, adjustedDir.x);
+        this.lastAzimuth = Math.toDegrees(Math.atan2(dy, dx));
+        double altitude = 0;
 
-            double rpmAvg = 0;
-            for (double v : this.rpmBuf) {
-                rpmAvg += v;
-            }
-            if (!this.rpmBuf.isEmpty()) rpmAvg /= this.rpmBuf.size();
-            if (this.rpmBuf.size() > 5) this.rpmBuf.remove(0);
-
-            BallisticsSolver.LaunchSolution possibleSolution = BallisticsSolver.solveLaunch(
-                    pos,
-                    vel,
-                    this.target,
-                    this.rpm * 0.07
-            );
-
-            this.lastAzimuth = possibleSolution.azimuthDeg;
-            double altitude = 0;
-            boolean angleFound = false;
-
-            if (this.flatShot) {
-                if (possibleSolution.lowValid) {
-                    altitude = this.mapElevationToDouble(possibleSolution.lowElevationDeg);
-                    angleFound = true;
-                }
-            } else {
-                if (possibleSolution.highValid) {
-                    altitude = this.mapElevationToDouble(possibleSolution.highElevationDeg);
-                    angleFound = true;
-                }
-            }
-
-            if (angleFound) angle = altitude;
-
-            telemetry.addData("ROBOT POSITION", robotPosition.get());
-            telemetry.addData("ROBOT VELOCITY", robotVelocity.get());
-            telemetry.addData("TARGET ANGLE", altitude);
-        //}
+        telemetry.addData("ROBOT POSITION", robotPosition.get());
+        telemetry.addData("ROBOT VELOCITY", robotVelocity.get());
+        telemetry.addData("TARGET ANGLE", altitude);
 
         double response = this.velocityController.calculate(
                 this.rpm,
@@ -204,12 +157,13 @@ public class Shooter extends SystemBase {
         if (this.state == State.Rest) response = 0;
 
 
-        if ((this.state == State.Compensate || this.state == State.AutoAimedFullPower || this.state == State.AdvancedTargettingCompensation) && rpm < trpm - 70){
+        if (this.state == State.AdvancedTargettingCompensation && rpm < trpm - 70){
             response = 1;
         }
 
         this.shooter.setPower(response);
-        this.hood.setPosition(this.calculateHoodAngle(angle));
+        if (this.state == State.Rest) this.hood.setPosition(this.calculateHoodAngle(0));
+        else this.hood.setPosition(this.calculateHoodAngle(angle));
 
         telemetry.addData("RPM", this.rpm);
     }
@@ -223,20 +177,6 @@ public class Shooter extends SystemBase {
     public void setTargetRPM(double targetRPM) {
         this.targetRPM = targetRPM;
     }
-
-    public double getTargetRPM() {
-        switch (this.state) {
-            case Rest:
-                return 0.0;
-            case Coast:
-                return Software.Constants.CruiseSpeed;
-            case Target:
-                return this.targetRPM + 200;
-        }
-
-        return 0.0;
-    }
-
     public double getRPM() {
         return this.rpm;
     }

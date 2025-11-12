@@ -26,18 +26,22 @@ public class AutoShootAll extends Task {
 
     @Override
     public void init() {
-        this.intake.setState(Intake.State.Shooting);
-        this.transfer.setState(Transfer.State.ShootingSlower);
         this.timer.resetTimer();
-        this.originalHood = this.shooter.getHoodAngle();
-        this.shooter.setState(Shooter.State.AdvancedTargetting);
+        this.shooter.setState(Shooter.State.AdvancedTargettingCompensation);
+    }
+
+    @Override
+    public void run() {
+        if (timer.getElapsedTimeSeconds() > 0.5) {
+            this.intake.setState(Intake.State.Shooting);
+            this.transfer.setState(Transfer.State.ShootingSlower);
+        }
     }
 
     @Override
     public boolean finished() {
-
         double time = timer.getElapsedTimeSeconds();
-        return time > 1;
+        return time > 1.5;
     }
 
     @Override
@@ -45,7 +49,6 @@ public class AutoShootAll extends Task {
         this.intake.setState(Intake.State.Zero);
         this.transfer.setState(Transfer.State.Rest);
         this.shooter.setState(Shooter.State.AdvancedTargetting);
-        this.shooter.setHoodAngle(this.originalHood);
     }
 
 }

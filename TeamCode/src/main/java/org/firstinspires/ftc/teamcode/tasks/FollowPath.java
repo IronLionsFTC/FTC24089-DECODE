@@ -38,7 +38,7 @@ public class FollowPath extends Task {
 
     @Override
     public boolean finished() {
-        return !this.follower.follower.isBusy();
+        return this.follower.follower.getCurrentTValue() > 0.98;
     }
 
     @Override
