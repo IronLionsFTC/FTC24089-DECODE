@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.tuning;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.paths.testing.TestPath;
+import org.firstinspires.ftc.teamcode.paths.testing.FifteenPath;
 import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 
 @Autonomous
@@ -21,12 +21,12 @@ public class PedroTestLinear extends OpMode {
 
     public void loop() {
         if (!started) {
-            this.follower.follower.followPath(TestPath.intakeA(follower));
+            this.follower.follower.followPath(FifteenPath.intakeA(follower));
             started = true;
         }
 
         if (!this.finishedA && !this.follower.follower.isBusy()) {
-            this.follower.follower.followPath(TestPath.shootA(follower));
+            this.follower.follower.followPath(FifteenPath.shootA(follower));
         }
 
         this.follower.follower.update();

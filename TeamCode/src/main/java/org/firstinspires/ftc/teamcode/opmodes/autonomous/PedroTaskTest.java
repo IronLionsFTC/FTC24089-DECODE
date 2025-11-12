@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
-import org.firstinspires.ftc.teamcode.paths.testing.TestPath;
+import org.firstinspires.ftc.teamcode.paths.testing.FifteenPath;
 import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 import org.firstinspires.ftc.teamcode.tasks.FollowPath;
 
@@ -21,10 +21,10 @@ public class PedroTaskTest extends TaskOpMode {
         return Jobs.create()
                 .addSeries(
                         new FollowPath(
-                                follower, TestPath.intakeA(follower)
+                                follower, FifteenPath.intakeA(follower)
                         ),
                         new FollowPath(
-                                follower, TestPath.shootA(follower)
+                                follower, FifteenPath.shootA(follower)
                         )
                 )
                 .registerSystem(follower);
