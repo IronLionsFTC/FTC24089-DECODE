@@ -13,7 +13,7 @@ public class FifteenPath {
     public static Pose intakeA = new Pose(-5, -53);
     public static Pose intakeAEnd = new Pose(20, -53);
     public static Pose hitLever = new Pose(16, -60);
-    public static Pose hitLeverEnd = new Pose(24, -65);
+    public static Pose hitLeverEnd = new Pose(23, -65);
     public static Pose shootA = new Pose(-10, -48);
 
     public static Pose intakeB = new Pose(-5, -79, 0);
@@ -95,7 +95,7 @@ public class FifteenPath {
     public static PathChain intakeCreepD(FollowerWrapper follower) {
         return follower.follower.pathBuilder()
                 .addPath(new BezierLine(intakeD, intakeDEnd))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(10))
                 .build();
     }
 

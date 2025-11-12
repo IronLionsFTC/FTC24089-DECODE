@@ -70,7 +70,7 @@ public class CloseZone extends TaskOpMode {
                         new AutoShootAll(intake, transfer, shooter),
 
                         new FollowPath(follower, FifteenPath.intakeD(follower)).then(
-                                new FollowPath(follower, FifteenPath.intakeCreepD(follower))
+                                new Sleep(0.8).then(new FollowPath(follower, FifteenPath.intakeCreepD(follower)))
                         ).with(
                                 new IntakeForTime(intake, transfer,3)
                         ),

@@ -39,13 +39,16 @@ public class FarZone extends TaskOpMode {
                                 new FollowPath(follower, FarPath.startToShoot(follower)).holdEnd(true)
                         ),
 
+                        new Sleep(2),
                         new AutoShootAll(intake, transfer, shooter),
 
-                        new FollowPath(follower, FarPath.intakeA(follower)),
-                        new FollowPath(follower, FarPath.intakeCreepA(follower)).setSpeed(1).with(
-                                new IntakeForTime(intake, transfer, 1.5)
+                        new FollowPath(follower, FarPath.intakeA(follower)).then(
+                                new Sleep(1).then(new FollowPath(follower, FarPath.intakeCreepA(follower)))
+                        ).with(
+                            new IntakeForTime(intake, transfer, 4)
                         ),
                         new FollowPath(follower, FarPath.shootA(follower)).holdEnd(true),
+                        new Sleep(0.8),
                         new AutoShootAll(intake, transfer, shooter),
                         new FollowPath(follower, FarPath.intakeB(follower)),
                         new FollowPath(follower, FarPath.intakeCreepB(follower)).setSpeed(1).with(
@@ -53,6 +56,7 @@ public class FarZone extends TaskOpMode {
                         ),
                         new FollowPath(follower, FarPath.shootB(follower)).holdEnd(true),
 
+                        new Sleep(0.8),
                         new AutoShootAll(intake, transfer, shooter),
 
                         new FollowPath(follower, FarPath.intakeC(follower)),
@@ -61,8 +65,9 @@ public class FarZone extends TaskOpMode {
                         ),
                         new FollowPath(follower, FarPath.shootC(follower)).holdEnd(true),
 
-                        new Sleep(0.5),
-                        new AutoShootAll(intake, transfer, shooter)
+                        new Sleep(0.8),
+                        new AutoShootAll(intake, transfer, shooter),
+                        new FollowPath(follower, FarPath.intakeA(follower))
                 )
 
                 .registerSystem(follower)

@@ -27,7 +27,7 @@ public class AutoShootAll extends Task {
     @Override
     public void init() {
         this.timer.resetTimer();
-        this.shooter.setState(Shooter.State.AdvancedTargettingCompensation);
+        this.shooter.setState(Shooter.State.AdvancedTargetting);
     }
 
     @Override
@@ -35,6 +35,7 @@ public class AutoShootAll extends Task {
         if (timer.getElapsedTimeSeconds() > 0.5) {
             this.intake.setState(Intake.State.Shooting);
             this.transfer.setState(Transfer.State.ShootingSlower);
+            this.shooter.setState(Shooter.State.AdvancedTargettingCompensation);
         }
     }
 

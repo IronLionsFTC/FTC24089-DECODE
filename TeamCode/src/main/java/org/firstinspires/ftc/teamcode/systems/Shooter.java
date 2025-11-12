@@ -24,6 +24,8 @@ public class Shooter extends SystemBase {
         AdvancedTargettingCompensation
     }
 
+    public double airsortFactor = 1;
+
     private LionMotor shooter;
     private LionServo hood;
     private State state;
@@ -112,9 +114,9 @@ public class Shooter extends SystemBase {
         double distance = this.distanceOmeter.getAsDouble();
 
         // Approximate the RPM and hood angle required at distance
-        trpm = distance * 11.7 + 1860;
+        trpm = distance * 11.7 + 1850;
         // 0.004
-        angle = distance * 0.0063;
+        angle = distance * 0.0063 / airsortFactor;
 
         loopCount += 1;
 
@@ -145,6 +147,8 @@ public class Shooter extends SystemBase {
         telemetry.addData("ROBOT VELOCITY", robotVelocity.get());
         telemetry.addData("TARGET ANGLE", altitude);
 
+        trpm *= airsortFactor;
+
         double response = this.velocityController.calculate(
                 this.rpm,
                 trpm
@@ -152,12 +156,12 @@ public class Shooter extends SystemBase {
 
         if (trpm == 0) response = 0;
 
-        if (response < 0) response *= 0.3;
+        if (response < 0) response *= 0.2;
 
         if (this.state == State.Rest) response = 0;
 
 
-        if (this.state == State.AdvancedTargettingCompensation && rpm < trpm - 70){
+        if (this.state == State.AdvancedTargettingCompensation && rpm < trpm-50){
             response = 1;
         }
 
