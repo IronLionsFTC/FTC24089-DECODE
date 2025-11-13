@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Transfer;
 
-public class TeleOpShootAll extends Task {
+public class AutoAirsortFirstToLast extends Task {
 
     private Intake intake;
     private Transfer transfer;
@@ -16,7 +16,7 @@ public class TeleOpShootAll extends Task {
 
     private double originalHood;
 
-    public TeleOpShootAll(Intake intake, Transfer transfer, Shooter shooter) {
+    public AutoAirsortFirstToLast(Intake intake, Transfer transfer, Shooter shooter) {
         this.intake = intake;
         this.transfer = transfer;
         this.shooter = shooter;
@@ -26,26 +26,37 @@ public class TeleOpShootAll extends Task {
 
     @Override
     public void init() {
-        this.intake.setState(Intake.State.Shooting);
-        this.transfer.setState(Transfer.State.ShootingSlower);
         this.timer.resetTimer();
-        this.originalHood = this.shooter.getHoodAngle();
+        this.shooter.airsortFactor = 0.5;
+        this.shooter.speedFactor = 2.5;
         this.shooter.setState(Shooter.State.AdvancedTargetting);
+        this.transfer.setState(Transfer.State.ShootingSlower);
+        this.intake.setState(Intake.State.Shooting);
+    }
+
+    @Override
+    public void run() {
+        if (timer.getElapsedTimeSeconds() > 0.35) {
+            this.intake.setState(Intake.State.Shooting);
+            this.transfer.setState(Transfer.State.Rest);
+            this.shooter.airsortFactor = 0;
+            this.shooter.speedFactor = 1;
+        } if (timer.getElapsedTimeSeconds() > 0.6) {
+            this.transfer.setState(Transfer.State.ShootingSlower);
+        }
     }
 
     @Override
     public boolean finished() {
-
         double time = timer.getElapsedTimeSeconds();
-        return time > 1.2;
+        return time > 2;
     }
 
     @Override
     public void end(boolean _) {
-        this.intake.setState(Intake.State.Positive);
+        this.intake.setState(Intake.State.Zero);
         this.transfer.setState(Transfer.State.Rest);
-        this.shooter.setState(Shooter.State.Rest);
-        this.shooter.setHoodAngle(this.originalHood);
+        this.shooter.setState(Shooter.State.AdvancedTargetting);
     }
 
 }
