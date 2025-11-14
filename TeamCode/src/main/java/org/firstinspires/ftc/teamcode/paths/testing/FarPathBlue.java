@@ -125,4 +125,11 @@ public class FarPathBlue {
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-67))
                 .build();
     }
+
+    public static PathChain park(FollowerWrapper follower) {
+        return follower.follower.pathBuilder()
+                .addPath(new BezierLine(farShoot, intakeC))
+                .setTangentHeadingInterpolation()
+                .build();
+    }
 }

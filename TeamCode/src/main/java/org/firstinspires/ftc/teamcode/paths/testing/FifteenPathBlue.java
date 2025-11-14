@@ -180,4 +180,11 @@ public class FifteenPathBlue {
                 .setConstantHeadingInterpolation(Math.toRadians(-67))
                 .build();
     }
+
+    public static PathChain park(FollowerWrapper follower) {
+        return follower.follower.pathBuilder()
+                .addPath(new BezierLine(farShoot, intakeA))
+                .setTangentHeadingInterpolation()
+                .build();
+    }
 }

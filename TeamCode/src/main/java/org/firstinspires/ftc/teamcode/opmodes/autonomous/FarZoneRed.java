@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.tasks.FollowPath;
 import org.firstinspires.ftc.teamcode.tasks.IntakeForTime;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpFlywheel;
 
-@Autonomous(name = "9 FAR")
-public class FarZone extends TaskOpMode {
+@Autonomous(name = "9 FAR RED")
+public class FarZoneRed extends TaskOpMode {
 
     private FollowerWrapper follower;
     public Intake intake;
@@ -67,7 +67,7 @@ public class FarZone extends TaskOpMode {
 
                         new Sleep(0.8),
                         new AutoShootAll(intake, transfer, shooter),
-                        new FollowPath(follower, FarPathRed.intakeA(follower))
+                        new FollowPath(follower, FarPathRed.park(follower))
                 )
 
                 .registerSystem(follower)
