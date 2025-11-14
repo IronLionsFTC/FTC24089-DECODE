@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.tasks;
 import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
+import org.firstinspires.ftc.teamcode.systems.Drivebase;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Transfer;
@@ -13,15 +14,17 @@ public class TeleOpShootAll extends Task {
     private Transfer transfer;
     private Timer timer;
     private Shooter shooter;
+    private Drivebase dt;
 
     private double originalHood;
 
-    public TeleOpShootAll(Intake intake, Transfer transfer, Shooter shooter) {
+    public TeleOpShootAll(Intake intake, Transfer transfer, Shooter shooter, Drivebase dt) {
         this.intake = intake;
         this.transfer = transfer;
         this.shooter = shooter;
         this.timer = new Timer();
         this.originalHood = 0;
+        this.dt = dt;
     }
 
     @Override
@@ -46,6 +49,7 @@ public class TeleOpShootAll extends Task {
         this.transfer.setState(Transfer.State.Rest);
         this.shooter.setState(Shooter.State.Rest);
         this.shooter.setHoodAngle(this.originalHood);
+        this.dt.setState(Drivebase.State.Manual);
     }
 
 }
