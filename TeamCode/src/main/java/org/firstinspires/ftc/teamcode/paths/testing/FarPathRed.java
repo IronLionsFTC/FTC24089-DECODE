@@ -6,7 +6,7 @@ import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 
-public class FarPath {
+public class FarPathRed {
 
     public static Pose start = new Pose(-18, -128, Math.toRadians(0));
 

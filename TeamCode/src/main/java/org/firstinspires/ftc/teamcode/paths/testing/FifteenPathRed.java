@@ -6,7 +6,7 @@ import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 
-public class FifteenPath {
+public class FifteenPathRed {
 
     public static Pose start = new Pose(14, -14, Math.toRadians(45));
 

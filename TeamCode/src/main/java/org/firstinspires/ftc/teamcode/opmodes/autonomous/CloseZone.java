@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Sleep;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.math.Vector3;
-import org.firstinspires.ftc.teamcode.paths.testing.FifteenPath;
+import org.firstinspires.ftc.teamcode.paths.testing.FifteenPathRed;
 import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
@@ -37,46 +37,46 @@ public class CloseZone extends TaskOpMode {
         return Jobs.create()
                 .addSeries(
                         new TeleOpFlywheel(intake, transfer, shooter).with(
-                                new FollowPath(follower, FifteenPath.startToShoot(follower)).holdEnd(true)
+                                new FollowPath(follower, FifteenPathRed.startToShoot(follower)).holdEnd(true)
                         ),
 
                         new AutoShootAll(intake, transfer, shooter),
 
-                        new FollowPath(follower, FifteenPath.intakeA(follower)),
-                        new FollowPath(follower, FifteenPath.intakeCreepA(follower)).setSpeed(1).with(
+                        new FollowPath(follower, FifteenPathRed.intakeA(follower)),
+                        new FollowPath(follower, FifteenPathRed.intakeCreepA(follower)).setSpeed(1).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
-                        new FollowPath(follower, FifteenPath.hitLeverFromA(follower)),
+                        new FollowPath(follower, FifteenPathRed.hitLeverFromA(follower)),
                         new Sleep(0.8),
-                        new FollowPath(follower, FifteenPath.shootA(follower)).holdEnd(true),
+                        new FollowPath(follower, FifteenPathRed.shootA(follower)).holdEnd(true),
 
                         new AutoShootAll(intake, transfer, shooter),
 
-                        new FollowPath(follower, FifteenPath.intakeB(follower)),
-                        new FollowPath(follower, FifteenPath.intakeCreepB(follower)).setSpeed(1).with(
+                        new FollowPath(follower, FifteenPathRed.intakeB(follower)),
+                        new FollowPath(follower, FifteenPathRed.intakeCreepB(follower)).setSpeed(1).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
-                        new FollowPath(follower, FifteenPath.shootB(follower)).holdEnd(true),
+                        new FollowPath(follower, FifteenPathRed.shootB(follower)).holdEnd(true),
 
                         new AutoShootAll(intake, transfer, shooter),
 
-                        new FollowPath(follower, FifteenPath.intakeC(follower)),
-                        new FollowPath(follower, FifteenPath.intakeCreepC(follower)).setSpeed(1).with(
+                        new FollowPath(follower, FifteenPathRed.intakeC(follower)),
+                        new FollowPath(follower, FifteenPathRed.intakeCreepC(follower)).setSpeed(1).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
-                        new FollowPath(follower, FifteenPath.shootC(follower)).holdEnd(true),
+                        new FollowPath(follower, FifteenPathRed.shootC(follower)).holdEnd(true),
 
                         new Sleep(0.5),
                         new AutoShootAll(intake, transfer, shooter),
 
-                        new FollowPath(follower, FifteenPath.intakeD(follower)).then(
-                                new Sleep(0.8).then(new FollowPath(follower, FifteenPath.intakeCreepD(follower)))
+                        new FollowPath(follower, FifteenPathRed.intakeD(follower)).then(
+                                new Sleep(0.8).then(new FollowPath(follower, FifteenPathRed.intakeCreepD(follower)))
                         ).with(
                                 new IntakeForTime(intake, transfer,3)
                         ),
 
 
-                        new FollowPath(follower, FifteenPath.shootD(follower)).holdEnd(true),
+                        new FollowPath(follower, FifteenPathRed.shootD(follower)).holdEnd(true),
 
                         new Sleep(0.5),
                         new AutoShootAll(intake, transfer, shooter),

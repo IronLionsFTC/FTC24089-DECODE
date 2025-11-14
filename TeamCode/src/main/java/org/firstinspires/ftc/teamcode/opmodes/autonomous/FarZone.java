@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Sleep;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.math.Vector3;
-import org.firstinspires.ftc.teamcode.paths.testing.FarPath;
+import org.firstinspires.ftc.teamcode.paths.testing.FarPathRed;
 import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
@@ -30,44 +30,44 @@ public class FarZone extends TaskOpMode {
         this.intake = new Intake();
         this.transfer = new Transfer();
         this.follower = new FollowerWrapper(hardwareMap);
-        this.follower.follower.setStartingPose(FarPath.start);
+        this.follower.follower.setStartingPose(FarPathRed.start);
         this.shooter = new Shooter(follower::position, follower::velocity, new Vector3(8, -5, 40));
 
         return Jobs.create()
                 .addSeries(
                         new TeleOpFlywheel(intake, transfer, shooter).with(
-                                new FollowPath(follower, FarPath.startToShoot(follower)).holdEnd(true)
+                                new FollowPath(follower, FarPathRed.startToShoot(follower)).holdEnd(true)
                         ),
 
                         new Sleep(2),
                         new AutoShootAll(intake, transfer, shooter),
 
-                        new FollowPath(follower, FarPath.intakeA(follower)).then(
-                                new Sleep(1).then(new FollowPath(follower, FarPath.intakeCreepA(follower)))
+                        new FollowPath(follower, FarPathRed.intakeA(follower)).then(
+                                new Sleep(1).then(new FollowPath(follower, FarPathRed.intakeCreepA(follower)))
                         ).with(
                             new IntakeForTime(intake, transfer, 4)
                         ),
-                        new FollowPath(follower, FarPath.shootA(follower)).holdEnd(true),
+                        new FollowPath(follower, FarPathRed.shootA(follower)).holdEnd(true),
                         new Sleep(0.8),
                         new AutoShootAll(intake, transfer, shooter),
-                        new FollowPath(follower, FarPath.intakeB(follower)),
-                        new FollowPath(follower, FarPath.intakeCreepB(follower)).setSpeed(1).with(
+                        new FollowPath(follower, FarPathRed.intakeB(follower)),
+                        new FollowPath(follower, FarPathRed.intakeCreepB(follower)).setSpeed(1).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
-                        new FollowPath(follower, FarPath.shootB(follower)).holdEnd(true),
+                        new FollowPath(follower, FarPathRed.shootB(follower)).holdEnd(true),
 
                         new Sleep(0.8),
                         new AutoShootAll(intake, transfer, shooter),
 
-                        new FollowPath(follower, FarPath.intakeC(follower)),
-                        new FollowPath(follower, FarPath.intakeCreepC(follower)).setSpeed(1).with(
+                        new FollowPath(follower, FarPathRed.intakeC(follower)),
+                        new FollowPath(follower, FarPathRed.intakeCreepC(follower)).setSpeed(1).with(
                                 new IntakeForTime(intake, transfer, 1.5)
                         ),
-                        new FollowPath(follower, FarPath.shootC(follower)).holdEnd(true),
+                        new FollowPath(follower, FarPathRed.shootC(follower)).holdEnd(true),
 
                         new Sleep(0.8),
                         new AutoShootAll(intake, transfer, shooter),
-                        new FollowPath(follower, FarPath.intakeA(follower))
+                        new FollowPath(follower, FarPathRed.intakeA(follower))
                 )
 
                 .registerSystem(follower)
