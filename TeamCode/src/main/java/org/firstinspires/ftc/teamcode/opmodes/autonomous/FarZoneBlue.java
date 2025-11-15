@@ -33,6 +33,8 @@ public class FarZoneBlue extends TaskOpMode {
         this.follower.follower.setStartingPose(FarPathBlue.start);
         this.shooter = new Shooter(follower::position, follower::velocity, new Vector3(8, -5, 40));
 
+        this.shooter.speedFactor = 0.96;
+
         return Jobs.create()
                 .addSeries(
                         new TeleOpFlywheel(intake, transfer, shooter).with(

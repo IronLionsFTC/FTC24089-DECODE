@@ -115,7 +115,7 @@ public class Shooter extends SystemBase {
         double distance = this.distanceOmeter.getAsDouble();
 
         // Approximate the RPM and hood angle required at distance
-        trpm = distance * 11.7 * speedFactor + 1850;
+        trpm = (distance * 11.7 + 1850) * speedFactor;
         // 0.004
         angle = distance * 0.0063 - airsortFactor;
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
+import org.firstinspires.ftc.teamcode.lioncore.tasks.Run;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Sleep;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.math.Vector3;
@@ -38,7 +39,7 @@ public class FarZoneAirsort extends TaskOpMode {
                                 new FollowPath(follower, FarPathRed.startToShoot(follower)).holdEnd(true)
                         ),
 
-                        new Sleep(5),
+                        new Sleep(1),
                         new AutoAirsortFirstToLast(intake, transfer, shooter)
                 )
 

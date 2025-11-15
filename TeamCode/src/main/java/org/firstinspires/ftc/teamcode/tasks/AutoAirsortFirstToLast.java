@@ -28,28 +28,29 @@ public class AutoAirsortFirstToLast extends Task {
     public void init() {
         this.timer.resetTimer();
         this.shooter.airsortFactor = 0.5;
-        this.shooter.speedFactor = 2.5;
+        this.shooter.speedFactor = 1.3;
         this.shooter.setState(Shooter.State.AdvancedTargetting);
-        this.transfer.setState(Transfer.State.ShootingSlower);
-        this.intake.setState(Intake.State.Shooting);
     }
 
     @Override
     public void run() {
-        if (timer.getElapsedTimeSeconds() > 0.35) {
+        if (timer.getElapsedTimeSeconds() > 4.45) {
+            this.transfer.setState(Transfer.State.ShootingSlower);
+        } else if (timer.getElapsedTimeSeconds() > 4.35) {
             this.intake.setState(Intake.State.Shooting);
             this.transfer.setState(Transfer.State.Rest);
             this.shooter.airsortFactor = 0;
             this.shooter.speedFactor = 1;
-        } if (timer.getElapsedTimeSeconds() > 0.6) {
-            this.transfer.setState(Transfer.State.ShootingSlower);
+        } else if (timer.getElapsedTimeSeconds() > 4.15) {
+            this.intake.setState(Intake.State.Shooting);
+            this.transfer.setState(Transfer.State.Shooting);
         }
     }
 
     @Override
     public boolean finished() {
         double time = timer.getElapsedTimeSeconds();
-        return time > 2;
+        return time > 5.5;
     }
 
     @Override

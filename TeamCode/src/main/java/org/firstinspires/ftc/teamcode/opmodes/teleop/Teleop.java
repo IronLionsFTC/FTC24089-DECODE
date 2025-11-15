@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.tasks.TeleOpShootOne;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpToggleZone;
 import org.firstinspires.ftc.teamcode.tasks.ToggleDrivebaseMode;
 import org.firstinspires.ftc.teamcode.tasks.ToggleIntake;
+import org.firstinspires.ftc.teamcode.tasks.TogglePower;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -38,6 +39,7 @@ public class Teleop extends TaskOpMode {
         );
 
         this.shooter = new Shooter(drivebase::getPosition, drivebase::getVelocity);
+        this.shooter.speedFactor = 0.96; // start slower
         this.drivebase.setAzimuthSupplier(this.shooter::yieldAzimuth);
         this.transfer = new Transfer(() -> drivebase.getDistance() > 70);
         this.intake = new Intake(() -> drivebase.getDistance() > 70);
@@ -51,7 +53,7 @@ public class Teleop extends TaskOpMode {
         );
 
         this.controller1.rightTrigger.asButton.onPress(
-                new TeleOpShootAll(intake, transfer, shooter)
+                new TeleOpShootAll(intake, transfer, shooter, drivebase)
         );
 
         this.controller1.leftTrigger.asButton.onPress(
@@ -68,6 +70,10 @@ public class Teleop extends TaskOpMode {
 
         this.controller1.bumpers.left.onPress(
                 new Run(drivebase::init)
+        );
+
+        this.controller1.dpad.right.onPress(
+                new TogglePower(shooter)
         );
 
         return Jobs.create()
