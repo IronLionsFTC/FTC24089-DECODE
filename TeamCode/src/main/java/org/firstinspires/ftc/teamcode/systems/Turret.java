@@ -75,6 +75,8 @@ public class Turret extends SystemBase {
 
     @Override
     public void init() {
+        this.timer = new Timer();
+        this.deltaTime = new Timer();
         this.shooter.setReversed(Hardware.Motors.Reversed.shooter1, Hardware.Motors.Reversed.shooter2);
         this.shooter.setZPB(Hardware.Motors.ZPB.shooterMotors);
         this.turret.setReversed(Hardware.Motors.Reversed.turret);

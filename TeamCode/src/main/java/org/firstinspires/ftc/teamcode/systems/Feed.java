@@ -37,6 +37,7 @@ public class Feed extends SystemBase {
 
     @Override
     public void init() {
+        this.timer = new Timer();
         this.timer.resetTimer();
         this.feedMotor.setReversed(Hardware.Motors.Reversed.feed);
         this.feedMotor.setZPB(Hardware.Motors.ZPB.transferMotor);
