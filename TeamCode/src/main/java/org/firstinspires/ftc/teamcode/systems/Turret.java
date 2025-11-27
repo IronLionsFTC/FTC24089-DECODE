@@ -68,6 +68,7 @@ public class Turret extends SystemBase {
 
     @Override
     public void loadHardware(HardwareMap hardwareMap) {
+        this.pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
         this.shooter = LionMotor.masterSlaves(hardwareMap, Hardware.Motors.Names.shooter1, Hardware.Motors.Names.shooter2);
         this.turret = LionMotor.withEncoder(hardwareMap, Hardware.Motors.Names.turret);
         this.hood = LionServo.single(hardwareMap, Hardware.Servos.Names.hood, Hardware.Servos.ZeroPositions.hood);
