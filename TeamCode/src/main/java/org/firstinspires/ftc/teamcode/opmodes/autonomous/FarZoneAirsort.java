@@ -3,15 +3,11 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
-import org.firstinspires.ftc.teamcode.lioncore.tasks.Run;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Sleep;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.math.Vector3;
 import org.firstinspires.ftc.teamcode.paths.testing.FarPathRed;
 import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
-import org.firstinspires.ftc.teamcode.systems.Intake;
-import org.firstinspires.ftc.teamcode.systems.Shooter;
-import org.firstinspires.ftc.teamcode.systems.Transfer;
 import org.firstinspires.ftc.teamcode.tasks.AutoAirsortFirstToLast;
 import org.firstinspires.ftc.teamcode.tasks.FollowPath;
 import org.firstinspires.ftc.teamcode.tasks.TeleOpFlywheel;

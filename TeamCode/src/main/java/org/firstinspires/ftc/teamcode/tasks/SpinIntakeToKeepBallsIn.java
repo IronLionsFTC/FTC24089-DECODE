@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
-import org.firstinspires.ftc.teamcode.systems.ColourChamber;
-import org.firstinspires.ftc.teamcode.systems.Intake;
 
 public class SpinIntakeToKeepBallsIn extends Task {
 

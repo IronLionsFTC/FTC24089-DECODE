@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.tasks;
 
 import org.firstinspires.ftc.teamcode.cache.Ordering;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
-import org.firstinspires.ftc.teamcode.systems.ColourChamber;
-import org.firstinspires.ftc.teamcode.systems.Intake;
-import org.firstinspires.ftc.teamcode.systems.Transfer;
 
 public class IntakeUntilFull extends Task {
 

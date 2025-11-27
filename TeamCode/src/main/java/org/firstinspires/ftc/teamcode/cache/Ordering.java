@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.cache;
 
-import org.firstinspires.ftc.teamcode.systems.ColourChamber;
-
 public class Ordering {
 
     public enum AirsortPattern {

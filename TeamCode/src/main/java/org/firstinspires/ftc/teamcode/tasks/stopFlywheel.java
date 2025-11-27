@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
-import org.firstinspires.ftc.teamcode.systems.Shooter;
 
 public class stopFlywheel extends Task {
     private Shooter stop;

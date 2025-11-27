@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.tasks;
 import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Task;
-import org.firstinspires.ftc.teamcode.systems.Intake;
 
 public class RunIntake extends Task {
     private Intake intake;
