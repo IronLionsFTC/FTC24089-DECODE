@@ -35,7 +35,7 @@ public class Turret extends SystemBase {
         public static double ty = 0;
         public static double tz = 30;
         public static double turretOverride = 0;
-        public static double hoodAngleOverride = 0;
+        public static double hoodAngleOverride = -1;
         public static double tP = 0.01;
         public static double tI = 0;
         public static double tD = 0;
@@ -154,7 +154,7 @@ public class Turret extends SystemBase {
         // Hardware
         this.turret.setPower(turretResponse);
         this.shooter.setPower(flywheelResponse);
-        this.hood.setPosition(hoodAngle); // tune, rmv constant
+        this.hood.setPosition(hoodAngle * 0.56 + 0.01);
 
         // Telemetry
         telemetry.addData("Raw Turret Pos", this.turret.getPosition());
