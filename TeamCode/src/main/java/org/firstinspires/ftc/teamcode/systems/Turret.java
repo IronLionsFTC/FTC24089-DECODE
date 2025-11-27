@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.systems;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
@@ -24,6 +26,19 @@ public class Turret extends SystemBase {
         Rest,
         Tracking,
         Shooting
+    }
+
+    @Config
+    @Configurable
+    public static class Constants {
+        public static double tx = 0;
+        public static double ty = 0;
+        public static double tz = 30;
+        public static double turretOverride = 0;
+        public static double hoodAngleOverride = 0;
+        public static double tP = 0.01;
+        public static double tI = 0;
+        public static double tD = 0;
     }
 
     // State
@@ -71,6 +86,13 @@ public class Turret extends SystemBase {
     @Override
     public void update(TelemetryManager telemetry) {
 
+        // Tuning
+        this.turretController.setConstants(
+                Constants.tP,
+                Constants.tI,
+                Constants.tD
+        );
+
         // Odometry
         pinpoint.update();
         Vector3 robotPosition = new Vector3(
@@ -111,6 +133,9 @@ public class Turret extends SystemBase {
                 break;
         }
 
+        if (Constants.turretOverride != 0) azimuth = Constants.turretOverride;
+        if (Constants.hoodAngleOverride >= 0) hoodAngle = Constants.hoodAngleOverride;
+
         this.deltaTime.resetTimer();
         this.lastPosition = robotPosition;
 
@@ -126,7 +151,7 @@ public class Turret extends SystemBase {
         // Hardware
         this.turret.setPower(turretResponse);
         this.shooter.setPower(flywheelResponse);
-        this.hood.setPosition(0); // tune
+        this.hood.setPosition(hoodAngle); // tune, rmv constant
 
     }
 
