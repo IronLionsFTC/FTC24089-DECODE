@@ -6,13 +6,6 @@ import org.firstinspires.ftc.teamcode.lioncore.tasks.Jobs;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.Run;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
-import org.firstinspires.ftc.teamcode.tasks.TeleOpFlywheel;
-import org.firstinspires.ftc.teamcode.tasks.TeleOpShootAll;
-import org.firstinspires.ftc.teamcode.tasks.TeleOpShootOne;
-import org.firstinspires.ftc.teamcode.tasks.TeleOpToggleZone;
-import org.firstinspires.ftc.teamcode.tasks.ToggleDrivebaseMode;
-import org.firstinspires.ftc.teamcode.tasks.ToggleIntake;
-import org.firstinspires.ftc.teamcode.tasks.TogglePower;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -25,10 +18,6 @@ public class Teleop extends TaskOpMode {
                 controller1.leftJoystick::x,
                 controller1.leftJoystick::y,
                 controller1.rightJoystick::y
-        );
-
-        this.controller1.bumpers.right.onPress(
-                new ToggleDrivebaseMode(drivebase)
         );
 
         this.controller1.bumpers.left.onPress(

@@ -14,7 +14,7 @@ public class Limelight {
 
     public Limelight(HardwareMap hwmp) {
         this.limelight = hwmp.get(Limelight3A.class, "limelight");
-        this.servo = LionServo.single(hwmp, Hardware.Servos.Names.limelightServo, Hardware.Servos.ZeroPositions.limelight);
+        // this.servo = LionServo.single(hwmp, Hardware.Servos.Names.limelightServo, Hardware.Servos.ZeroPositions.limelight);
         this.limelight.pipelineSwitch(1);
     }
 

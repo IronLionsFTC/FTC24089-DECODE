@@ -153,6 +153,14 @@ public class Turret extends SystemBase {
         this.shooter.setPower(flywheelResponse);
         this.hood.setPosition(hoodAngle); // tune, rmv constant
 
+        // Telemetry
+        telemetry.addData("Raw Turret Pos", this.turret.getPosition());
+        telemetry.addData("Turret Pos", this.turret.getPosition() * 0.279642857);
+        telemetry.addData("Azimuth", azimuth);
+        telemetry.addData("RobotPosition", this.lastPosition.toString());
+        telemetry.addData("RobotVelocity", this.getVelocity().toString());
+        telemetry.addData("RPM", this.getRPM());
+
     }
 
     public Vector3 getVelocity() {
