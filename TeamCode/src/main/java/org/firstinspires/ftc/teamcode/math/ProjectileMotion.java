@@ -5,7 +5,7 @@ public class ProjectileMotion {
     /**
      * Solution class detailing necessary values to hit target
      */
-    public class Solution {
+    public static class Solution {
         public double targetRPM;
         public double hoodAngle;
         public double azimuthHeading;
@@ -31,7 +31,7 @@ public class ProjectileMotion {
      * @param targetPosition The target position vector (xy plane is ground, +z is up.
      * @return Solution containing RPM, hood angle [0, 1], 1 is horizontal, azimuth (degrees counterclockwise from x axis) on ground pland and expected time of flight.
      */
-    public Solution calculate(Vector3 robotPosition, Vector3 robotVelocity, Vector3 targetPosition) {
+    public static Solution calculate(Vector3 robotPosition, Vector3 robotVelocity, Vector3 targetPosition) {
 
         // Radial vectors
         Vector3 radial = robotPosition.sub(targetPosition);

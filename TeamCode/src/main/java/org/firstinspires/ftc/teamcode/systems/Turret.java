@@ -5,11 +5,18 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionServo;
 import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
+import org.firstinspires.ftc.teamcode.math.ProjectileMotion;
+import org.firstinspires.ftc.teamcode.math.Vector3;
 import org.firstinspires.ftc.teamcode.parameters.Hardware;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Turret extends SystemBase {
 
@@ -22,6 +29,7 @@ public class Turret extends SystemBase {
     // State
     private State state = State.Rest;
     private Timer timer;
+    private Timer deltaTime;
 
     // Hardware
     private LionMotor shooter;
@@ -30,12 +38,18 @@ public class Turret extends SystemBase {
 
     // Odometry
     private GoBildaPinpointDriver pinpoint;
+    private Vector3 lastPosition = new Vector3(0, 0, 0);
+    List<Vector3> velocityBuffer = new ArrayList<>();
 
     // Control
     private PID turretController;
     private PID flywheelController;
+    List<Double> rpmBuffer = new ArrayList<>();
 
-    public Turret() {}
+    public Turret() {
+        this.turretController = new PID(0.01, 0, 0);
+        this.flywheelController = new PID(0.005, 0, 0);
+    }
 
     @Override
     public void loadHardware(HardwareMap hardwareMap) {
@@ -51,24 +65,82 @@ public class Turret extends SystemBase {
         this.turret.setReversed(Hardware.Motors.Reversed.turret);
         this.turret.setZPB(Hardware.Motors.ZPB.turretMotor);
         this.timer.resetTimer();
+        this.deltaTime.resetTimer();
     }
 
     @Override
     public void update(TelemetryManager telemetry) {
 
+        // Odometry
+        pinpoint.update();
+        Vector3 robotPosition = new Vector3(
+            pinpoint.getPosX(DistanceUnit.INCH),
+            pinpoint.getPosY(DistanceUnit.INCH),
+            0
+        );
+
+        double currentHeading = pinpoint.getHeading(AngleUnit.DEGREES);
+        Vector3 ds = robotPosition.sub(lastPosition);
+        double dt = this.deltaTime.getElapsedTimeSeconds();
+        Vector3 velocity = ds.multiply(1 / dt);
+        this.velocityBuffer.add(velocity);
+        if (this.velocityBuffer.size() > 5) this.velocityBuffer.remove(0);
+
+        // RPM control
+        double currentRPM = shooter.getVelocity(28);
+        this.rpmBuffer.add(currentRPM);
+        if (this.rpmBuffer.size() > 5) this.rpmBuffer.remove(0);
+
         double targetRPM;
         double hoodAngle; // [0, 1], 1 being VERTICAL and 0 being HORIZONTAL
+        double azimuth;
 
         // State machine
         switch (this.state) {
-            case Rest:
-                targetRPM = 0;
-                hoodAngle = 1;
+            case Tracking: case Shooting:
+                ProjectileMotion.Solution solution = ProjectileMotion.calculate(robotPosition, this.getVelocity(), new Vector3(20, 0, 30));
+                targetRPM = solution.targetRPM;
+                hoodAngle = solution.hoodAngle;
+                azimuth = solution.azimuthHeading - currentHeading;
                 break;
 
-            case Tracking: case Shooting:
-                targetRPM =
+            default:
+                targetRPM = 0;
+                hoodAngle = 1;
+                azimuth = currentHeading;
+                break;
         }
 
+        this.deltaTime.resetTimer();
+        this.lastPosition = robotPosition;
+
+        // Flywheel RPM PID
+        double flywheelResponse = 0;
+        if (targetRPM > 0) flywheelResponse = this.flywheelController.calculate(this.getRPM(), targetRPM);
+
+        // Turret turn PID
+        while (azimuth < -180) azimuth += 360;
+        while (azimuth > 180) azimuth -= 360;
+        double turretResponse = this.turretController.calculate(this.turret.getPosition() * 0.279642857, azimuth);
+
+        // Hardware
+        this.turret.setPower(turretResponse);
+        this.shooter.setPower(flywheelResponse);
+        this.hood.setPosition(0); // tune
+
+    }
+
+    public Vector3 getVelocity() {
+        if (this.velocityBuffer.isEmpty()) return new Vector3(0, 0, 0);
+        Vector3 buffer = new Vector3(0, 0, 0);
+        for (Vector3 instant : this.velocityBuffer) buffer.add(instant);
+        return buffer.multiply((double)1/ this.velocityBuffer.size());
+    }
+
+    public double getRPM() {
+        if (this.rpmBuffer.isEmpty()) return 0;
+        double sum = 0;
+        for (double instant : this.rpmBuffer) sum += instant;
+        return sum / rpmBuffer.size();
     }
 }
