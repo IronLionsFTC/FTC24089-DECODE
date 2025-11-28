@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.lioncore.tasks.Run;
 import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
 import org.firstinspires.ftc.teamcode.systems.Feed;
+import org.firstinspires.ftc.teamcode.systems.Lift;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.firstinspires.ftc.teamcode.tasks.ShootForTime;
 import org.firstinspires.ftc.teamcode.tasks.ToggleIntake;
@@ -18,9 +19,11 @@ public class Teleop extends TaskOpMode {
     private Feed feed;
     private Turret turret;
     private Drivebase drivebase;
+    private Lift lift;
 
     public Jobs spawn() {
 
+        this.lift = new Lift();
         this.feed = new Feed();
         this.turret = new Turret();
         this.drivebase = new Drivebase(

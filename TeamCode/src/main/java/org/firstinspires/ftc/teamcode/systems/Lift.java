@@ -57,7 +57,7 @@ public class Lift extends SystemBase {
                 this.setPower(0);
                 break;
             case Retract:
-                this.setPower(-0.1);
+                this.setPower(-0.15);
                 break;
             case Lift:
                 this.setPower(0.8);
@@ -70,6 +70,10 @@ public class Lift extends SystemBase {
         this.b.setPower(power);
         this.c.setPower(-power);
         this.d.setPower(-power);
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 
 }
