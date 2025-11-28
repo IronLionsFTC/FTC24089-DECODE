@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.lioncore.tasks.TaskOpMode;
 import org.firstinspires.ftc.teamcode.systems.Drivebase;
 import org.firstinspires.ftc.teamcode.systems.Feed;
 import org.firstinspires.ftc.teamcode.systems.Turret;
+import org.firstinspires.ftc.teamcode.tasks.ShootForTime;
+import org.firstinspires.ftc.teamcode.tasks.ToggleIntake;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -18,10 +20,20 @@ public class Teleop extends TaskOpMode {
 
     public Jobs spawn() {
 
+        this.feed = new Feed();
+        this.turret = new Turret();
         this.drivebase = new Drivebase(
                 controller1.leftJoystick::x,
                 controller1.leftJoystick::y,
                 controller1.rightJoystick::y
+        );
+
+        this.controller1.X.onPress(
+                new ToggleIntake(feed)
+        );
+
+        this.controller1.A.onPress(
+                new ShootForTime(feed, turret, 1.5)
         );
 
         this.controller1.bumpers.left.onPress(
