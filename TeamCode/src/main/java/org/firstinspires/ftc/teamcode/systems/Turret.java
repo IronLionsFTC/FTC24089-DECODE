@@ -134,7 +134,7 @@ public class Turret extends SystemBase {
             case Tracking: case Shooting:
                 ProjectileMotion.Solution solution = ProjectileMotion.calculate(robotPosition, this.getVelocity(), new Vector3(
                        Constants.tx, Constants.ty, Constants.tz
-                ));
+                ), telemetry);
                 targetRPM = solution.targetRPM;
                 hoodAngle = solution.hoodAngle;
                 azimuth = solution.azimuthHeading - currentHeading;
@@ -181,7 +181,7 @@ public class Turret extends SystemBase {
     public Vector3 getVelocity() {
         if (this.velocityBuffer.isEmpty()) return new Vector3(0, 0, 0);
         Vector3 buffer = new Vector3(0, 0, 0);
-        for (Vector3 instant : this.velocityBuffer) buffer.add(instant);
+        for (Vector3 instant : this.velocityBuffer) buffer = buffer.add(instant);
         return buffer.multiply((double)1/ this.velocityBuffer.size());
     }
 

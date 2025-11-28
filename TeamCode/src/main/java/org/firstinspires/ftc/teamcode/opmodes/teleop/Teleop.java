@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.systems.Drivebase;
 import org.firstinspires.ftc.teamcode.systems.Feed;
 import org.firstinspires.ftc.teamcode.systems.Lift;
 import org.firstinspires.ftc.teamcode.systems.Turret;
+import org.firstinspires.ftc.teamcode.tasks.RetractLift;
 import org.firstinspires.ftc.teamcode.tasks.ShootForTime;
 import org.firstinspires.ftc.teamcode.tasks.ToggleIntake;
 import org.firstinspires.ftc.teamcode.tasks.ToggleShooterMode;
@@ -48,7 +49,13 @@ public class Teleop extends TaskOpMode {
                 new Run(turret::relocalise)
         );
 
+        this.controller1.dpad.up.onPress(
+                new RetractLift(lift)
+        );
+
         return Jobs.create()
+                .addTask(new RetractLift(lift))
+                .registerSystem(lift)
                 .registerSystem(feed)
                 .registerSystem(turret)
                 .registerSystem(drivebase);
