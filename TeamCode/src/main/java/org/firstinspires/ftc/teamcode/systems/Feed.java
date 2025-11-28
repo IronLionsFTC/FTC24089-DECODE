@@ -18,7 +18,8 @@ public class Feed extends SystemBase {
         Rest,
         Slow,
         Full,
-        Eject
+        Eject,
+        Shooting
     }
 
     // State
@@ -79,17 +80,22 @@ public class Feed extends SystemBase {
 
             case Slow:
                 this.feedMotor.setPower(0.7);
-                this.block.setPosition(Software.Constants.Unblock);
+                this.block.setPosition(Hardware.Servos.ZeroPositions.blockPosition);
                 break;
 
             case Full:
                 this.feedMotor.setPower(1);
-                this.block.setPosition(Software.Constants.Unblock);
+                this.block.setPosition(Hardware.Servos.ZeroPositions.blockPosition);
                 break;
 
             case Eject:
                 this.feedMotor.setPower(-1);
                 this.block.setPosition(Hardware.Servos.ZeroPositions.blockPosition);
+                break;
+
+            case Shooting:
+                this.feedMotor.setPower(1);
+                this.block.setPosition(Software.Constants.Unblock);
                 break;
         }
     }
