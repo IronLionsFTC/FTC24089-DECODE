@@ -16,7 +16,7 @@ public class Software {
     @Config
     public static class Constants {
         public static double CruiseSpeed = 1000;
-        public static double Unblock = 0.385;
+        public static double Unblock = 0.6;
         public static double HoodMax = 0.85;
     }
 

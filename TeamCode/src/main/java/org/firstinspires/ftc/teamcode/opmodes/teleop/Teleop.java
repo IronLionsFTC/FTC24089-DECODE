@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.systems.Feed;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.firstinspires.ftc.teamcode.tasks.ShootForTime;
 import org.firstinspires.ftc.teamcode.tasks.ToggleIntake;
+import org.firstinspires.ftc.teamcode.tasks.ToggleShooterMode;
 
 @TeleOp
 public class Teleop extends TaskOpMode {
@@ -32,8 +33,12 @@ public class Teleop extends TaskOpMode {
                 new ToggleIntake(feed)
         );
 
-        this.controller1.A.onPress(
+        this.controller1.rightTrigger.asButton.onPress(
                 new ShootForTime(feed, turret, 1.5)
+        );
+
+        this.controller1.A.onPress(
+                new ToggleShooterMode(turret)
         );
 
         this.controller1.bumpers.left.onPress(
