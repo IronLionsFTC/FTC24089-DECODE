@@ -43,7 +43,7 @@ public class Turret extends SystemBase {
     }
 
     // State
-    private State state = State.Rest;
+    private State state = State.Tracking;
     private Timer timer;
     private Timer deltaTime;
 
@@ -63,7 +63,7 @@ public class Turret extends SystemBase {
     List<Double> rpmBuffer = new ArrayList<>();
 
     public Turret() {
-        this.turretController = new PID(0.01, 0, 0);
+        this.turretController = new PID(0.025, 0, 0.003);
         this.flywheelController = new PID(0.005, 0, 0);
     }
 
@@ -85,6 +85,9 @@ public class Turret extends SystemBase {
         this.turret.setZPB(Hardware.Motors.ZPB.turretMotor);
         this.timer.resetTimer();
         this.deltaTime.resetTimer();
+        this.turret.resetPosition();
+        this.pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        this.relocalise();
     }
 
     @Override
@@ -142,6 +145,7 @@ public class Turret extends SystemBase {
 
         this.deltaTime.resetTimer();
         this.lastPosition = robotPosition;
+        if (state == State.Tracking) targetRPM = 0;
 
         // Flywheel RPM PID
         double flywheelResponse = 0;

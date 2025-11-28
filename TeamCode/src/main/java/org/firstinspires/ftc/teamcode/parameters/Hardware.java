@@ -25,7 +25,7 @@ public class Hardware {
             public static boolean shooter1 = false;
             public static boolean shooter2 = true;
 
-            public static boolean feed = false;
+            public static boolean feed = true;
             public static boolean turret = false;
         }
 

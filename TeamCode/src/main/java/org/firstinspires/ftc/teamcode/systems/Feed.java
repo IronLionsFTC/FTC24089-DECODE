@@ -32,7 +32,7 @@ public class Feed extends SystemBase {
     @Config
     @Configurable
     public static class FeedConstants {
-        public static double power = -1;
+        public static double power = -2;
         public static double blockPosition = -3;
     }
 
@@ -55,13 +55,19 @@ public class Feed extends SystemBase {
     @Override
     public void update(TelemetryManager telemetry) {
 
+        boolean override = false;
+
         if (FeedConstants.blockPosition > 0) {
             this.block.setPosition(FeedConstants.blockPosition);
+            override = true;
         }
 
         if (FeedConstants.power > -2) {
             this.feedMotor.setPower(FeedConstants.power);
+            override = true;
         }
+
+        if (override) return;
 
          // Apply power based on state
         switch (this.state) {
