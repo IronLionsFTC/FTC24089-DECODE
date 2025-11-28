@@ -40,6 +40,11 @@ public class Turret extends SystemBase {
         public static double tP = 0.035;
         public static double tI = 0;
         public static double tD = 0.001;
+
+        public static double shooterMultiplier = 12;
+        public static double shooterOffset = 2000;
+        public static double hoodDivisor = 70;
+        public static double hoodOffset = 0;
     }
 
     // State

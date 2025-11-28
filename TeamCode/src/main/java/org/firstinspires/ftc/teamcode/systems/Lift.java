@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.lioncore.systems.SystemBase;
@@ -15,6 +14,14 @@ public class Lift extends SystemBase {
     private CRServo b;
     private CRServo c;
     private CRServo d;
+
+    public enum State {
+        Unpowered,
+        Retract,
+        Lift
+    }
+
+    private State state = State.Unpowered;
 
     public Lift() {}
 
@@ -29,7 +36,7 @@ public class Lift extends SystemBase {
     @Config
     @Configurable
     public static class LiftTuning {
-        public static double liftPower = 0;
+        public static double liftPower = 2;
     }
 
     @Override
@@ -39,7 +46,23 @@ public class Lift extends SystemBase {
 
     @Override
     public void update(TelemetryManager telemetry) {
-        this.setPower(LiftTuning.liftPower);
+
+        if (LiftTuning.liftPower <= 1) {
+            this.setPower(LiftTuning.liftPower);
+            return;
+        }
+
+        switch (this.state) {
+            case Unpowered:
+                this.setPower(0);
+                break;
+            case Retract:
+                this.setPower(-0.1);
+                break;
+            case Lift:
+                this.setPower(0.8);
+                break;
+        }
     }
 
     public void setPower(double power) {

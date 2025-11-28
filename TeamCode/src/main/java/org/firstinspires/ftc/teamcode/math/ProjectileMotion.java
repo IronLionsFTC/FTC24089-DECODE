@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.math;
 
+import org.firstinspires.ftc.teamcode.systems.Turret;
+
 public class ProjectileMotion {
 
     /**
@@ -44,8 +46,8 @@ public class ProjectileMotion {
         double tangentialVelocity = tangentialDirectionalVelocity.length();
 
         // Linear approximation of shooting power
-        double RPM = distance * 12 + 2000;
-        double hood = Math.max(Math.min(1, 1 - distance / 70), 0);
+        double RPM = distance * Turret.Constants.shooterMultiplier + Turret.Constants.shooterOffset;
+        double hood = Math.max(Math.min(1, 1 - distance / Turret.Constants.hoodDivisor + Turret.Constants.hoodOffset), 0);
 
         // Heading calculation
         Vector3 displacement = targetPosition.sub(robotPosition);
