@@ -35,7 +35,7 @@ public class ProjectileMotion {
      * @param targetPosition The target position vector (xy plane is ground, +z is up.
      * @return Solution containing RPM, hood angle [0, 1], 1 is horizontal, azimuth (degrees counterclockwise from x axis) on ground pland and expected time of flight.
      */
-    public static Solution calculate(Vector3 robotPosition, Vector3 robotVelocity, Vector3 targetPosition, TelemetryManager telemetry) {
+    public static Solution calculate(Vector3 robotPosition, Vector3 robotVelocity, Vector3 targetPosition, TelemetryManager telemetry, double angularVelocity) {
 
         // Radial vectors
         Vector3 radial = robotPosition.sub(targetPosition);
@@ -52,7 +52,7 @@ public class ProjectileMotion {
 
         // Linear approximation of shooting power
         double RPM = distance * Turret.Constants.shooterMultiplier + Turret.Constants.shooterOffset;
-        double hood = Math.max(Math.min(1, 1 - distance / Turret.Constants.hoodDivisor + Turret.Constants.hoodOffset), 0);
+        double hood = Math.max(Math.min(1.1, 1.1 - distance / Turret.Constants.hoodDivisor + Turret.Constants.hoodOffset), 0);
 
         // Heading calculation
         Vector3 displacement = targetPosition.sub(robotPosition);
@@ -60,9 +60,8 @@ public class ProjectileMotion {
 
         // Cross-product test to determine direction of motion
         Vector3 normalisedAngularMomentum = radial.cross(tangentialDirectionalVelocity);
-
         telemetry.addData("ANGULAR MOMENTUM", normalisedAngularMomentum);
-        double clampedTangentialVelocity = 30 * (1 - Math.pow(Math.E, -(0.1 * tangentialVelocity)));
+        double clampedTangentialVelocity = 20 * (1 - Math.pow(Math.E, -(0.03 * tangentialVelocity)));
         double counterclockwiseTangentialVelocity = clampedTangentialVelocity * Math.signum(normalisedAngularMomentum.z);
         telemetry.addData("LEAD", counterclockwiseTangentialVelocity);
         double azimuthVelocityLeading = azimuthRaw + counterclockwiseTangentialVelocity;
@@ -74,12 +73,12 @@ public class ProjectileMotion {
         double timeOfFlight = xy_distance / (initialVelocity * Math.cos(Math.toRadians(launchAngle)));
 
         // Adjust RPM to account for normal velocity
-        double RPMleading = RPM - normalVelocity * 10;
+        double RPMleading = RPM + normalVelocity * 13;
 
         return new Solution(
                 RPMleading,
                 hood,
-                azimuthVelocityLeading,
+                azimuthVelocityLeading - angularVelocity * 0.5,
                 timeOfFlight
         );
     }

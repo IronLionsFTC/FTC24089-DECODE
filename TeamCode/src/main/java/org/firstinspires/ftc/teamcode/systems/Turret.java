@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionServo;
 import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
@@ -32,7 +33,7 @@ public class Turret extends SystemBase {
     @Config
     @Configurable
     public static class Constants {
-        public static double tx = 12;
+        public static double tx = 24;
         public static double ty = 0;
         public static double tz = 30;
         public static double turretOverride = 0;
@@ -41,10 +42,10 @@ public class Turret extends SystemBase {
         public static double tI = 0;
         public static double tD = 0.001;
 
-        public static double shooterMultiplier = 12;
-        public static double shooterOffset = 2000;
+        public static double shooterMultiplier = 11;
+        public static double shooterOffset = 1800;
         public static double hoodDivisor = 70;
-        public static double hoodOffset = 0;
+        public static double hoodOffset = 1.5;
     }
 
     // State
@@ -134,7 +135,7 @@ public class Turret extends SystemBase {
             case Tracking: case Shooting:
                 ProjectileMotion.Solution solution = ProjectileMotion.calculate(robotPosition, this.getVelocity(), new Vector3(
                        Constants.tx, Constants.ty, Constants.tz
-                ), telemetry);
+                ), telemetry, pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
                 targetRPM = solution.targetRPM;
                 hoodAngle = solution.hoodAngle;
                 azimuth = solution.azimuthHeading - currentHeading;
