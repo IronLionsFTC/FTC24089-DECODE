@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.systems;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -27,6 +29,13 @@ public class Feed extends SystemBase {
     LionMotor feedMotor;
     LionServo block;
 
+    @Config
+    @Configurable
+    public static class FeedConstants {
+        public static double power = -1;
+        public static double blockPosition = -3;
+    }
+
     public Feed() {}
 
     @Override
@@ -45,6 +54,14 @@ public class Feed extends SystemBase {
 
     @Override
     public void update(TelemetryManager telemetry) {
+
+        if (FeedConstants.blockPosition > 0) {
+            this.block.setPosition(FeedConstants.blockPosition);
+        }
+
+        if (FeedConstants.power > -2) {
+            this.feedMotor.setPower(FeedConstants.power);
+        }
 
          // Apply power based on state
         switch (this.state) {
