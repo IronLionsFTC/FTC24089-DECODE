@@ -32,14 +32,14 @@ public class Turret extends SystemBase {
     @Config
     @Configurable
     public static class Constants {
-        public static double tx = 0;
+        public static double tx = 12;
         public static double ty = 0;
         public static double tz = 30;
         public static double turretOverride = 0;
         public static double hoodAngleOverride = -1;
-        public static double tP = 0.01;
+        public static double tP = 0.035;
         public static double tI = 0;
-        public static double tD = 0;
+        public static double tD = 0.001;
     }
 
     // State
@@ -127,7 +127,9 @@ public class Turret extends SystemBase {
         // State machine
         switch (this.state) {
             case Tracking: case Shooting:
-                ProjectileMotion.Solution solution = ProjectileMotion.calculate(robotPosition, this.getVelocity(), new Vector3(20, 0, 30));
+                ProjectileMotion.Solution solution = ProjectileMotion.calculate(robotPosition, this.getVelocity(), new Vector3(
+                       Constants.tx, Constants.ty, Constants.tz
+                ));
                 targetRPM = solution.targetRPM;
                 hoodAngle = solution.hoodAngle;
                 azimuth = solution.azimuthHeading - currentHeading;
@@ -187,5 +189,13 @@ public class Turret extends SystemBase {
 
     public void relocalise() {
         this.pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
+    }
+
+    public State getState() {
+        return this.state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }
