@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionMotor;
 import org.firstinspires.ftc.teamcode.lioncore.hardware.LionServo;
 import org.firstinspires.ftc.teamcode.lioncore.math.pid.PID;
@@ -178,5 +179,9 @@ public class Turret extends SystemBase {
         double sum = 0;
         for (double instant : this.rpmBuffer) sum += instant;
         return sum / rpmBuffer.size();
+    }
+
+    public void relocalise() {
+        this.pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
     }
 }
