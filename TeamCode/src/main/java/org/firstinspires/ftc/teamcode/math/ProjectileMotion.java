@@ -76,9 +76,9 @@ public class ProjectileMotion {
         double RPMleading = RPM + normalVelocity * 13;
 
         return new Solution(
-                RPMleading,
+                RPM,
                 hood,
-                azimuthVelocityLeading - angularVelocity * 0.1,
+                azimuthRaw,
                 timeOfFlight
         );
     }

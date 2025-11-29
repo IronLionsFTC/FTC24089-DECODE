@@ -11,12 +11,22 @@ public class ShootForTime extends Task {
     private Feed feed;
     private Turret turret;
     private Timer timer;
+    boolean stopShooterAtEnd;
 
     public ShootForTime(Feed feed, Turret turret, double time) {
         this.feed = feed;
         this.turret = turret;
         this.shootTime = time;
         this.timer = new Timer();
+        this.stopShooterAtEnd = true;
+    }
+
+    public ShootForTime(Feed feed, Turret turret, double time, boolean cancelShooter) {
+        this.feed = feed;
+        this.turret = turret;
+        this.shootTime = time;
+        this.timer = new Timer();
+        this.stopShooterAtEnd = cancelShooter;
     }
 
     @Override
@@ -35,6 +45,6 @@ public class ShootForTime extends Task {
     @Override
     public void end(boolean i) {
         this.feed.setState(Feed.State.Rest);
-        this.turret.setState(Turret.State.Tracking);
+        if (this.stopShooterAtEnd) this.turret.setState(Turret.State.Tracking);
     }
 }

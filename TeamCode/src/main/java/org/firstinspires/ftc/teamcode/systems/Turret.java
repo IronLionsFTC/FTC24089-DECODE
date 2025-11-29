@@ -43,9 +43,9 @@ public class Turret extends SystemBase {
         public static double tD = 0.001;
 
         public static double shooterMultiplier = 11;
-        public static double shooterOffset = 1800;
+        public static double shooterOffset = 1700;
         public static double hoodDivisor = 70;
-        public static double hoodOffset = 1.5;
+        public static double hoodOffset = 1;
     }
 
     // State
@@ -160,8 +160,8 @@ public class Turret extends SystemBase {
         if (targetRPM > 0) flywheelResponse = this.flywheelController.calculate(this.getRPM(), targetRPM);
 
         // Turret turn PID
-        while (azimuth < -180) azimuth += 360;
-        while (azimuth > 180) azimuth -= 360;
+        while (azimuth < -225) azimuth += 360;
+        while (azimuth > 135) azimuth -= 360;
         double turretResponse = this.turretController.calculate(this.turret.getPosition() * 0.279642857, azimuth);
 
         // Hardware
