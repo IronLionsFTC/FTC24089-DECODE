@@ -50,7 +50,7 @@ public class Hardware {
         }
 
         public static class ZeroPositions {
-            public static double blockPosition = 0.69;
+            public static double blockPosition = 0.65;
             public static double hood = 0.57;
         }
     }

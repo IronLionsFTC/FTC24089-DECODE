@@ -38,7 +38,7 @@ public class Teleop extends TaskOpMode {
         );
 
         this.controller1.rightTrigger.asButton.onPress(
-                new ShootForTime(feed, turret, 1.5)
+                new ShootForTime(feed, turret, 2.5, false)
         );
 
         this.controller1.A.onPress(

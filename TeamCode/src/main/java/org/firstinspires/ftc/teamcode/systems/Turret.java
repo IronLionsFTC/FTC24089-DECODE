@@ -38,14 +38,20 @@ public class Turret extends SystemBase {
         public static double tz = 30;
         public static double turretOverride = 0;
         public static double hoodAngleOverride = -1;
+
         public static double tP = 0.035;
         public static double tI = 0;
         public static double tD = 0.001;
+        public static double fP = 0.0019;
+        public static double fI = 0;
+        public static double fD = 0;
 
-        public static double shooterMultiplier = 11;
-        public static double shooterOffset = 1700;
+        public static double shooterMultiplier = 14;
+        public static double shooterOffset = 1800;
         public static double hoodDivisor = 70;
         public static double hoodOffset = 1;
+
+        public static double compScale = 200000;
     }
 
     // State
@@ -69,8 +75,8 @@ public class Turret extends SystemBase {
     List<Double> rpmBuffer = new ArrayList<>();
 
     public Turret() {
-        this.turretController = new PID(0.025, 0, 0.003);
-        this.flywheelController = new PID(0.005, 0, 0);
+        this.turretController = new PID(Constants.tP, Constants.tI, Constants.tD);
+        this.flywheelController = new PID(Constants.fP, Constants.fI, Constants.fD);
     }
 
     @Override
@@ -106,6 +112,12 @@ public class Turret extends SystemBase {
                 Constants.tD
         );
 
+        this.flywheelController.setConstants(
+                Constants.fP,
+                Constants.fI,
+                Constants.fD
+        );
+
         // Odometry
         pinpoint.update();
         Vector3 robotPosition = new Vector3(
@@ -119,7 +131,7 @@ public class Turret extends SystemBase {
         double dt = this.deltaTime.getElapsedTimeSeconds();
         Vector3 velocity = ds.multiply(1 / dt);
         this.velocityBuffer.add(velocity);
-        if (this.velocityBuffer.size() > 5) this.velocityBuffer.remove(0);
+        if (this.velocityBuffer.size() > 2) this.velocityBuffer.remove(0);
 
         // RPM control
         double currentRPM = shooter.getVelocity(28);
@@ -164,6 +176,9 @@ public class Turret extends SystemBase {
         while (azimuth > 135) azimuth -= 360;
         double turretResponse = this.turretController.calculate(this.turret.getPosition() * 0.279642857, azimuth);
 
+        double error = (targetRPM - this.getRPM() - 200) / Constants.compScale;
+        hoodAngle += error;
+
         // Hardware
         this.turret.setPower(turretResponse);
         this.shooter.setPower(flywheelResponse);
@@ -176,6 +191,7 @@ public class Turret extends SystemBase {
         telemetry.addData("RobotPosition", this.lastPosition.toString());
         telemetry.addData("RobotVelocity", this.getVelocity().toString());
         telemetry.addData("RPM", this.getRPM());
+        telemetry.addData("TRPM", targetRPM);
 
     }
 
