@@ -44,9 +44,9 @@ public class Turret extends SystemBase {
         public static double tD = 0.001;
         public static double fP = 0.0019;
         public static double fI = 0;
-        public static double fD = 0;
+        public static double fD = 0.00006;
 
-        public static double shooterMultiplier = 14;
+        public static double shooterMultiplier = 12;
         public static double shooterOffset = 1800;
         public static double hoodDivisor = 70;
         public static double hoodOffset = 1;
