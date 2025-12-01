@@ -51,8 +51,8 @@ public class ProjectileMotion {
         telemetry.addData("TANGENTIAL VELOCITY", tangentialVelocity);
 
         // Linear approximation of shooting power
-        double RPM = distance * Turret.Constants.shooterMultiplier + Turret.Constants.shooterOffset;
-        double hood = Math.max(Math.min(1.1, 1.1 - distance / Turret.Constants.hoodDivisor + Turret.Constants.hoodOffset), 0);
+        double RPM = distance * Turret.RobotConstants.shooterMultiplier + Turret.RobotConstants.shooterOffset;
+        double hood = Math.max(Math.min(1.1, 1.1 - distance / Turret.RobotConstants.hoodDivisor + Turret.RobotConstants.hoodOffset), 0);
 
         // Heading calculation
         Vector3 displacement = targetPosition.sub(robotPosition);

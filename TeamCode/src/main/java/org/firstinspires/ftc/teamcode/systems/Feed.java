@@ -95,7 +95,7 @@ public class Feed extends SystemBase {
 
             case Shooting:
                 this.feedMotor.setPower(0.8);
-                this.block.setPosition(Software.Constants.Unblock);
+                this.block.setPosition(Software.SoftwareConstants.Unblock);
                 break;
         }
     }

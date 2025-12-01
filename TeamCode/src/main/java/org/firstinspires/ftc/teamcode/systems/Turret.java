@@ -32,7 +32,7 @@ public class Turret extends SystemBase {
 
     @Config
     @Configurable
-    public static class Constants {
+    public static class RobotConstants {
         public static double tx = 24;
         public static double ty = 0;
         public static double tz = 30;
@@ -46,7 +46,7 @@ public class Turret extends SystemBase {
         public static double fI = 0;
         public static double fD = 0.00006;
 
-        public static double shooterMultiplier = 12;
+        public static double shooterMultiplier = 14;
         public static double shooterOffset = 1800;
         public static double hoodDivisor = 70;
         public static double hoodOffset = 1;
@@ -75,8 +75,8 @@ public class Turret extends SystemBase {
     List<Double> rpmBuffer = new ArrayList<>();
 
     public Turret() {
-        this.turretController = new PID(Constants.tP, Constants.tI, Constants.tD);
-        this.flywheelController = new PID(Constants.fP, Constants.fI, Constants.fD);
+        this.turretController = new PID(RobotConstants.tP, RobotConstants.tI, RobotConstants.tD);
+        this.flywheelController = new PID(RobotConstants.fP, RobotConstants.fI, RobotConstants.fD);
     }
 
     @Override
@@ -107,15 +107,15 @@ public class Turret extends SystemBase {
 
         // Tuning
         this.turretController.setConstants(
-                Constants.tP,
-                Constants.tI,
-                Constants.tD
+                RobotConstants.tP,
+                RobotConstants.tI,
+                RobotConstants.tD
         );
 
         this.flywheelController.setConstants(
-                Constants.fP,
-                Constants.fI,
-                Constants.fD
+                RobotConstants.fP,
+                RobotConstants.fI,
+                RobotConstants.fD
         );
 
         // Odometry
@@ -146,7 +146,7 @@ public class Turret extends SystemBase {
         switch (this.state) {
             case Tracking: case Shooting:
                 ProjectileMotion.Solution solution = ProjectileMotion.calculate(robotPosition, this.getVelocity(), new Vector3(
-                       Constants.tx, Constants.ty, Constants.tz
+                       RobotConstants.tx, RobotConstants.ty, RobotConstants.tz
                 ), telemetry, pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
                 targetRPM = solution.targetRPM;
                 hoodAngle = solution.hoodAngle;
@@ -160,8 +160,8 @@ public class Turret extends SystemBase {
                 break;
         }
 
-        if (Constants.turretOverride != 0) azimuth = Constants.turretOverride;
-        if (Constants.hoodAngleOverride >= 0) hoodAngle = Constants.hoodAngleOverride;
+        if (RobotConstants.turretOverride != 0) azimuth = RobotConstants.turretOverride;
+        if (RobotConstants.hoodAngleOverride >= 0) hoodAngle = RobotConstants.hoodAngleOverride;
 
         this.deltaTime.resetTimer();
         this.lastPosition = robotPosition;
@@ -176,7 +176,7 @@ public class Turret extends SystemBase {
         while (azimuth > 135) azimuth -= 360;
         double turretResponse = this.turretController.calculate(this.turret.getPosition() * 0.279642857, azimuth);
 
-        double error = (targetRPM - this.getRPM() - 200) / Constants.compScale;
+        double error = (targetRPM - this.getRPM() - 200) / RobotConstants.compScale;
         hoodAngle += error;
 
         // Hardware

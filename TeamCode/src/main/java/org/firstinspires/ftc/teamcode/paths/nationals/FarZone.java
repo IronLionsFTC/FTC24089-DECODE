@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.systems.FollowerWrapper;
 
 public class FarZone {
     public static Pose start = new Pose(0, 0, 0);
-    public static Vector3 goal = new Vector3(55.11, 125.98, 30);
-    public static Pose farZone = new Pose(-2, 8, Math.toDegrees(-15));
-    public static Pose wallIntake = new Pose(53.11, 0, Math.toDegrees(0));
-    public static Pose intakeSpikeStart = new Pose(30, 28, Math.toDegrees(0));
-    public static Pose intakeSpikeEnd = new Pose(50, 28);
-    public static Pose intakeSpikeStart2 = new Pose(25, 53, Math.toDegrees(0));
-    public static Pose intakeSpikeEnd2 = new Pose(50, 53);
+    public static Vector3 goal = new Vector3(55.11, -125.98, -30);
+    public static Pose farZone = new Pose(-2, -8, -Math.toDegrees(-15));
+    public static Pose wallIntake = new Pose(23, 0, Math.toDegrees(0));
+    public static Pose intakeSpikeStart = new Pose(5, -28, -Math.toDegrees(0));
+    public static Pose intakeSpikeEnd = new Pose(20, -28);
+    public static Pose intakeSpikeStart2 = new Pose(5, -53, -Math.toDegrees(0));
+    public static Pose intakeSpikeEnd2 = new Pose(20, -53);
 
     public static PathChain startToShoot(FollowerWrapper follower) {
         return new PathBuilder(follower.follower)
